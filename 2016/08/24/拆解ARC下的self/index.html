@@ -3,24 +3,27 @@
 <head>
     <meta charset="utf-8">
     
-    <title>Hello World | zakariyyaSv</title>
+    <title>拆解ARC下的self | zakariyyaSv</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
         <meta name="keywords" content="" />
     
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
+    <meta name="description" content="最近在研究AFNetworking源码的过程中碰到了很多处地方用到了weakSelf和strongSelf。依据自己之前的理解，正常情况下使用weakSelf是为了避免发生循环引用，而使用strongSelf是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。
+###self的本质
+self是">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://yoursite.com/2016/08/22/hello-world/index.html">
+<meta property="og:title" content="拆解ARC下的self">
+<meta property="og:url" content="http://yoursite.com/2016/08/24/拆解ARC下的self/index.html">
 <meta property="og:site_name" content="zakariyyaSv">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
-<meta property="og:updated_time" content="2016-08-22T15:21:19.000Z">
+<meta property="og:description" content="最近在研究AFNetworking源码的过程中碰到了很多处地方用到了weakSelf和strongSelf。依据自己之前的理解，正常情况下使用weakSelf是为了避免发生循环引用，而使用strongSelf是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。
+###self的本质
+self是">
+<meta property="og:updated_time" content="2016-08-24T13:24:38.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
+<meta name="twitter:title" content="拆解ARC下的self">
+<meta name="twitter:description" content="最近在研究AFNetworking源码的过程中碰到了很多处地方用到了weakSelf和strongSelf。依据自己之前的理解，正常情况下使用weakSelf是为了避免发生循环引用，而使用strongSelf是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。
+###self的本质
+self是">
     
 
     
@@ -63,11 +66,11 @@ Quick">
                         <ul id="main-nav">
                             
                                 <li class="main-nav-list-item" >
-                                    <a class="main-nav-list-link" href="/">Home</a>
+                                    <a class="main-nav-list-link" href="/">Inici</a>
                                 </li>
                             
                                 <li class="main-nav-list-item" >
-                                    <a class="main-nav-list-link" href="/about/index.html">About</a>
+                                    <a class="main-nav-list-link" href="/about/index.html">Quant a</a>
                                 </li>
                             
                         </ul>
@@ -75,7 +78,7 @@ Quick">
                             <div id="search-form-wrap">
 
     <form class="search-form">
-        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <input type="text" class="ins-search-input search-form-input" placeholder="Cercar" />
         <button type="submit" class="search-form-submit"></button>
     </form>
     <div class="ins-search">
@@ -96,8 +99,8 @@ Quick">
         TRANSLATION: {
             POSTS: 'Posts',
             PAGES: 'Pages',
-            CATEGORIES: 'Categories',
-            TAGS: 'Tags',
+            CATEGORIES: 'categories',
+            TAGS: 'etiquetes',
             UNTITLED: '(Untitled)',
         },
         ROOT_URL: '/',
@@ -123,18 +126,18 @@ Quick">
                         <div class="main-body-header">
     <h1 class="header">
     
-    uncategorized
+    Sense categoria
     </h1>
 </div>
                         <div class="main-body-content">
-                            <article id="post-hello-world" class="article article-single article-type-post" itemscope itemprop="blogPost">
+                            <article id="post-拆解ARC下的self" class="article article-single article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
             <header class="article-header">
                 
     
         <h1 class="article-title" itemprop="name">
-        Hello World
+        拆解ARC下的self
         </h1>
     
 
@@ -142,23 +145,31 @@ Quick">
         
         
             <div class="article-subtitle">
-                <a href="/2016/08/22/hello-world/" class="article-date">
-    <time datetime="2016-08-22T15:21:19.000Z" itemprop="datePublished">2016-08-22</time>
+                <a href="/2016/08/24/拆解ARC下的self/" class="article-date">
+    <time datetime="2016-08-24T13:23:28.000Z" itemprop="datePublished">2016-08-24</time>
 </a>
                 
             </div>
         
         
         <div class="article-entry" itemprop="articleBody">
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+            <p>最近在研究AFNetworking源码的过程中碰到了很多处地方用到了<code>weakSelf</code>和<code>strongSelf</code>。依据自己之前的理解，正常情况下使用<code>weakSelf</code>是为了避免发生循环引用，而使用<code>strongSelf</code>是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。</p>
+<p>###self的本质</p>
+<p>self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是const Class self，在实例方法中self是Person const* self（以Person类举例）。事实确实如此么？来验证一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">#import &quot;Person.h&quot;</div><div class="line"></div><div class="line">@implementation Person</div><div class="line"></div><div class="line">- (void)eat&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)classEat&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)drink:(NSString *)sth&#123;</div><div class="line">    [self eat];</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<p>将Person.m用clang命令进行重写，得到的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">static void _I_Person_eat(Person * self, SEL _cmd) &#123;</div><div class="line">    id obj = ((Person *(*)(__rw_objc_super *, SEL))(void *)objc_msgSendSuper)((__rw_objc_super)&#123;(id)self, (id)class_getSuperclass(objc_getClass(&quot;Person&quot;))&#125;, sel_registerName(&quot;init&quot;));</div><div class="line">&#125;</div><div class="line"></div><div class="line">static void _C_Person_classEat(Class self, SEL _cmd) &#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">static void _I_Person_drink_(Person * self, SEL _cmd, NSString *sth) &#123;</div><div class="line">    ((void (*)(id, SEL))(void *)objc_msgSend)((id)self, sel_registerName(&quot;eat&quot;));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从重写后的代码中可以看出结论是正确的，但还是没有找到self在方法执行过程中可能被释放的原因。我又查阅了<a href="http://clang.llvm.org/docs/AutomaticReferenceCounting.html#self" target="_blank" rel="external">Clang</a>的官方文档,找到了其中关于self的说明：</p>
+<blockquote>
+<p>The self parameter variable of an Objective-C method is never actually retained by the implementation. It is undefined behavior, or at least dangerous, to cause an object to be deallocated during a message send to that object.</p>
+<p>To make this safe, for Objective-C instance methods self is implicitly const unless the method is in the init family. Further, self is always implicitly const within a class method.</p>
+</blockquote>
+<p>翻译过来就是在OC方法中作为参数的self不会被方法的实现持有，当给self指向的对象发送消息时确实可能会发生错误。为了确保安全，除非是在init及类init的方法中，否则在OC的实例方法和类方法中self始终是指针常量无法被retain。根据我的理解整理如下：</p>
+<ol>
+<li>在ARC中，self的修饰符是<strong>unsafe_unretained，而不是</strong>strong。<strong>unsafe_unretained与weak类似，均是对对象的弱引用，区别在于当</strong>unsafe_unretained的指针指向的对象被释放后，指针仍会指向被释放对象的内存地址，变成野指针导致crash，而当<strong>weak的指针指向的对象被释放后，指针指向的对象会被置为nil。正是由于</strong>unsafe_unretained修饰符的作用，因此会导致在方法执行的过程若self被释放则会引起crash。</li>
+<li>OC方法不会对self自动retain（除了init方法族以外），self在方法运行过程中的生命周期需要由程序员自己手动实现来保证。通常的做法也就是在方法中添加一个局部变量strongSelf来对self指向的对象进行强引用来保证在方法执行完之前self都不会被释放。</li>
+<li>对self采用__unsafe_unretained修饰符，主要是为了性能方面的考虑。通常调用一个方法被runtime改写成objc_msgSend()后，传入的第一个参数都是self，从上面clang重写的代码中也可以看出。若是在方法调用中对self进行retain和release，确实可以保证方法执行过程中self不会被释放，但是，会对性能产生很大影响。并且在大多数方法调用过程中，self是不会被释放的，因此，不对self进行reatain和release操作所带来的性能提升是值得的。</li>
+</ol>
 
         </div>
         <footer class="article-footer">
@@ -208,7 +219,7 @@ window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMin
     <section id="comments">
     
         
-    <div class="ds-thread" data-thread-key="2016/08/22/hello-world/" data-title="Hello World" data-url="http://yoursite.com/2016/08/22/hello-world/"></div>
+    <div class="ds-thread" data-thread-key="2016/08/24/拆解ARC下的self/" data-title="拆解ARC下的self" data-url="http://yoursite.com/2016/08/24/拆解ARC下的self/"></div>
     <style>
         #ds-thread #ds-reset .ds-textarea-wrapper {
             background: none;
@@ -255,7 +266,7 @@ window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMin
                     <aside id="sidebar">
     <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
     <div class="sidebar-top">
-        <p>follow:</p>
+        <p>seguir:</p>
         <ul class="social-links">
             
                 
@@ -310,6 +321,21 @@ window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMin
     </div>
     
         
+<nav id="article-nav">
+    
+        <a href="/2016/08/24/test/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">més nou</strong>
+        <p class="article-nav-title">
+        
+            test
+        
+        </p>
+        <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+    
+    
+</nav>
+
     
     <div class="widgets-container">
         
@@ -323,7 +349,7 @@ window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMin
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2016/08/22/hello-world/" class="thumbnail">
+                            <a href="/2016/08/24/test/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -335,8 +361,28 @@ window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMin
                         
                         <div class="item-inner">
                             <p class="item-category"></p>
-                            <p class="item-title"><a href="/2016/08/22/hello-world/" class="title">Hello World</a></p>
-                            <p class="item-date"><time datetime="2016-08-22T15:21:19.000Z" itemprop="datePublished">2016-08-22</time></p>
+                            <p class="item-title"><a href="/2016/08/24/test/" class="title">test</a></p>
+                            <p class="item-date"><time datetime="2016-08-24T13:23:28.000Z" itemprop="datePublished">2016-08-24</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/08/24/拆解ARC下的self/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2016/08/24/拆解ARC下的self/" class="title">拆解ARC下的self</a></p>
+                            <p class="item-date"><time datetime="2016-08-24T13:23:28.000Z" itemprop="datePublished">2016-08-24</time></p>
                         </div>
                     </li>
                 
@@ -350,9 +396,9 @@ window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMin
             
                 
     <div class="widget-wrap widget-list">
-        <h3 class="widget-title">archives</h3>
+        <h3 class="widget-title">arxius</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">2</span></li></ul>
         </div>
     </div>
 
