@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+    
+    <entry>
+      <title><![CDATA[拆解ARC下的self]]></title>
+      <url>http://yoursite.com/2016/08/24/%E6%8B%86%E8%A7%A3ARC%E4%B8%8B%E7%9A%84self/</url>
+      <content type="html"><![CDATA[<p>最近在研究AFNetworking源码的过程中碰到了很多处地方用到了<code>weakSelf</code>和<code>strongSelf</code>。依据自己之前的理解，正常情况下使用<code>weakSelf</code>是为了避免发生循环引用，而使用<code>strongSelf</code>是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。</p>
+<p>###self的本质###</p>
+<p>self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是const Class self，在实例方法中self是Person const* self（以Person类举例）。事实确实如此么？来验证一下。<br><a id="more"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#import &quot;Person.h&quot;</div><div class="line"></div><div class="line">@implementation Person</div><div class="line"></div><div class="line">- (void)eat&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)classEat&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)drink:(NSString *)sth&#123;</div><div class="line">    [self eat];</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<p>将Person.m用clang命令进行重写，得到的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">static void _I_Person_eat(Person * self, SEL _cmd) &#123;</div><div class="line">    id obj = ((Person *(*)(__rw_objc_super *, SEL))(void *)objc_msgSendSuper)((__rw_objc_super)&#123;(id)self, (id)class_getSuperclass(objc_getClass(&quot;Person&quot;))&#125;, sel_registerName(&quot;init&quot;));</div><div class="line">&#125;</div><div class="line"></div><div class="line">static void _C_Person_classEat(Class self, SEL _cmd) &#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">static void _I_Person_drink_(Person * self, SEL _cmd, NSString *sth) &#123;</div><div class="line">    ((void (*)(id, SEL))(void *)objc_msgSend)((id)self, sel_registerName(&quot;eat&quot;));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从重写后的代码中可以看出结论是正确的，但还是没有找到self在方法执行过程中可能被释放的原因。我又查阅了<a href="http://clang.llvm.org/docs/AutomaticReferenceCounting.html#self" target="_blank" rel="external">Clang</a>的官方文档,找到了其中关于self的说明：</p>
+<blockquote>
+<p>The self parameter variable of an Objective-C method is never actually retained by the implementation. It is undefined behavior, or at least dangerous, to cause an object to be deallocated during a message send to that object.</p>
+<p>To make this safe, for Objective-C instance methods self is implicitly const unless the method is in the init family. Further, self is always implicitly const within a class method.</p>
+</blockquote>
+<p>翻译过来就是在OC方法中作为参数的self不会被方法的实现持有，当给self指向的对象发送消息时确实可能会发生错误。为了确保安全，除非是在init及类init的方法中，否则在OC的实例方法和类方法中self始终是指针常量无法被retain。根据我的理解整理如下：</p>
+<ol>
+<li><p>在ARC中，self的修饰符是<strong>unsafe_unretained，而不是</strong>strong。<strong>unsafe_unretained与weak类似，均是对对象的弱引用，区别在于当</strong>unsafe_unretained的指针指向的对象被释放后，指针仍会指向被释放对象的内存地址，变成野指针导致crash，而当<strong>weak的指针指向的对象被释放后，指针指向的对象会被置为nil。正是由于</strong>unsafe_unretained修饰符的作用，因此会导致在方法执行的过程若self被释放则会引起crash。</p>
+</li>
+<li><p>OC方法不会对self自动retain（除了init方法族以外），self在方法运行过程中的生命周期需要由程序员自己手动实现来保证。通常的做法也就是在方法中添加一个局部变量strongSelf来对self指向的对象进行强引用来保证在方法执行完之前self都不会被释放。</p>
+</li>
+<li><p>对self采用__unsafe_unretained修饰符，主要是为了性能方面的考虑。通常调用一个方法被runtime改写成objc_msgSend()后，传入的第一个参数都是self，从上面clang重写的代码中也可以看出。若是在方法调用中对self进行retain和release，确实可以保证方法执行过程中self不会被释放，但是，会对性能产生很大影响。并且在大多数方法调用过程中，self是不会被释放的，因此，不对self进行reatain和release操作所带来的性能提升是值得的。</p>
+</li>
+</ol>
+]]></content>
+    </entry>
+    
+  
+  
+</search>
