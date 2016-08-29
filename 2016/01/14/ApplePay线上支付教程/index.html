@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -84,22 +84,36 @@
 
 
 
-<meta name="description" content="最近在研究AFNetworking源码的过程中碰到了很多处地方用到了weakSelf和strongSelf。依据自己之前的理解，正常情况下使用weakSelf是为了避免发生循环引用，而使用strongSelf是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。
-###self的本质###
-se">
+<meta name="description" content="##第一部分 准备阶段
+1）硬件要求：iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。
+2">
 <meta property="og:type" content="article">
-<meta property="og:title" content="拆解ARC下的self">
-<meta property="og:url" content="http://yoursite.com/2016/08/24/拆解ARC下的self/index.html">
+<meta property="og:title" content="ApplePay线上支付教程">
+<meta property="og:url" content="http://yoursite.com/2016/01/14/ApplePay线上支付教程/index.html">
 <meta property="og:site_name" content="zakariyyaSv">
-<meta property="og:description" content="最近在研究AFNetworking源码的过程中碰到了很多处地方用到了weakSelf和strongSelf。依据自己之前的理解，正常情况下使用weakSelf是为了避免发生循环引用，而使用strongSelf是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。
-###self的本质###
-se">
-<meta property="og:updated_time" content="2016-08-28T14:45:23.000Z">
+<meta property="og:description" content="##第一部分 准备阶段
+1）硬件要求：iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。
+2">
+<meta property="og:image" content="http://yoursite.com/images/applePay/1.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/2.jpeg">
+<meta property="og:image" content="http://yoursite.com/images/applePay/3.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/4.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/5.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/6.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/7.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/8.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/2_1.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/2_2.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/2_3.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/2_4.png">
+<meta property="og:image" content="http://yoursite.com/images/applePay/2_5.png">
+<meta property="og:updated_time" content="2016-08-29T13:24:45.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="拆解ARC下的self">
-<meta name="twitter:description" content="最近在研究AFNetworking源码的过程中碰到了很多处地方用到了weakSelf和strongSelf。依据自己之前的理解，正常情况下使用weakSelf是为了避免发生循环引用，而使用strongSelf是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。
-###self的本质###
-se">
+<meta name="twitter:title" content="ApplePay线上支付教程">
+<meta name="twitter:description" content="##第一部分 准备阶段
+1）硬件要求：iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。
+2">
+<meta name="twitter:image" content="http://yoursite.com/images/applePay/1.png">
 
 
 
@@ -120,9 +134,9 @@ se">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/08/24/拆解ARC下的self/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/01/14/ApplePay线上支付教程/"/>
 
-  <title> 拆解ARC下的self | zakariyyaSv </title>
+  <title> ApplePay线上支付教程 | zakariyyaSv </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -265,7 +279,7 @@ se">
             
             
               
-                拆解ARC下的self
+                ApplePay线上支付教程
               
             
           </h1>
@@ -277,38 +291,19 @@ se">
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-08-24T21:23:28+08:00" content="2016-08-24">
-              2016-08-24
+            <time itemprop="dateCreated" datetime="2016-01-14T20:33:39+08:00" content="2016-01-14">
+              2016-01-14
             </time>
           </span>
 
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/08/24/拆解ARC下的self/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/24/拆解ARC下的self/" itemprop="commentsCount"></span>
+                <a href="/2016/01/14/ApplePay线上支付教程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/14/ApplePay线上支付教程/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -331,26 +326,33 @@ se">
       
 
       
-        <p>最近在研究AFNetworking源码的过程中碰到了很多处地方用到了<code>weakSelf</code>和<code>strongSelf</code>。依据自己之前的理解，正常情况下使用<code>weakSelf</code>是为了避免发生循环引用，而使用<code>strongSelf</code>是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。</p>
-<p>###self的本质###</p>
-<p>self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是const Class self，在实例方法中self是Person const* self（以Person类举例）。事实确实如此么？来验证一下。<br><a id="more"></a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#import &quot;Person.h&quot;</div><div class="line"></div><div class="line">@implementation Person</div><div class="line"></div><div class="line">- (void)eat&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)classEat&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)drink:(NSString *)sth&#123;</div><div class="line">    [self eat];</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
-<p>将Person.m用clang命令进行重写，得到的代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">static void _I_Person_eat(Person * self, SEL _cmd) &#123;</div><div class="line">    id obj = ((Person *(*)(__rw_objc_super *, SEL))(void *)objc_msgSendSuper)((__rw_objc_super)&#123;(id)self, (id)class_getSuperclass(objc_getClass(&quot;Person&quot;))&#125;, sel_registerName(&quot;init&quot;));</div><div class="line">&#125;</div><div class="line"></div><div class="line">static void _C_Person_classEat(Class self, SEL _cmd) &#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">static void _I_Person_drink_(Person * self, SEL _cmd, NSString *sth) &#123;</div><div class="line">    ((void (*)(id, SEL))(void *)objc_msgSend)((id)self, sel_registerName(&quot;eat&quot;));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从重写后的代码中可以看出结论是正确的，但还是没有找到self在方法执行过程中可能被释放的原因。我又查阅了<a href="http://clang.llvm.org/docs/AutomaticReferenceCounting.html#self" target="_blank" rel="external">Clang</a>的官方文档,找到了其中关于self的说明：</p>
-<blockquote>
-<p>The self parameter variable of an Objective-C method is never actually retained by the implementation. It is undefined behavior, or at least dangerous, to cause an object to be deallocated during a message send to that object.</p>
-<p>To make this safe, for Objective-C instance methods self is implicitly const unless the method is in the init family. Further, self is always implicitly const within a class method.</p>
-</blockquote>
-<p>翻译过来就是在OC方法中作为参数的self不会被方法的实现持有，当给self指向的对象发送消息时确实可能会发生错误。为了确保安全，除非是在init及类init的方法中，否则在OC的实例方法和类方法中self始终是指针常量无法被retain。根据我的理解整理如下：</p>
-<ol>
-<li><p>在ARC中，self的修饰符是<strong>unsafe_unretained，而不是</strong>strong。<strong>unsafe_unretained与weak类似，均是对对象的弱引用，区别在于当</strong>unsafe_unretained的指针指向的对象被释放后，指针仍会指向被释放对象的内存地址，变成野指针导致crash，而当<strong>weak的指针指向的对象被释放后，指针指向的对象会被置为nil。正是由于</strong>unsafe_unretained修饰符的作用，因此会导致在方法执行的过程若self被释放则会引起crash。</p>
-</li>
-<li><p>OC方法不会对self自动retain（除了init方法族以外），self在方法运行过程中的生命周期需要由程序员自己手动实现来保证。通常的做法也就是在方法中添加一个局部变量strongSelf来对self指向的对象进行强引用来保证在方法执行完之前self都不会被释放。</p>
-</li>
-<li><p>对self采用__unsafe_unretained修饰符，主要是为了性能方面的考虑。通常调用一个方法被runtime改写成objc_msgSend()后，传入的第一个参数都是self，从上面clang重写的代码中也可以看出。若是在方法调用中对self进行retain和release，确实可以保证方法执行过程中self不会被释放，但是，会对性能产生很大影响。并且在大多数方法调用过程中，self是不会被释放的，因此，不对self进行reatain和release操作所带来的性能提升是值得的。</p>
-</li>
-</ol>
+        <p>##第一部分 准备阶段</p>
+<p>1）硬件要求：<br>iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。</p>
+<p>2）系统要求：<br>iPhone或iPad至少要升到iOS 9.2版，手表至少watch OS 2.1。</p>
+<p>3）配置支付环境<br>1.进入苹果开发者中心，注册App ID。<br>App ID必须是explicit类型，否则无法使用ApplePay服务。<br><a id="more"></a><br><img src="/images/applePay/1.png" alt=""></p>
+<p>2.勾选Apple Pay并点击continue，然后点击“submit”提交。<br><img src="/images/applePay/2.jpeg" alt=""></p>
+<p>3.在App IDs中找到刚刚注册成功的App ID，点击edit，对Apple Pay进行配置。<br><img src="/images/applePay/3.png" alt=""></p>
+<p>4.创建MerchantID。<br><img src="/images/applePay/4.png" alt=""></p>
+<p>5.配置Apple Pay服务，勾选Merchant ID。<br><img src="/images/applePay/5.png" alt=""></p>
+<p>6.App ID的apple pay选项变成enable表示配置成功。<br><img src="/images/applePay/6.png" alt=""></p>
+<p>7.创建Xcode项目，填入刚注册的BundleID。<br><img src="/images/applePay/7.png" alt=""></p>
+<p>8.在项目的target-&gt;Capabilities中，打开Apple Pay，并勾选Merchant ID。<br><img src="/images/applePay/8.png" alt=""></p>
+<p>##第二部分 代码实现</p>
+<p>项目地址：<a href="https://github.com/ZakariyyaSv/ApplePayDemo" target="_blank" rel="external">https://github.com/ZakariyyaSv/ApplePayDemo</a></p>
+<p>####一、判断支付环境<br>1.导入Passkit框架，加载view。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#import &lt;PassKit/PassKit.h&gt;</div></pre></td></tr></table></figure></p>
+<p>2.判断当前设备是否支持Apple Pay以及wallet中是否有符合所支持网络的银行卡。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">// 1.判断当前设备是否支持ApplePay</div><div class="line">if ([PKPaymentAuthorizationViewController canMakePayments]) &#123;</div><div class="line">    // 2.判断是否添加了银行卡</div><div class="line">    if ([PKPaymentAuthorizationViewController canMakePaymentsUsingNetworks:@[PKPaymentNetworkChinaUnionPay]]) &#123;</div><div class="line">        // 3.1添加支付按钮，点击跳转去支付</div><div class="line">        PKPaymentButton *buyBtn = [PKPaymentButton buttonWithType:PKPaymentButtonTypeBuy style:PKPaymentButtonStyleBlack];</div><div class="line">        [buyBtn addTarget:self action:@selector(buyOnClick) forControlEvents:UIControlEventTouchUpInside];</div><div class="line">        [self.payView addSubview:buyBtn];</div><div class="line">    &#125;</div><div class="line">    else &#123;</div><div class="line">        // 3.2添加设置按钮，点击跳转去wallet绑定银行卡</div><div class="line">        PKPaymentButton *setupBtn = [PKPaymentButton buttonWithType:PKPaymentButtonTypeSetUp style:PKPaymentButtonStyleWhiteOutline];</div><div class="line">        [setupBtn addTarget:self action:@selector(jumpToWallet) forControlEvents:UIControlEventTouchUpInside];</div><div class="line">        [self.payView addSubview:setupBtn];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">else &#123;</div><div class="line">    NSLog(@&quot;The device cannot support ApplePay!&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行效果如下图所示：<br><img src="/images/applePay/2_1.png" alt=""></p>
+<p>3.若wallet中没有绑定所支持网络的银行卡，则点击按钮跳转到wallet中去绑定银行卡。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">- (void)jumpToWallet&#123;</div><div class="line">    PKPassLibrary *walletLibrary = [[PKPassLibrary alloc] init];</div><div class="line">    [walletLibrary openPaymentSetup];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="/images/applePay/2_2.png" alt=""></p>
+<p>4.若该设备支持Apple Pay并且有绑定所支持网络的银行卡则发起支付请求。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">- (void)buyOnClick&#123;</div><div class="line">    NSLog(@&quot;start to pay!&quot;);</div><div class="line">    // 创建支付请求，配置请求信息。</div><div class="line">    PKPaymentRequest *payRequest = [[PKPaymentRequest alloc] init];</div><div class="line">    // 国家代码</div><div class="line">    payRequest.countryCode = @&quot;CN&quot;;</div><div class="line">    // 货币代码</div><div class="line">    payRequest.currencyCode = @&quot;CNY&quot;;</div><div class="line">    // 商家ID</div><div class="line">    payRequest.merchantIdentifier = @&quot;merchant.com.zakariyya.fabrunMerchant&quot;;</div><div class="line">    // 商家的处理方式</div><div class="line">    payRequest.merchantCapabilities = PKMerchantCapability3DS;</div><div class="line">    // 商家支持的网络</div><div class="line">    payRequest.supportedNetworks = @[PKPaymentNetworkChinaUnionPay];</div><div class="line">    </div><div class="line">    // 配置支付订单的详情</div><div class="line">    PKPaymentSummaryItem *cameraItem = [PKPaymentSummaryItem summaryItemWithLabel:@&quot;单反相机&quot; amount:[NSDecimalNumber decimalNumberWithString:@&quot;5999.0&quot;] type:PKPaymentSummaryItemTypeFinal];</div><div class="line">    PKPaymentSummaryItem *totalItem = [PKPaymentSummaryItem summaryItemWithLabel:@&quot;佳能&quot; amount:[NSDecimalNumber decimalNumberWithString:@&quot;5999.0&quot;] type:PKPaymentSummaryItemTypeFinal];</div><div class="line">    payRequest.paymentSummaryItems = @[cameraItem,totalItem];</div><div class="line">    </div><div class="line">    // 跳转并验证支付权限</div><div class="line">    PKPaymentAuthorizationViewController *authViewController = [[PKPaymentAuthorizationViewController alloc] initWithPaymentRequest:payRequest];</div><div class="line">    authViewController.delegate = self;</div><div class="line">    [self presentViewController:authViewController animated:YES completion:nil];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>支付请求配置包括国家代码、货币代码、商家ID、商家的处理方式、商家支持的网络、订单的详情，这几个要素缺一不可。<br>其中，merchantCapabilities是一个枚举值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">typedef NS_OPTIONS(NSUInteger, PKMerchantCapability) &#123;</div><div class="line">    PKMerchantCapability3DS                                 = 1UL &lt;&lt; 0,   // Merchant supports 3DS</div><div class="line">    PKMerchantCapabilityEMV                                 = 1UL &lt;&lt; 1,   // Merchant supports EMV</div><div class="line">    PKMerchantCapabilityCredit NS_ENUM_AVAILABLE_IOS(9_0)   = 1UL &lt;&lt; 2,   // Merchant supports credit</div><div class="line">    PKMerchantCapabilityDebit  NS_ENUM_AVAILABLE_IOS(9_0)   = 1UL &lt;&lt; 3    // Merchant supports debit</div><div class="line">&#125; NS_ENUM_AVAILABLE(NA, 8_0);</div></pre></td></tr></table></figure></p>
+<p>这些枚举值当中PKMerchantCapability3DS是必选项，其他的则是可选项。</p>
+<p>supportedNetworks是一个包含常量字符串的数组：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">extern NSString * const PKPaymentNetworkAmex NS_AVAILABLE(NA, 8_0);</div><div class="line">extern NSString * const PKPaymentNetworkChinaUnionPay NS_AVAILABLE(NA, 9_2);</div><div class="line">extern NSString * const PKPaymentNetworkDiscover NS_AVAILABLE(NA, 9_0);</div><div class="line">extern NSString * const PKPaymentNetworkInterac NS_AVAILABLE(NA, 9_2);</div><div class="line">extern NSString * const PKPaymentNetworkMasterCard NS_AVAILABLE(NA, 8_0);</div><div class="line">extern NSString * const PKPaymentNetworkPrivateLabel NS_AVAILABLE(NA, 9_0);</div><div class="line">extern NSString * const PKPaymentNetworkVisa NS_AVAILABLE(NA, 8_0);</div></pre></td></tr></table></figure></p>
+<p>国内一般我们用到的会是中国银联，即PKPaymentNetworkChinaUnionPay，注意：iOS 9.2以后才开始支持银联支付。</p>
+<p><img src="/images/applePay/2_3.png" alt=""></p>
+<p>5.监听用户授权状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">#pragma mark - PKPaymentAuthorizationViewControllerDelegate</div><div class="line">// 用户授权成功后调用此方法</div><div class="line">- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void (^)(PKPaymentAuthorizationStatus))completion&#123;</div><div class="line">    </div><div class="line">    // 一般在此处，拿到支付信息，发送给服务端处理，处理完毕后，服务器会返回一个状态来告诉客户端是否支付成功，然后由客户端进行处理。</div><div class="line">    BOOL isSuccess = YES;</div><div class="line">    </div><div class="line">    if (isSuccess) &#123;</div><div class="line">        completion(PKPaymentAuthorizationStatusSuccess);</div><div class="line">    &#125;</div><div class="line">    else &#123;</div><div class="line">        completion(PKPaymentAuthorizationStatusFailure);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 用户授权成功或者用户取消授权操作时调用该方法</div><div class="line">- (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller&#123;</div><div class="line">    NSLog(@&quot;Authorization did finished!&quot;);</div><div class="line">    [self dismissViewControllerAnimated:YES completion:nil];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>##附：<br><img src="/images/applePay/2_4.png" alt="ApplePay支付流程"></p>
+<p><img src="/images/applePay/2_5.png" alt="第三方支付解决方案"></p>
 
       
     </div>
@@ -371,24 +373,18 @@ se">
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/iOS/" rel="tag">#iOS</a>
-          
-        </div>
-      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/01/14/ApplePay线上支付教程/" rel="next" title="ApplePay线上支付教程">
-                <i class="fa fa-chevron-left"></i> ApplePay线上支付教程
-              </a>
-            
           </div>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/24/拆解ARC下的self/" rel="prev" title="拆解ARC下的self">
+                拆解ARC下的self <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -403,10 +399,10 @@ se">
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/08/24/拆解ARC下的self/"
-     data-title="拆解ARC下的self"
+        <div class="ds-share flat" data-thread-key="2016/01/14/ApplePay线上支付教程/"
+     data-title="ApplePay线上支付教程"
      data-content=""
-     data-url="http://yoursite.com/2016/08/24/拆解ARC下的self/">
+     data-url="http://yoursite.com/2016/01/14/ApplePay线上支付教程/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -433,8 +429,8 @@ se">
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/08/24/拆解ARC下的self/"
-           data-title="拆解ARC下的self" data-url="http://yoursite.com/2016/08/24/拆解ARC下的self/">
+      <div class="ds-thread" data-thread-key="2016/01/14/ApplePay线上支付教程/"
+           data-title="ApplePay线上支付教程" data-url="http://yoursite.com/2016/01/14/ApplePay线上支付教程/">
       </div>
     
   </div>
