@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>zakariyyaSv&#39;s Blog</title>
   
+  <link href="/atom.xml" rel="self"/>
   
+  <link href="http://yoursite.com/"/>
+  <updated>2016-08-30T13:18:49.000Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>zakariyyaSv</name>
     
-    <entry>
-      <title><![CDATA[拆解ARC下的self]]></title>
-      <url>http://yoursite.com/2016/08/24/%E6%8B%86%E8%A7%A3ARC%E4%B8%8B%E7%9A%84self/</url>
-      <content type="html"><![CDATA[<p>最近在研究AFNetworking源码的过程中碰到了很多处地方用到了<code>weakSelf</code>和<code>strongSelf</code>。依据自己之前的理解，正常情况下使用<code>weakSelf</code>是为了避免发生循环引用，而使用<code>strongSelf</code>是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。</p>
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>拆解ARC下的self</title>
+    <link href="http://yoursite.com/2016/08/24/%E6%8B%86%E8%A7%A3ARC%E4%B8%8B%E7%9A%84self/"/>
+    <id>http://yoursite.com/2016/08/24/拆解ARC下的self/</id>
+    <published>2016-08-24T13:23:28.000Z</published>
+    <updated>2016-08-30T13:18:49.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近在研究AFNetworking源码的过程中碰到了很多处地方用到了<code>weakSelf</code>和<code>strongSelf</code>。依据自己之前的理解，正常情况下使用<code>weakSelf</code>是为了避免发生循环引用，而使用<code>strongSelf</code>是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。</p>
 <h3 id="self的本质"><a href="#self的本质" class="headerlink" title="self的本质"></a>self的本质</h3><p>self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是const Class self，在实例方法中self是Person const* self（以Person类举例）。事实确实如此么？来验证一下。<br><a id="more"></a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#import &quot;Person.h&quot;</div><div class="line"></div><div class="line">@implementation Person</div><div class="line"></div><div class="line">- (void)eat&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)classEat&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)drink:(NSString *)sth&#123;</div><div class="line">    [self eat];</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
 <p>将Person.m用clang命令进行重写，得到的代码如下：</p>
@@ -26,12 +42,27 @@
 </li>
 </ol>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[UIImage加载图片方式的研究]]></title>
-      <url>http://yoursite.com/2016/01/20/UIImage%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E6%96%B9%E5%BC%8F%E7%9A%84%E7%A0%94%E7%A9%B6/</url>
-      <content type="html"><![CDATA[<p>常用的UIImage加载图片的方式有以下几种：</p>
+    <summary type="html">
+    
+      &lt;p&gt;最近在研究AFNetworking源码的过程中碰到了很多处地方用到了&lt;code&gt;weakSelf&lt;/code&gt;和&lt;code&gt;strongSelf&lt;/code&gt;。依据自己之前的理解，正常情况下使用&lt;code&gt;weakSelf&lt;/code&gt;是为了避免发生循环引用，而使用&lt;code&gt;strongSelf&lt;/code&gt;是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。&lt;/p&gt;
+&lt;h3 id=&quot;self的本质&quot;&gt;&lt;a href=&quot;#self的本质&quot; class=&quot;headerlink&quot; title=&quot;self的本质&quot;&gt;&lt;/a&gt;self的本质&lt;/h3&gt;&lt;p&gt;self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是const Class self，在实例方法中self是Person const* self（以Person类举例）。事实确实如此么？来验证一下。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>UIImage加载图片方式的研究</title>
+    <link href="http://yoursite.com/2016/01/20/UIImage%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E6%96%B9%E5%BC%8F%E7%9A%84%E7%A0%94%E7%A9%B6/"/>
+    <id>http://yoursite.com/2016/01/20/UIImage加载图片方式的研究/</id>
+    <published>2016-01-20T11:56:39.000Z</published>
+    <updated>2016-08-30T13:19:34.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>常用的UIImage加载图片的方式有以下几种：</p>
 <ul>
 <li><code>[UIImage imageNamed:name]</code></li>
 <li><code>[UIImage imageWithContentsOfFile:name]</code></li>
@@ -48,12 +79,34 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^&#123;</div><div class="line"></div><div class="line">    UIImage *image = [UIImage imageWithContentsOfFile:imagePath];</div><div class="line"></div><div class="line">    dispatch_async(dispatch_get_main_queue(), ^&#123;</div><div class="line">        [self.button setBackgroundImage:image forState:UIControlStateNormal];</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
 <p>当图片显示在屏幕上时，系统并不会对其进行缓存。当图片数据被加载到内存中，它会被标记为可清除（purgeable）。如果数据被清除了且需要再次加载，image对象会再次从指定的文件路径获取数据并加载进内存中。根据它的实现原理，通常该方法的使用场景是图片不需要重复展示，或者图片的数据较大会造成内存警告。当然，这并不是说<code>imageWithContentsOfFile:</code>一定比<code>imageNamed:</code>方法高效，<code>imageWithContentsOfFile:</code>方法的问题在于它会将图片文件全尺寸展示在屏幕上即使是512*512的图片都要占到1M多的内存，加载会影响程序的性能，造成不好的用户体验。<br>针对图片尺寸太大带来的性能问题，比较好的解决方案是用<code>CGImageSource</code>的有关方法，将图片的尺寸缩减到适合的尺寸，减小数据大小。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">#import &lt;ImageIO/ImageIO.h&gt;</div><div class="line"></div><div class="line">NSURL *imageFileURL = [NSURL fileURLWithPath:...];</div><div class="line">CGImageSourceRef imageSource = CGImageSourceCreateWithURL((CFURLRef)imageFileURL, NULL);</div><div class="line">if (imageSource == NULL) &#123;</div><div class="line">    // Error loading image</div><div class="line">    ...</div><div class="line">    return;</div><div class="line">&#125;</div><div class="line"></div><div class="line">NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:</div><div class="line">                         [NSNumber numberWithBool:NO], (NSString *)kCGImageSourceShouldCache,</div><div class="line">                         nil];</div><div class="line">CFDictionaryRef imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, (CFDictionaryRef)options);</div><div class="line">if (imageProperties) &#123;</div><div class="line">    NSNumber *width = (NSNumber *)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelWidth);</div><div class="line">    NSNumber *height = (NSNumber *)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelHeight);</div><div class="line">    NSLog(@&quot;Image dimensions: %@ x %@ px&quot;, width, height);</div><div class="line">    CFRelease(imageProperties);</div><div class="line">&#125;</div><div class="line">CFRelease(imageSource);</div></pre></td></tr></table></figure></p>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[ApplePay线上支付教程]]></title>
-      <url>http://yoursite.com/2016/01/14/ApplePay%E7%BA%BF%E4%B8%8A%E6%94%AF%E4%BB%98%E6%95%99%E7%A8%8B/</url>
-      <content type="html"><![CDATA[<h2 id="第一部分-准备阶段"><a href="#第一部分-准备阶段" class="headerlink" title="第一部分 准备阶段"></a>第一部分 准备阶段</h2><p>1）硬件要求：<br>iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。</p>
+    <summary type="html">
+    
+      &lt;p&gt;常用的UIImage加载图片的方式有以下几种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;[UIImage imageNamed:name]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[UIImage imageWithContentsOfFile:name]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[UIImage imageWithData:data]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[UIImage imageWithCGImage:imageRef]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[UIImage imageWithCIImage:obj]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以上方法中&lt;code&gt;imageNamed:&lt;/code&gt;和&lt;code&gt;imageWitData:&lt;/code&gt;应用程序会对其自动缓存，不过，它们缓存的实现方式并不相同，后面会有详细说明。除去这两个方法以外剩下的三个方法默认情况下是不会产生缓存的，这三个方法的主要区别在于它们的数据源：&lt;code&gt;imageWithContentsOfFile:&lt;/code&gt;从指定文件中创建对象，&lt;code&gt;imageWithCGImage:&lt;/code&gt;以CGImageRef来创建对象，&lt;code&gt;imageWithCIImage:&lt;/code&gt;以CIImage对象来创建对象。&lt;br&gt;最后两种方法平时用的相对会少一些，简要解释一下CGImage与CIImage的区别：CGImageRef只能代表位图，如果你需要与bitmap数据打交道，无疑CGImage是非常合适的选择。CGImageRef以CG开头就不难想到CGImageRef的相关操作都需要在Core Graphics中进行，比如混合、遮罩等等。CIImage以CI开头，即Core Image，不难理解CIImage是底层的数据对象，它通常包含了与它相关的图像数据，而不是一个图像。默认情况下，CIImage对象是不会被绘图系统渲染的，除非是得到明确的指令。这种机制（“lazy evaluation”）允许核心绘图系统尽可能高效地运行。CIImage通常被运用在GPU优化图像滤镜算法当中。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>ApplePay线上支付教程</title>
+    <link href="http://yoursite.com/2016/01/14/ApplePay%E7%BA%BF%E4%B8%8A%E6%94%AF%E4%BB%98%E6%95%99%E7%A8%8B/"/>
+    <id>http://yoursite.com/2016/01/14/ApplePay线上支付教程/</id>
+    <published>2016-01-14T12:33:39.000Z</published>
+    <updated>2016-08-30T13:19:27.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="第一部分-准备阶段"><a href="#第一部分-准备阶段" class="headerlink" title="第一部分 准备阶段"></a>第一部分 准备阶段</h2><p>1）硬件要求：<br>iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。</p>
 <p>2）系统要求：<br>iPhone或iPad至少要升到iOS 9.2版，手表至少watch OS 2.1。</p>
 <p>3）配置支付环境<br>1.进入苹果开发者中心，注册App ID。<br>App ID必须是explicit类型，否则无法使用ApplePay服务。<br><a id="more"></a><br><img src="/images/applePay/1.png" alt=""></p>
 <p>2.勾选Apple Pay并点击continue，然后点击“submit”提交。<br><img src="/images/applePay/2.jpeg" alt=""></p>
@@ -79,8 +132,18 @@
 <h2 id="附："><a href="#附：" class="headerlink" title="附："></a>附：</h2><p><img src="/images/applePay/2_4.png" alt="ApplePay支付流程"></p>
 <p><img src="/images/applePay/2_5.png" alt="第三方支付解决方案"></p>
 ]]></content>
-    </entry>
     
+    <summary type="html">
+    
+      &lt;h2 id=&quot;第一部分-准备阶段&quot;&gt;&lt;a href=&quot;#第一部分-准备阶段&quot; class=&quot;headerlink&quot; title=&quot;第一部分 准备阶段&quot;&gt;&lt;/a&gt;第一部分 准备阶段&lt;/h2&gt;&lt;p&gt;1）硬件要求：&lt;br&gt;iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。&lt;/p&gt;
+&lt;p&gt;2）系统要求：&lt;br&gt;iPhone或iPad至少要升到iOS 9.2版，手表至少watch OS 2.1。&lt;/p&gt;
+&lt;p&gt;3）配置支付环境&lt;br&gt;1.进入苹果开发者中心，注册App ID。&lt;br&gt;App ID必须是explicit类型，否则无法使用ApplePay服务。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
   
-  
-</search>
+</feed>
