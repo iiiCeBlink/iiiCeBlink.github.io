@@ -56,6 +56,86 @@
   </entry>
   
   <entry>
+    <title>Mac workflow小记</title>
+    <link href="http://yoursite.com/2016/03/12/Mac%20workflow%E5%B0%8F%E8%AE%B0/"/>
+    <id>http://yoursite.com/2016/03/12/Mac workflow小记/</id>
+    <published>2016-03-12T12:11:39.000Z</published>
+    <updated>2016-08-31T12:32:02.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。</p>
+<h3 id="Homebrew"><a href="#Homebrew" class="headerlink" title="Homebrew"></a><a href="http://brew.sh/index_zh-cn.html" target="_blank" rel="external">Homebrew</a></h3><p><img src="/images/workflow/homebrew.png" alt=""></p>
+<p>Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际上是Mac下的套件管理器。比如你想安装MySQL、git等等工具软件，都可以使用homebrew来下载和管理。<br>homebrew的安装也非常方便，你可以去到它的官网，根据提示进行安装。安装成功后就使用homebrew的命令去下载和管理你需要的工具软件了。<br><strong>注</strong>：homebrew的安装程序需要用到Xcode的command line tools。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">brew install mysql  // 安装MySQL</div><div class="line">brew uninstall mysql     // 卸载MySQL</div><div class="line">brew search mysql   // 搜索MySQL</div><div class="line">brew upgrade mysql  // 更新MySQL</div><div class="line">brew list   // 显示已经安装的软件列表</div><div class="line">brew update     // 更新homebrew</div><div class="line">brew deps mysql     // 显示MySQL的包依赖</div></pre></td></tr></table></figure>
+<h3 id="iTerm2"><a href="#iTerm2" class="headerlink" title="iTerm2"></a><a href="http://www.iterm2.com/" target="_blank" rel="external">iTerm2</a></h3><p><img src="/images/workflow/iterm2.png" alt=""></p>
+<p>iTerm2是mac下的替代Terminal的终端工具，可以说iTerm2是Mac下最好的终端工具。它有一些特色功能如下：</p>
+<p><strong>标签变色</strong><br>iTerm2 的标签的颜色会变化，以指示该 tab 当前的状态。当该标签有新输出的时候，标签会变成洋红色；新的输出长时间没有查看，标签会变成红色。可在设置中关掉该功能。</p>
+<p><strong>智能选中</strong><br>在 iTerm2 中，双击选中，三击选中整行，四击智能选中（智能规则可配置），可以识别网址，引号引起的字符串，邮箱地址等。（很多时候双击的选中就已经很智能了）<br>在 iTerm2 中，选中即复制。即任何选中状态的字符串都被放到了系统剪切板中。</p>
+<p><strong>巧用 Command 键</strong><br>按住⌘键:<br>可以拖拽选中的字符串；<br>点击 url：调用默认浏览器访问该网址；<br>点击文件：调用默认程序打开文件；<br>如果文件名是filename:42，且默认文本编辑器是 Macvim、Textmate或BBEdit，将会直接打开到这一行；<br>点击文件夹：在 finder 中打开该文件夹；<br>同时按住option键，可以以矩形选中，类似于vim中的ctrl v操作。</p>
+<p>iTerm2的可定制化也是一大特色，详细的定制化步骤可以参见我的另一篇博客。</p>
+<h3 id="Alfred3"><a href="#Alfred3" class="headerlink" title="Alfred3"></a><a href="https://www.alfredapp.com/" target="_blank" rel="external">Alfred3</a></h3><p><img src="/images/workflow/alfred.png" alt=""></p>
+<p>我对Alfred3的评价是Mac下最逆天的工具。如果你是个键盘党，Alfred绝对可以让你基本摆脱鼠标。丰富的workflow可以让你的操作变得得心应手而且高效。你可以去<a href="http://www.alfredworkflow.com/" target="_blank" rel="external">alfredworkflow</a>上下载安装适合你的workflow。当然，你要是想自己制作workflow也很容易，简单易上手，这也是Alfred workflow资源丰富的原因所在。如果兜里不差钱还是建议去买个终身会员，绝对值得。如果囊中羞涩，这里提供一个破解版本供大家尝鲜。（<a href="http://bbs.feng.com/read-htm-tid-10516652.html" target="_blank" rel="external">下载链接</a>）</p>
+<h3 id="Dash"><a href="#Dash" class="headerlink" title="Dash"></a><a href="https://kapeli.com/dash" target="_blank" rel="external">Dash</a></h3><p><img src="/images/workflow/dash.png" alt=""></p>
+<p>Dash是Mac下的API文档查阅器，其储存了超过150种API离线文档。这可以说是程序员必备利器，不管是从操作体验以及资源的丰富程度都是Mac平台下最好用的。同时，配合Alfred使用，效率会更高。Dash提供免费版也带有付费插件，如果不差钱，支持一下也是无可厚非的。</p>
+<h3 id="CheatSheet"><a href="#CheatSheet" class="headerlink" title="CheatSheet"></a><a href="https://www.mediaatelier.com/CheatSheet/" target="_blank" rel="external">CheatSheet</a></h3><p><img src="/images/workflow/cheatsheet.png" alt=""></p>
+<p>CheatSheet是一款Mac上非常实用的快捷键快速提醒工具，只需要按住Command键，就会弹出当前应用所有的快捷键列表。所以，即使你记不住一些快捷键也没有关系，有CheatSheet就够了。</p>
+<h3 id="Sequel-Pro"><a href="#Sequel-Pro" class="headerlink" title="Sequel Pro"></a><a href="http://www.sequelpro.com/" target="_blank" rel="external">Sequel Pro</a></h3><p><img src="/images/workflow/sequelpro.png" alt=""></p>
+<p>Sequel Pro（原CocoaMySQL）是众多Mac程序员使用的MySQL管理软件，提供了比phpmyadmin更强大的管理能力，帮助用户轻松编辑数据库，表（字段和索引）和列，执行个性化查找以及导出/入数据，快速查询数据。</p>
+<p>Sequel Pro它最大的优点是简单、易用。因为这款工具是苹果公司为了吸引Web开发者进入Mac平台而投资的项目。所以它处处体现了苹果公司简洁的设计哲学。说它是全世界最好用的MySQL数据库管理工具是一点也不夸张。</p>
+<p>功能特点：</p>
+<blockquote>
+<ul>
+<li>支持多达30种编码方式</li>
+<li>快速导出/导入、备份/还原数据库的SQL/CSV文件</li>
+<li>最高版本支持MySQL 5.6</li>
+<li>内置强大的数据库查询编辑器，有自定义查询中的自动语句高亮功能，可自定义字体，自定义查询占位符.</li>
+<li>允许你编辑数据库，表格（字段和索引）和列，执行个性化查找和导入导出数据</li>
+<li>自动补全关键词，表名，域名</li>
+<li>自动段落化查询命令</li>
+<li>IP直连数据库</li>
+<li>表触发机制</li>
+<li>服务器运行监控Query Favourites for SQL reuse</li>
+<li>包括检索功能在内的全表管理设计</li>
+<li>快速在Mac上架设本地MySQL数据库</li>
+<li>在MAMP/XAMP架构上连接数据库</li>
+<li>SSH连接模式</li>
+</ul>
+</blockquote>
+<h3 id="Sublime-Text-3"><a href="#Sublime-Text-3" class="headerlink" title="Sublime Text 3"></a><a href="http://www.sublimetext.com/3" target="_blank" rel="external">Sublime Text 3</a></h3><p><img src="/images/workflow/sublime.png" alt=""></p>
+<p>Sublime Text可以说是一款优雅高效地编辑器，越来越受到开发人员的欢迎。这款编辑器区别于其他编辑器的特性主要有以下几点：</p>
+<blockquote>
+<ul>
+<li>随时保留文件的修改</li>
+<li>多重选择，同时修改</li>
+<li>智能选择</li>
+<li>智能感知，一键注释</li>
+<li>Goto Anything，智能搜索</li>
+<li>自动完成，无处不在</li>
+<li>HTML标签输入</li>
+<li>标签输入，再简化</li>
+<li>简单全面的插件体系</li>
+</ul>
+</blockquote>
+<h3 id="Lantern"><a href="#Lantern" class="headerlink" title="Lantern"></a><a href="https://www.getlantern.org/" target="_blank" rel="external">Lantern</a></h3><p><img src="/images/workflow/lantern.jpeg" alt=""></p>
+<p>Lantern是一款免费开源的科学上网的软件，安装和使用极其简单。Lantern让用户能流畅地访问被封锁的互联网站点。Lantern自动检测一个网站是否被封锁。对那些被封锁的网站，Lantern通过自有的服务器或者未封锁地区的用户运行的Lantern来提供访问。如果网站没有被封锁，Lantern选择靠边站。这样浏览器就会直接访问网站，而速度不受影响。</p>
+<h3 id="iStat-Menus"><a href="#iStat-Menus" class="headerlink" title="iStat Menus"></a><a href="https://bjango.com/mac/istatmenus/" target="_blank" rel="external">iStat Menus</a></h3><p><img src="/images/workflow/istatmenus.png" alt=""></p>
+<p>iStat Menus 5 是一款由软件开发商 Bjango 制作的 System Monitor（工具，也是笔者电脑里的必装应用之一，它能让用户最快速、最直观地了解到几乎各硬件所有的运行状态，其中包括：CPU 中央处理器、GPU 图形处理器、Memory 虚拟内存、Network 网络、Battery 电池、Disks 硬盘等。</p>
+<h3 id="Cmd-Markdown编辑器"><a href="#Cmd-Markdown编辑器" class="headerlink" title="Cmd Markdown编辑器"></a><a href="https://www.zybuluo.com/mdeditor" target="_blank" rel="external">Cmd Markdown编辑器</a></h3><p><img src="https://www.zybuluo.com/static/img/logo.png" alt=""></p>
+<p>Cmd Markdown是一款markdown编辑器，相比于同类markdown编辑器，Cmd Markdown编辑器的优势在于对中文支持比较好，实时的云端文稿，实时同步预览等等。</p>
+<p>目前，也就只有这些了，后续如果发现好用的软件会继续更新的。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>UIImage加载图片方式的研究</title>
     <link href="http://yoursite.com/2016/01/20/UIImage%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E6%96%B9%E5%BC%8F%E7%9A%84%E7%A0%94%E7%A9%B6/"/>
     <id>http://yoursite.com/2016/01/20/UIImage加载图片方式的研究/</id>
