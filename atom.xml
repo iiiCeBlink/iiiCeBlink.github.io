@@ -60,7 +60,7 @@
     <link href="http://yoursite.com/2016/03/12/Mac%20workflow%E5%B0%8F%E8%AE%B0/"/>
     <id>http://yoursite.com/2016/03/12/Mac workflow小记/</id>
     <published>2016-03-12T12:11:39.000Z</published>
-    <updated>2016-08-31T12:33:15.000Z</updated>
+    <updated>2016-08-31T12:36:47.000Z</updated>
     
     <content type="html"><![CDATA[<p>在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。</p>
 <h3 id="Homebrew"><a href="#Homebrew" class="headerlink" title="Homebrew"></a><a href="http://brew.sh/index_zh-cn.html" target="_blank" rel="external">Homebrew</a></h3><p><img src="/images/workflow/homebrew.png" alt=""></p>
@@ -132,7 +132,7 @@
     
     </summary>
     
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+      <category term="Mac相关" scheme="http://yoursite.com/categories/Mac%E7%9B%B8%E5%85%B3/"/>
     
     
   </entry>
