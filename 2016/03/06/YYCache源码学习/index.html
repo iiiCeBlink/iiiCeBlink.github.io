@@ -1,0 +1,868 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="这篇文章并不是对YYCache的设计思路的范范分析，而是对YYCache代码实现的详细分析。一方面YYCache的设计思路作者已经写得比较清楚了，我就没必要再多此一举了，有兴趣的可以到大神的博客去看YYCache 设计思路。从代码层面进行分析，一方面是因为很多思路上的东西很虚理解起来大都很容易，但是要能用代码实现却往往不那么轻松，另一方面是因为代码分析可以学习优秀代码的编码风格以及加深对iOS技术">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YYCache源码学习">
+<meta property="og:url" content="http://yoursite.com/2016/03/06/YYCache源码学习/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="这篇文章并不是对YYCache的设计思路的范范分析，而是对YYCache代码实现的详细分析。一方面YYCache的设计思路作者已经写得比较清楚了，我就没必要再多此一举了，有兴趣的可以到大神的博客去看YYCache 设计思路。从代码层面进行分析，一方面是因为很多思路上的东西很虚理解起来大都很容易，但是要能用代码实现却往往不那么轻松，另一方面是因为代码分析可以学习优秀代码的编码风格以及加深对iOS技术">
+<meta property="og:image" content="http://yoursite.com/images/YYCacheImage/codeArchitecture.png">
+<meta property="og:updated_time" content="2016-09-07T13:10:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="YYCache源码学习">
+<meta name="twitter:description" content="这篇文章并不是对YYCache的设计思路的范范分析，而是对YYCache代码实现的详细分析。一方面YYCache的设计思路作者已经写得比较清楚了，我就没必要再多此一举了，有兴趣的可以到大神的博客去看YYCache 设计思路。从代码层面进行分析，一方面是因为很多思路上的东西很虚理解起来大都很容易，但是要能用代码实现却往往不那么轻松，另一方面是因为代码分析可以学习优秀代码的编码风格以及加深对iOS技术">
+<meta name="twitter:image" content="http://yoursite.com/images/YYCacheImage/codeArchitecture.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/03/06/YYCache源码学习/"/>
+
+  <title> YYCache源码学习 | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                YYCache源码学习
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-03-06T14:17:28+08:00" content="2016-03-06">
+              2016-03-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/06/YYCache源码学习/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/06/YYCache源码学习/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇文章并不是对YYCache的设计思路的范范分析，而是对YYCache代码实现的详细分析。一方面YYCache的设计思路作者已经写得比较清楚了，我就没必要再多此一举了，有兴趣的可以到大神的博客去看<a href="http://blog.ibireme.com/2015/10/26/yycache/" target="_blank" rel="external">YYCache 设计思路</a>。从代码层面进行分析，一方面是因为很多思路上的东西很虚理解起来大都很容易，但是要能用代码实现却往往不那么轻松，另一方面是因为代码分析可以学习优秀代码的编码风格以及加深对iOS技术上的理解，这样做给自己带来的帮助或许会更多。</p>
+<h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><p>YYCache文件数并不多，主要包含四个文件：</p>
+<blockquote>
+<ul>
+<li>YYCache</li>
+<li>YYDiskCache  </li>
+<li>YYMemoryCache</li>
+<li>YYKVStorage</li>
+</ul>
+</blockquote>
+<a id="more"></a>
+<p>他们之间的关系可以用一张图来描述：<br><img src="/images/YYCacheImage/codeArchitecture.png" alt=""></p>
+<p><code>YYCache</code>是整个缓存框架的核心类，它是由<code>YYDiskCache</code>和<code>YYMemeoryCache</code>组成，而<code>YYDiskCache</code>需要借助<code>YYKVStorage</code>来实现对元素的读写。以下就依次对每个类进行详细的剖析，我觉得由下向上的去看代码理解起来会更方便，于是剖析的顺序依次是<code>YYKVStorage</code>、<code>YYDiskCache</code>、<code>YYMemeoryCache</code>、<code>YYCache</code>。</p>
+<h2 id="YYKVStorage"><a href="#YYKVStorage" class="headerlink" title="YYKVStorage"></a>YYKVStorage</h2><p><code>YYKVStorage</code>文件中包含两个类<code>YYKVStorageItem</code>和<code>YYKVStorage</code>，前者的作用是为后者提供存储键值对和元数据服务的。前者将每一个储存的数据包装成一个元素，是静态的，后者则是对前者的元素进行读写操作，是动态的。做个比喻，<code>YYKVStorageItem</code>就好比是仓库里的货物，而<code>YYKVStorage</code>则是仓库管理员。不过，该类并非是线程安全的，所以，需要确保该类同一时间只能由一个<code>YYKVStorage</code>对象去访问某个<code>YYKVStorageItem</code>元素。<br><code>YYKVStorageItem</code>的结构很简单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@interface YYKVStorageItem : NSObject</div><div class="line">@property (nonatomic, strong) NSString *key;                ///&lt; key</div><div class="line">@property (nonatomic, strong) NSData *value;                ///&lt; value</div><div class="line">@property (nullable, nonatomic, strong) NSString *filename; ///&lt; filename (nil if inline)</div><div class="line">@property (nonatomic) int size;                             ///&lt; value&apos;s size in bytes</div><div class="line">@property (nonatomic) int modTime;                          ///&lt; modification unix timestamp</div><div class="line">@property (nonatomic) int accessTime;                       ///&lt; last access unix timestamp</div><div class="line">@property (nullable, nonatomic, strong) NSData *extendedData; ///&lt; extended data (nil if no extended data)</div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>key：唯一标示元素的标识符<br>value：存储的二进制数据<br>filename：存储数据文件的文件名<br>size：限定存储数据的大小<br>modTime：最后一次修改数据的时间戳<br>accessTime：最后一次读取数据的时间戳<br>extendedData：附加的数据</p>
+<p><code>YYKVStorage</code>类的结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">@interface YYKVStorage : NSObject</div><div class="line">#pragma mark - Attribute</div><div class="line">@property (nonatomic, readonly) NSString *path;        ///&lt; The path of this storage.</div><div class="line">@property (nonatomic, readonly) YYKVStorageType type;  ///&lt; The type of this storage.</div><div class="line">@property (nonatomic) BOOL errorLogsEnabled;           ///&lt; Set `YES` to enable error logs for debug.</div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>path：存储的路径<br>type：存储类型<br>errorLogsEnabled：debug下是否打印错误信息<br>注：由于写入速度方面sqlite比文件速度快，但是读取速度方面的性能则取决于数据的大小。在作者的测试当中，当数据大于20KB时，读取速度上文件要快于sqlite。为了从性能方面考虑，加入了<code>YYKVStorageType</code>枚举类型。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">typedef NS_ENUM(NSUInteger, YYKVStorageType) &#123;</div><div class="line">    </div><div class="line">    /// The `value` is stored as a file in file system.</div><div class="line">    YYKVStorageTypeFile = 0,</div><div class="line">    </div><div class="line">    /// The `value` is stored in sqlite with blob type.</div><div class="line">    YYKVStorageTypeSQLite = 1,</div><div class="line">    </div><div class="line">    /// The `value` is stored in file system or sqlite based on your choice.</div><div class="line">    YYKVStorageTypeMixed = 2,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>如果是要存储大量的小数据，用<code>YYKVStorageTypeSQLite</code>性能会更好，如果是要存储大文件（比如图片缓存），使用YYKVStorageTypeFile来获取更好的性能，当然也可以使用<code>YYKVStorageTypeMixed</code>来自己决定每一个item的存储方式。</p>
+<p><code>YYKVStorage</code>实现文件依据它的思路分为两部分：sqlite和文件，它们的存储结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">/*</div><div class="line"> File:</div><div class="line"> /path/</div><div class="line">      /manifest.sqlite</div><div class="line">      /manifest.sqlite-shm</div><div class="line">      /manifest.sqlite-wal</div><div class="line">      /data/</div><div class="line">           /e10adc3949ba59abbe56e057f20f883e</div><div class="line">           /e10adc3949ba59abbe56e057f20f883e</div><div class="line">      /trash/</div><div class="line">            /unused_file_or_folder</div><div class="line"> </div><div class="line"> SQL:</div><div class="line"> create table if not exists manifest (</div><div class="line">    key                 text,</div><div class="line">    filename            text,</div><div class="line">    size                integer,</div><div class="line">    inline_data         blob,</div><div class="line">    modification_time   integer,</div><div class="line">    last_access_time    integer,</div><div class="line">    extended_data       blob,</div><div class="line">    primary key(key)</div><div class="line"> ); </div><div class="line"> create index if not exists last_access_time_idx on manifest(last_access_time);</div><div class="line"> */</div></pre></td></tr></table></figure></p>
+<p>File和SQL共用一张manifest表，如果是用SQL方式存储数据，则manifest表中的<code>filename</code>字段为空。这样设计的好处是，查询和修改item的信息只要查询一张表，效率上会高一点。</p>
+<p>注：manifest.sqlite-shm和manifest.sqlite-wal是自sqlite 3.7后加入的，-wal文件的意思是write-ahead log，当一个数据库采用WAL模式，所有连接数据的操作都必须使用WAL，然后在数据库文件夹下生成后缀为-wal的文件来保存操作日志，-shm则说的是共享内存的问题，有兴趣可以看看下面这段。</p>
+<blockquote>
+<p>2.2 Write-Ahead Log (WAL) Files</p>
+<p>A write-ahead log or WAL file is used in place of a rollback journal when SQLite is operating in WAL mode. As with the rollback journal, the purpose of the WAL file is to implement atomic commit and rollback. The WAL file is always located in the same directory as the database file and has the same name as the database file except with the 4 characters “-wal” appended. The WAL file is created when the first connection to the database is opened and is normally removed when the last connection to the database closes. However, if the last connection does not shutdown cleanly, the WAL file will remain in the filesystem and will be automatically cleaned up the next time the database is opened.</p>
+<p>2.3 Shared-Memory Files</p>
+<p>When operating in WAL mode, all SQLite database connections associated with the same database file need to share some memory that is used as an index for the WAL file. In most implementations, this shared memory is implemented by calling mmap() on a file created for this sole purpose: the shared-memory file. The shared-memory file, if it exists, is located in the same directory as the database file and has the same name as the database file except with the 4 characters “-shm” appended. Shared memory files only exist while running in WAL mode.</p>
+<p>The shared-memory file contains no persistent content. The only purpose of the shared-memory file is to provide a block of shared memory for use by multiple processes all accessing the same database in WAL mode. If the VFS is able to provide an alternative method for accessing shared memory, then that alternative method might be used rather than the shared-memory file. For example, if PRAGMA locking_mode is set to EXCLUSIVE (meaning that only one process is able to access the database file) then the shared memory will be allocated from heap rather than out of the shared-memory file, and the shared-memory file will never be created.</p>
+<p>The shared-memory file has the same lifetime as its associated WAL file. The shared-memory file is created when the WAL file is created and is deleted when the WAL file is deleted. During WAL file recovery, the shared memory file is recreated from scratch based on the contents of the WAL file being recovered.</p>
+</blockquote>
+<p>sqlite3部分涉及到sqlite3预编译，它的预编译过程分为以下几步：</p>
+<blockquote>
+<p>1.通过sqlite3_prepare_v2()创建sqlite3_stmt对象<br>2.通过sqlite3<em>bind</em>*()绑定预编译字段的值<br>3.通过sqlite2_step()执行SQL语句<br>4.通过sqlite3_reset()重置预编译语句，重复步骤2多次<br>5.通过sqlite3_finalize()销毁资源</p>
+</blockquote>
+<p>sqlite3<em>bind</em>*有多种形式，分别对应不同的类型：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">int sqlite3_bind_blob(sqlite3_stmt*, int, const void*, int n, void(*)(void*)); </div><div class="line">int sqlite3_bind_double(sqlite3_stmt*, int, double);</div><div class="line">int sqlite3_bind_int(sqlite3_stmt*, int, int);</div><div class="line">int sqlite3_bind_int64(sqlite3_stmt*, int, sqlite3_int64);</div><div class="line">int sqlite3_bind_null(sqlite3_stmt*, int);</div><div class="line">int sqlite3_bind_text(sqlite3_stmt*, int, const char*, int n, void(*)(void*));</div><div class="line">int sqlite3_bind_text16(sqlite3_stmt*, int, const void*, int, void(*)(void*));</div><div class="line">int sqlite3_bind_value(sqlite3_stmt*, int, const sqlite3_value*);</div><div class="line">int sqlite3_bind_zeroblob(sqlite3_stmt*, int, int n);</div></pre></td></tr></table></figure></p>
+<h2 id="YYDiskCache"><a href="#YYDiskCache" class="headerlink" title="YYDiskCache"></a>YYDiskCache</h2><p><code>YYDiskCache</code>是线程安全的底层依赖于SQLite和File系统（类似于NSURLCache的磁盘缓存）来存储键值对的缓存<br><code>YYDiskCache</code>有以下的特性：</p>
+<blockquote>
+<ul>
+<li>使用LRU算法来移除对象</li>
+<li>能够被开销、数量和寿命来控制</li>
+<li>当没有多余的磁盘空间时它能够自动回收对象</li>
+<li>能够自动决定为每个对象决定存储类型（sqlite还是文件）以达到更好的性能</li>
+</ul>
+</blockquote>
+<p><code>YYDiskCache</code>结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">@interface YYDiskCache : NSObject</div><div class="line"></div><div class="line">#pragma mark - Attribute</div><div class="line">/** The name of the cache. Default is nil. */</div><div class="line">@property (nullable, copy) NSString *name;</div><div class="line">/** The path of the cache (read-only). */</div><div class="line">@property (readonly) NSString *path;</div><div class="line">/**</div><div class="line"> *  如果对象的数据大小超过这个值，那对象就会被当做文件存储起来，否则对象会以sqlite形式存储起来。</div><div class="line">    0意味着所有的对象会被以单独的文件存储起来，NSIntegerMax意味着所有的对象都会以sqlite形式存储。</div><div class="line"> */</div><div class="line">@property (readonly) NSUInteger inlineThreshold;</div><div class="line">/**</div><div class="line"> *  如果这个block不为空，那么这个block会被用来取代NSKeyedArchiver序列化对象。</div><div class="line"> *  你可以使用这个block来支持那些没有实现&apos;NSCoding&apos;协议的对象</div><div class="line"> */</div><div class="line">@property (nullable, copy) NSData *(^customArchiveBlock)(id object);</div><div class="line">/**</div><div class="line"> *  反序列化那些没有遵从&apos;NSCoding&apos;协议的对象</div><div class="line"> */</div><div class="line">@property (nullable, copy) id (^customUnarchiveBlock)(NSData *data);</div><div class="line">/**</div><div class="line"> *  当一个对象需要以文件的形式存储起来时，这个block会被触发来以指定的key生成文件名。</div><div class="line">    如果block为空，缓存就使用md5加密的key来作为文件名</div><div class="line"> */</div><div class="line">@property (nullable, copy) NSString *(^customFileNameBlock)(NSString *key);</div><div class="line"></div><div class="line">#pragma mark - Limit</div><div class="line">/**</div><div class="line"> *  缓存所拥有的对象的最大限制</div><div class="line">    默认值为NSIntegMax，这不是一个严格的限制——如果缓存超过了这个限制，一些对象会在后台队列中被回收</div><div class="line"> */</div><div class="line">@property NSUInteger countLimit;</div><div class="line">/**</div><div class="line"> *  在缓存开始回收对象前它所能持有的所有代价</div><div class="line">    如果缓存超过这个限制，一些对象会在后台队列中被回收。</div><div class="line"> */</div><div class="line">@property NSUInteger costLimit;</div><div class="line">/**</div><div class="line"> *  缓存中对象的生命周期</div><div class="line">    如果对象超过这个限制，它会在后台队列中被回收</div><div class="line"> */</div><div class="line">@property NSTimeInterval ageLimit;</div><div class="line">/**</div><div class="line"> *  缓存保有的最小的空余磁盘空间大小</div><div class="line">    如果空余磁盘空间大小小于这个值，缓存会移除部分对象来释放磁盘空间。</div><div class="line"> */</div><div class="line">@property NSUInteger freeDiskSpaceLimit;</div><div class="line">/**</div><div class="line"> *  缓存有一个内部的timer来检查缓存是否达到它的限制，如果达到限制，便开始回收对象。</div><div class="line"> */</div><div class="line">@property NSTimeInterval autoTrimInterval;</div><div class="line">/**</div><div class="line"> Set `YES` to enable error logs for debug.</div><div class="line"> */</div><div class="line">@property BOOL errorLogsEnabled;</div></pre></td></tr></table></figure></p>
+<p><code>YYDiskCache</code>实现部分采用dispatch_semaphore来控制同步的，而并没有采用性能非常好的OSSpinLock自旋锁，研究了一下原因。</p>
+<blockquote>
+<p>OSSpinLock：得益于不进内核不挂起的方式，OSSpinLock有着优异的性能表现，然而在高并发执行(冲突概率大，竞争激烈)的时候，又或者代码片段比较耗时(比如涉及内核执行文件io、socket、thread等)，就容易引发CPU占有率暴涨的风险，因此更适用于一些简短低耗时的代码片段<br>dispatch_semaphore：GCD用于控制多线程并发的信号量，允许通过wait/signal的信号事件控制并发执行的最大线程数，当最大线程数降级为1的时候则可当作同步锁使用，注意该信号量并不支持递归；性能虽不如OSSpinLock但性能表现也是出乎意料之外的好，也没有OSSpinLock的CPU占有率暴涨的问题，然而原本是用于GCD的多线程并发控制，也是信号量机制。</p>
+</blockquote>
+<p>对于耗时较大又易冲突的读操作，可以使用dispatch_semaphore，对于性能要求苛刻，可以考虑使用OSSpinLock，但需要确保加锁片段的耗时足够小。由于<code>YYDiskCache</code>锁占用时间会比较长，使用OSSpinLock会造成CPU内存暴涨，相比之下，使用dispatch_semaphore性能上则会好很多。</p>
+<h2 id="YYMemoryCache"><a href="#YYMemoryCache" class="headerlink" title="YYMemoryCache"></a>YYMemoryCache</h2><p><code>YYMemoryCache</code>是一个高效的存储键值对的内存缓存。与NSDictionary相比，keys只被持有而并不进行拷贝, 其API和性能与NSCache接近，所有的方法都是线程安全的。它的特性如下：</p>
+<blockquote>
+<ul>
+<li>YYMemoryCache与NSCache在以下几个方面不同：</li>
+<li>它使用LRU算法移除对象；NSCache的回收方法的策略是不确定的。</li>
+<li>它可以被开销，数量和生命周期来控制；NSCache的限制是不确定的。</li>
+<li>当收到内存警告和进入后台时，它可以自动回收对象。</li>
+</ul>
+</blockquote>
+<p><code>YYMemoryCache</code>使用pthread_mutex来控制同步。读写锁的在锁操作耗时上明显不占优势，读写锁的主要性能优势在于多线程高并发量的场景，这时候锁竞争可能会非常激烈，使用一般的锁这时候并发性能都会明显下降，读写锁对于所有读操作能够把同步放开，进而保持并发性能不受影响。由于内存缓存属于多线程高并发的使用场景，因此使用pthread_mutex会更稳定。</p>
+<blockquote>
+<p>pthread_mutex：POSIX标准的unix多线程库(pthread)中使用的互斥量，支持递归，需要特别说明的是信号机制pthread_cond_wait()同步方式也是依赖于该互斥量，pthread_cond_wait()本身并不具备同步能力；</p>
+</blockquote>
+<p><code>YYMemoryCache</code>的实现主要基于双链表，将链表的节点按照时间先后顺序逆序链接，若有节点被访问，则将该节点挪到表头，若插入新节点而缓存已满，则从链表表尾开始删除节点腾出存储空间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@interface _YYLinkedMapNode : NSObject &#123;</div><div class="line">    @package</div><div class="line">    __unsafe_unretained _YYLinkedMapNode *_prev; // retained by dic</div><div class="line">    __unsafe_unretained _YYLinkedMapNode *_next; // retained by dic</div><div class="line">    id _key;</div><div class="line">    id _value;</div><div class="line">    NSUInteger _cost;</div><div class="line">    NSTimeInterval _time;</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p><code>YYMemoryCache</code>创建一个<code>YYMemoryCacheGetReleaseQueue</code>来release<code>CFMutableDictionaryRef</code>对象，避免阻塞主线程。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">static inline dispatch_queue_t YYMemoryCacheGetReleaseQueue() &#123;</div><div class="line">    return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>YYMemoryCache</code>的实现部分有段代码引起了我的注意：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">- (void)removeObjectForKey:(id)key &#123;</div><div class="line">    if (!key) return;</div><div class="line">    pthread_mutex_lock(&amp;_lock);</div><div class="line">    _YYLinkedMapNode *node = CFDictionaryGetValue(_lru-&gt;_dic, (__bridge const void *)(key));</div><div class="line">    if (node) &#123;</div><div class="line">        [_lru removeNode:node];</div><div class="line">        if (_lru-&gt;_releaseAsynchronously) &#123;</div><div class="line">            dispatch_queue_t queue = _lru-&gt;_releaseOnMainThread ? dispatch_get_main_queue() : YYMemoryCacheGetReleaseQueue();</div><div class="line">            dispatch_async(queue, ^&#123;</div><div class="line">                [node class]; //hold and release in queue</div><div class="line">            &#125;);</div><div class="line">        &#125; else if (_lru-&gt;_releaseOnMainThread &amp;&amp; !pthread_main_np()) &#123;</div><div class="line">            dispatch_async(dispatch_get_main_queue(), ^&#123;</div><div class="line">                [node class]; //hold and release in queue</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    pthread_mutex_unlock(&amp;_lock);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这段代码实现的很巧妙，<code>removeObjectForKey:</code>方法执行完之后，<code>node</code>指向的对象的引用计数为0需要被释放，但是由于在<code>dispatch_async</code>方法中的block中调用了<code>[node class];</code>，使得blcok持有<code>node</code>，其指向的对象也就不会释放，而此时只有<code>dispatch_async</code>的block持有<code>node</code>，也就自然<code>node</code>释放的过程发生在<code>dispatch_async</code>指定的线程当中。</p>
+<h2 id="YYCache"><a href="#YYCache" class="headerlink" title="YYCache"></a>YYCache</h2><p><code>YYCache</code>是线程安全的键值对缓存。它使用<code>YYMemoryCache</code>将对象存储在速度快但空间小的内存缓存中，使用<code>YYDiskCache</code>将对象持久化存储在速度慢但空间大的磁盘缓存中。其类结构也很简单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@interface YYCache : NSObject</div><div class="line">/** The name of the cache, readonly. */</div><div class="line">@property (copy, readonly) NSString *name;</div><div class="line">/** The underlying memory cache. see `YYMemoryCache` for more information.*/</div><div class="line">@property (strong, readonly) YYMemoryCache *memoryCache;</div><div class="line">/** The underlying disk cache. see `YYDiskCache` for more information.*/</div><div class="line">@property (strong, readonly) YYDiskCache *diskCache;</div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p><code>YYCache</code>没有太复杂的实现细节，主要就是调用<code>YYMemoryCache</code>和<code>YYDiskCache</code>相关方法存储、查找、修改、删除对象。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/20/runtime对containsString方法的小改进/" rel="next" title="runtime对containsString方法的小改进">
+                <i class="fa fa-chevron-left"></i> runtime对containsString方法的小改进
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/12/Mac workflow小记/" rel="prev" title="Mac workflow小记">
+                Mac workflow小记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/03/06/YYCache源码学习/"
+     data-title="YYCache源码学习"
+     data-content=""
+     data-url="http://yoursite.com/2016/03/06/YYCache源码学习/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/06/YYCache源码学习/"
+           data-title="YYCache源码学习" data-url="http://yoursite.com/2016/03/06/YYCache源码学习/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#代码结构"><span class="nav-number">1.</span> <span class="nav-text">代码结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YYKVStorage"><span class="nav-number">2.</span> <span class="nav-text">YYKVStorage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YYDiskCache"><span class="nav-number">3.</span> <span class="nav-text">YYDiskCache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YYMemoryCache"><span class="nav-number">4.</span> <span class="nav-text">YYMemoryCache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YYCache"><span class="nav-number">5.</span> <span class="nav-text">YYCache</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>
