@@ -86,33 +86,19 @@
 
 
 
-<meta name="description" content="第一部分 准备阶段1）硬件要求：iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。
-2）系统">
+<meta name="description" content="最近在学习YYCache中的YYDiskCache时，注意到了这段代码：
+12345678910111213141516171819202122232425262728/// weak reference for all instancesstatic NSMapTable *_globalInstances;static dispatch_semaphore_t _globalInstances">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ApplePay线上支付教程">
-<meta property="og:url" content="http://yoursite.com/2016/01/14/ApplePay线上支付教程/index.html">
+<meta property="og:title" content="深入理解NSMapTable、NSHashTable、NSPointerArray">
+<meta property="og:url" content="http://yoursite.com/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/index.html">
 <meta property="og:site_name" content="zakariyyaSv's Blog">
-<meta property="og:description" content="第一部分 准备阶段1）硬件要求：iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。
-2）系统">
-<meta property="og:image" content="http://yoursite.com/images/applePay/1.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/2.jpeg">
-<meta property="og:image" content="http://yoursite.com/images/applePay/3.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/4.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/5.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/6.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/7.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/8.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/2_1.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/2_2.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/2_3.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/2_4.png">
-<meta property="og:image" content="http://yoursite.com/images/applePay/2_5.png">
-<meta property="og:updated_time" content="2016-08-30T13:19:27.000Z">
+<meta property="og:description" content="最近在学习YYCache中的YYDiskCache时，注意到了这段代码：
+12345678910111213141516171819202122232425262728/// weak reference for all instancesstatic NSMapTable *_globalInstances;static dispatch_semaphore_t _globalInstances">
+<meta property="og:updated_time" content="2016-09-08T13:47:22.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ApplePay线上支付教程">
-<meta name="twitter:description" content="第一部分 准备阶段1）硬件要求：iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。
-2）系统">
-<meta name="twitter:image" content="http://yoursite.com/images/applePay/1.png">
+<meta name="twitter:title" content="深入理解NSMapTable、NSHashTable、NSPointerArray">
+<meta name="twitter:description" content="最近在学习YYCache中的YYDiskCache时，注意到了这段代码：
+12345678910111213141516171819202122232425262728/// weak reference for all instancesstatic NSMapTable *_globalInstances;static dispatch_semaphore_t _globalInstances">
 
 
 
@@ -133,9 +119,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/01/14/ApplePay线上支付教程/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/"/>
 
-  <title> ApplePay线上支付教程 | zakariyyaSv's Blog </title>
+  <title> 深入理解NSMapTable、NSHashTable、NSPointerArray | zakariyyaSv's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -278,7 +264,7 @@
             
             
               
-                ApplePay线上支付教程
+                深入理解NSMapTable、NSHashTable、NSPointerArray
               
             
           </h1>
@@ -290,8 +276,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-01-14T20:33:39+08:00" content="2016-01-14">
-              2016-01-14
+            <time itemprop="dateCreated" datetime="2016-03-10T10:19:45+08:00" content="2016-03-10">
+              2016-03-10
             </time>
           </span>
 
@@ -320,8 +306,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/01/14/ApplePay线上支付教程/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/14/ApplePay线上支付教程/" itemprop="commentsCount"></span>
+                <a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -344,31 +330,44 @@
       
 
       
-        <h2 id="第一部分-准备阶段"><a href="#第一部分-准备阶段" class="headerlink" title="第一部分 准备阶段"></a>第一部分 准备阶段</h2><p>1）硬件要求：<br>iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。</p>
-<p>2）系统要求：<br>iPhone或iPad至少要升到iOS 9.2版，手表至少watch OS 2.1。</p>
-<p>3）配置支付环境<br>1.进入苹果开发者中心，注册App ID。<br>App ID必须是explicit类型，否则无法使用ApplePay服务。<br><a id="more"></a><br><img src="/images/applePay/1.png" alt=""></p>
-<p>2.勾选Apple Pay并点击continue，然后点击“submit”提交。<br><img src="/images/applePay/2.jpeg" alt=""></p>
-<p>3.在App IDs中找到刚刚注册成功的App ID，点击edit，对Apple Pay进行配置。<br><img src="/images/applePay/3.png" alt=""></p>
-<p>4.创建MerchantID。<br><img src="/images/applePay/4.png" alt=""></p>
-<p>5.配置Apple Pay服务，勾选Merchant ID。<br><img src="/images/applePay/5.png" alt=""></p>
-<p>6.App ID的apple pay选项变成enable表示配置成功。<br><img src="/images/applePay/6.png" alt=""></p>
-<p>7.创建Xcode项目，填入刚注册的BundleID。<br><img src="/images/applePay/7.png" alt=""></p>
-<p>8.在项目的target-&gt;Capabilities中，打开Apple Pay，并勾选Merchant ID。<br><img src="/images/applePay/8.png" alt=""></p>
-<h2 id="第二部分-代码实现"><a href="#第二部分-代码实现" class="headerlink" title="第二部分 代码实现"></a>第二部分 代码实现</h2><p>项目地址：<a href="https://github.com/ZakariyyaSv/ApplePayDemo" target="_blank" rel="external">https://github.com/ZakariyyaSv/ApplePayDemo</a></p>
-<h4 id="一、判断支付环境"><a href="#一、判断支付环境" class="headerlink" title="一、判断支付环境"></a>一、判断支付环境</h4><p>1.导入Passkit框架，加载view。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#import &lt;PassKit/PassKit.h&gt;</div></pre></td></tr></table></figure></p>
-<p>2.判断当前设备是否支持Apple Pay以及wallet中是否有符合所支持网络的银行卡。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">// 1.判断当前设备是否支持ApplePay</div><div class="line">if ([PKPaymentAuthorizationViewController canMakePayments]) &#123;</div><div class="line">    // 2.判断是否添加了银行卡</div><div class="line">    if ([PKPaymentAuthorizationViewController canMakePaymentsUsingNetworks:@[PKPaymentNetworkChinaUnionPay]]) &#123;</div><div class="line">        // 3.1添加支付按钮，点击跳转去支付</div><div class="line">        PKPaymentButton *buyBtn = [PKPaymentButton buttonWithType:PKPaymentButtonTypeBuy style:PKPaymentButtonStyleBlack];</div><div class="line">        [buyBtn addTarget:self action:@selector(buyOnClick) forControlEvents:UIControlEventTouchUpInside];</div><div class="line">        [self.payView addSubview:buyBtn];</div><div class="line">    &#125;</div><div class="line">    else &#123;</div><div class="line">        // 3.2添加设置按钮，点击跳转去wallet绑定银行卡</div><div class="line">        PKPaymentButton *setupBtn = [PKPaymentButton buttonWithType:PKPaymentButtonTypeSetUp style:PKPaymentButtonStyleWhiteOutline];</div><div class="line">        [setupBtn addTarget:self action:@selector(jumpToWallet) forControlEvents:UIControlEventTouchUpInside];</div><div class="line">        [self.payView addSubview:setupBtn];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">else &#123;</div><div class="line">    NSLog(@&quot;The device cannot support ApplePay!&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>运行效果如下图所示：<br><img src="/images/applePay/2_1.png" alt=""></p>
-<p>3.若wallet中没有绑定所支持网络的银行卡，则点击按钮跳转到wallet中去绑定银行卡。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">- (void)jumpToWallet&#123;</div><div class="line">    PKPassLibrary *walletLibrary = [[PKPassLibrary alloc] init];</div><div class="line">    [walletLibrary openPaymentSetup];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><img src="/images/applePay/2_2.png" alt=""></p>
-<p>4.若该设备支持Apple Pay并且有绑定所支持网络的银行卡则发起支付请求。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">- (void)buyOnClick&#123;</div><div class="line">    NSLog(@&quot;start to pay!&quot;);</div><div class="line">    // 创建支付请求，配置请求信息。</div><div class="line">    PKPaymentRequest *payRequest = [[PKPaymentRequest alloc] init];</div><div class="line">    // 国家代码</div><div class="line">    payRequest.countryCode = @&quot;CN&quot;;</div><div class="line">    // 货币代码</div><div class="line">    payRequest.currencyCode = @&quot;CNY&quot;;</div><div class="line">    // 商家ID</div><div class="line">    payRequest.merchantIdentifier = @&quot;merchant.com.zakariyya.fabrunMerchant&quot;;</div><div class="line">    // 商家的处理方式</div><div class="line">    payRequest.merchantCapabilities = PKMerchantCapability3DS;</div><div class="line">    // 商家支持的网络</div><div class="line">    payRequest.supportedNetworks = @[PKPaymentNetworkChinaUnionPay];</div><div class="line">    </div><div class="line">    // 配置支付订单的详情</div><div class="line">    PKPaymentSummaryItem *cameraItem = [PKPaymentSummaryItem summaryItemWithLabel:@&quot;单反相机&quot; amount:[NSDecimalNumber decimalNumberWithString:@&quot;5999.0&quot;] type:PKPaymentSummaryItemTypeFinal];</div><div class="line">    PKPaymentSummaryItem *totalItem = [PKPaymentSummaryItem summaryItemWithLabel:@&quot;佳能&quot; amount:[NSDecimalNumber decimalNumberWithString:@&quot;5999.0&quot;] type:PKPaymentSummaryItemTypeFinal];</div><div class="line">    payRequest.paymentSummaryItems = @[cameraItem,totalItem];</div><div class="line">    </div><div class="line">    // 跳转并验证支付权限</div><div class="line">    PKPaymentAuthorizationViewController *authViewController = [[PKPaymentAuthorizationViewController alloc] initWithPaymentRequest:payRequest];</div><div class="line">    authViewController.delegate = self;</div><div class="line">    [self presentViewController:authViewController animated:YES completion:nil];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>支付请求配置包括国家代码、货币代码、商家ID、商家的处理方式、商家支持的网络、订单的详情，这几个要素缺一不可。<br>其中，merchantCapabilities是一个枚举值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">typedef NS_OPTIONS(NSUInteger, PKMerchantCapability) &#123;</div><div class="line">    PKMerchantCapability3DS                                 = 1UL &lt;&lt; 0,   // Merchant supports 3DS</div><div class="line">    PKMerchantCapabilityEMV                                 = 1UL &lt;&lt; 1,   // Merchant supports EMV</div><div class="line">    PKMerchantCapabilityCredit NS_ENUM_AVAILABLE_IOS(9_0)   = 1UL &lt;&lt; 2,   // Merchant supports credit</div><div class="line">    PKMerchantCapabilityDebit  NS_ENUM_AVAILABLE_IOS(9_0)   = 1UL &lt;&lt; 3    // Merchant supports debit</div><div class="line">&#125; NS_ENUM_AVAILABLE(NA, 8_0);</div></pre></td></tr></table></figure></p>
-<p>这些枚举值当中PKMerchantCapability3DS是必选项，其他的则是可选项。</p>
-<p>supportedNetworks是一个包含常量字符串的数组：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">extern NSString * const PKPaymentNetworkAmex NS_AVAILABLE(NA, 8_0);</div><div class="line">extern NSString * const PKPaymentNetworkChinaUnionPay NS_AVAILABLE(NA, 9_2);</div><div class="line">extern NSString * const PKPaymentNetworkDiscover NS_AVAILABLE(NA, 9_0);</div><div class="line">extern NSString * const PKPaymentNetworkInterac NS_AVAILABLE(NA, 9_2);</div><div class="line">extern NSString * const PKPaymentNetworkMasterCard NS_AVAILABLE(NA, 8_0);</div><div class="line">extern NSString * const PKPaymentNetworkPrivateLabel NS_AVAILABLE(NA, 9_0);</div><div class="line">extern NSString * const PKPaymentNetworkVisa NS_AVAILABLE(NA, 8_0);</div></pre></td></tr></table></figure></p>
-<p>国内一般我们用到的会是中国银联，即PKPaymentNetworkChinaUnionPay，注意：iOS 9.2以后才开始支持银联支付。</p>
-<p><img src="/images/applePay/2_3.png" alt=""></p>
-<p>5.监听用户授权状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">#pragma mark - PKPaymentAuthorizationViewControllerDelegate</div><div class="line">// 用户授权成功后调用此方法</div><div class="line">- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void (^)(PKPaymentAuthorizationStatus))completion&#123;</div><div class="line">    </div><div class="line">    // 一般在此处，拿到支付信息，发送给服务端处理，处理完毕后，服务器会返回一个状态来告诉客户端是否支付成功，然后由客户端进行处理。</div><div class="line">    BOOL isSuccess = YES;</div><div class="line">    </div><div class="line">    if (isSuccess) &#123;</div><div class="line">        completion(PKPaymentAuthorizationStatusSuccess);</div><div class="line">    &#125;</div><div class="line">    else &#123;</div><div class="line">        completion(PKPaymentAuthorizationStatusFailure);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 用户授权成功或者用户取消授权操作时调用该方法</div><div class="line">- (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller&#123;</div><div class="line">    NSLog(@&quot;Authorization did finished!&quot;);</div><div class="line">    [self dismissViewControllerAnimated:YES completion:nil];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="附："><a href="#附：" class="headerlink" title="附："></a>附：</h2><p><img src="/images/applePay/2_4.png" alt="ApplePay支付流程"></p>
-<p><img src="/images/applePay/2_5.png" alt="第三方支付解决方案"></p>
+        <p>最近在学习<code>YYCache</code>中的<code>YYDiskCache</code>时，注意到了这段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">/// weak reference for all instances</div><div class="line">static NSMapTable *_globalInstances;</div><div class="line">static dispatch_semaphore_t _globalInstancesLock;</div><div class="line"></div><div class="line">static void _YYDiskCacheInitGlobal() &#123;</div><div class="line">    static dispatch_once_t onceToken;</div><div class="line">    dispatch_once(&amp;onceToken, ^&#123;</div><div class="line">        _globalInstancesLock = dispatch_semaphore_create(1);</div><div class="line">        _globalInstances = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">static YYDiskCache *_YYDiskCacheGetGlobal(NSString *path) &#123;</div><div class="line">    if (path.length == 0) return nil;</div><div class="line">    _YYDiskCacheInitGlobal();</div><div class="line">    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);</div><div class="line">    id cache = [_globalInstances objectForKey:path];</div><div class="line">    dispatch_semaphore_signal(_globalInstancesLock);</div><div class="line">    return cache;</div><div class="line">&#125;</div><div class="line"></div><div class="line">static void _YYDiskCacheSetGlobal(YYDiskCache *cache) &#123;</div><div class="line">    if (cache.path.length == 0) return;</div><div class="line">    _YYDiskCacheInitGlobal();</div><div class="line">    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);</div><div class="line">    [_globalInstances setObject:cache forKey:cache.path];</div><div class="line">    dispatch_semaphore_signal(_globalInstancesLock);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<p><code>YYDiskCache</code>采用<code>NSMapTable</code>作为全局变量而并没有采用<code>NSDictionary</code>来存储<code>cache</code>变量，这样做的好处是避免<code>_globalInstances</code>与<code>cache</code>发生循环引用，造成内存无法释放。回顾之前自己的编码经历，基本没考虑过<code>NSDictionary</code>与其元素可能发生的循环引用问题，不得不说自己在这方面还是有欠缺。因而写下这篇blog总结这部分的内容。</p>
+<p>我在总结的过程中发现了<code>NSMapTable</code>-<code>NSDictionary</code>、<code>NSHashTable</code>-<code>NSSet</code>、<code>NSPointerArray</code>-<code>NSArray</code>三组存在相似的关系，于是我就想干脆将这几个类总结在一起，便于理解。</p>
+<h2 id="NSMapTable-NSDictionary"><a href="#NSMapTable-NSDictionary" class="headerlink" title="NSMapTable - NSDictionary"></a>NSMapTable - NSDictionary</h2><p>以下是苹果文档关于<code>NSMapTable</code>的描述：</p>
+<blockquote>
+<p>The NSMapTable class is a mutable collection modeled after NSDictionary, with the following differences:</p>
+<p>The major option is to have keys and/or values held “weakly” in a manner that entries are removed when one of the objects is reclaimed.</p>
+<p>Its keys or values may be copied on input or may use pointer identity for equality and hashing.</p>
+<p>It can contain arbitrary pointers (its contents are not constrained to being objects).</p>
+</blockquote>
+<p>总结一下，<code>NSMapTable</code>仿效的是<code>NSDictionary</code>，但它是可变的集合。它与<code>NSDictionary</code>有几点区别：</p>
+<blockquote>
+<p>1.<code>NSMapTable</code>与<code>NSDictionary</code>最重要的区别在于前者可以将keys和values以弱引用的方式关联，当其中任一对象被回收了，其所有的内容都会被移除。我们可以通过<code>mapTableWithKeyOptions:valueOptions:</code>分别控制键和值的对象获取/保留行为。<code>NSDictionary</code>则会对keys和values执行retain操作，只有等到<code>NSDictionary</code>被release才会release它所持有的keys和values。</p>
+<ol>
+<li><code>NSMapTable</code>可以包含任意的指针并且指针的内容不限定必须是对象，然后用指针去做相等或者hasing检查，而<code>NSDictionary</code>的key必须是遵循<code>NSCopying</code>协议的对象。不仅如此，如果<code>NSDictionary</code>要使用KVC那么key必须是字符串。</li>
+<li>当<code>NSMapTable</code>指定为<code>NSMapTableCopyIn</code>，它会通过NSCopying协议将添加进来的数据复制一份副本，<code>NSDictionary</code>则需要调用<code>copy</code>方法来复制数据。</li>
+</ol>
+</blockquote>
+<h2 id="NSHashTable-NSSet"><a href="#NSHashTable-NSSet" class="headerlink" title="NSHashTable - NSSet"></a>NSHashTable - NSSet</h2><p>以下是苹果文档关于<code>NSHashTable</code>的描述：</p>
+<blockquote>
+<p>NSHashTable is modeled after NSSet but provides different options, in particular to support weak relationships.</p>
+<p>It can hold weak references to its members.</p>
+<p>Its members may be copied on input or may use pointer identity for equality and hashing.</p>
+<p>It can contain arbitrary pointers (its members are not constrained to being objects).</p>
+<p>Because of its options, NSHashTable is not a set because it can behave differently (for example, if pointer equality is specified two isEqual: strings will both be entered).</p>
+</blockquote>
+<p>总结一下，<code>NSHashTable</code>效仿的是<code>NSSet</code>但提供更多不同的选项，尤其是支持weak关联。它支持对所有成员的弱引用，而<code>NSSet</code>对所有成员均是强引用。其他的不同点与前面<code>NSMapTable</code>与<code>NSDictionary</code>类似，可以参考对比，就不再码废话了。</p>
+<h2 id="NSPointerArray-NSArray"><a href="#NSPointerArray-NSArray" class="headerlink" title="NSPointerArray - NSArray"></a>NSPointerArray - NSArray</h2><p>以下是苹果文档关于<code>NSPointerArray</code>的描述：</p>
+<blockquote>
+<p>The NSPointerArray class represents a mutable collection modeled after NSArray, but can also hold nil values. nil values may be inserted or removed and contribute to the object’s count. An NSPointerArray object can also increase and decrease its count directly.</p>
+<p>A pointer array can be initialized to maintain strong or weak references to objects, or according to any of the memory or personality options defined by NSPointerFunctionsOptions.</p>
+<p>The NSCopying and NSCoding protocols are applicable only when a pointer array is initialized to maintain strong or weak references to objects.</p>
+<p>When enumerating a pointer array with NSFastEnumeration using for…in, the loop will yield any nil values present in the array. See Fast Enumeration Makes It Easy to Enumerate a Collection in Programming with Objective-C for more information.</p>
+</blockquote>
+<p>总结一下，<code>NSPointerArray</code>效仿的是<code>NSArray</code>，但可以存储值为<code>nil</code>的元素。<code>nil</code>可以被插入和移除并且计入对象的数目中。而<code>NSArray</code>不可以存储<code>nil</code>，通常它会将<code>nil</code>看做数组的终止符，并且不会计入到对象的数目当中。<code>NSPointerArray</code>可以直接增加或减少元素的数量，与<code>NSMutableArray</code>类似。<code>NSPointerArray</code>最重要的特性与前面两组相同，均是可以对存储的对象采用弱引用。只有当<code>NSPointerArray</code>存储的是对象时<code>NSCopying</code>、<code>NSCoding</code>协议才会适用。还有一点要注意的，在快速遍历的for…in方法中，如果<code>NSPointerArray</code>存在nil则循环遍历会终止。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>依据这三组类的不同也就归纳出它们各自的应用场景。若你的使用场景中可能会产生如实例代码中的循环引用问题，那就使用前者，若你的使用场景中存储的对象不遵循<code>NSCopying</code>协议或者就不是对象，而是指针之类，那就使用前者。其他大多数情况下还是使用后者。</p>
 
       
     </div>
@@ -394,12 +393,16 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/03/06/YYCache源码学习/" rel="next" title="YYCache源码学习">
+                <i class="fa fa-chevron-left"></i> YYCache源码学习
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/01/20/UIImage加载图片方式的研究/" rel="prev" title="UIImage加载图片方式的研究">
-                UIImage加载图片方式的研究 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/03/12/Mac workflow小记/" rel="prev" title="Mac workflow小记">
+                Mac workflow小记 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -415,10 +418,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/01/14/ApplePay线上支付教程/"
-     data-title="ApplePay线上支付教程"
+        <div class="ds-share flat" data-thread-key="2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/"
+     data-title="深入理解NSMapTable、NSHashTable、NSPointerArray"
      data-content=""
-     data-url="http://yoursite.com/2016/01/14/ApplePay线上支付教程/">
+     data-url="http://yoursite.com/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -445,8 +448,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/01/14/ApplePay线上支付教程/"
-           data-title="ApplePay线上支付教程" data-url="http://yoursite.com/2016/01/14/ApplePay线上支付教程/">
+      <div class="ds-thread" data-thread-key="2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/"
+           data-title="深入理解NSMapTable、NSHashTable、NSPointerArray" data-url="http://yoursite.com/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">
       </div>
     
   </div>
@@ -548,7 +551,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分-准备阶段"><span class="nav-number">1.</span> <span class="nav-text">第一部分 准备阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二部分-代码实现"><span class="nav-number">2.</span> <span class="nav-text">第二部分 代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、判断支付环境"><span class="nav-number">2.0.1.</span> <span class="nav-text">一、判断支付环境</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附："><span class="nav-number">3.</span> <span class="nav-text">附：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NSMapTable-NSDictionary"><span class="nav-number">1.</span> <span class="nav-text">NSMapTable - NSDictionary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSHashTable-NSSet"><span class="nav-number">2.</span> <span class="nav-text">NSHashTable - NSSet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSPointerArray-NSArray"><span class="nav-number">3.</span> <span class="nav-text">NSPointerArray - NSArray</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
             
           </div>
         </section>
