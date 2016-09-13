@@ -415,9 +415,9 @@
     <link href="http://yoursite.com/2015/12/28/UIButton%E4%B9%8BtitleLabel%E3%80%81imageView%E8%A7%A3%E6%9E%90/"/>
     <id>http://yoursite.com/2015/12/28/UIButton之titleLabel、imageView解析/</id>
     <published>2015-12-28T02:28:19.000Z</published>
-    <updated>2016-09-13T12:14:40.000Z</updated>
+    <updated>2016-09-13T12:29:45.000Z</updated>
     
-    <content type="html"><![CDATA[<p><code>UIButton</code>是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变<code>UIButton</code>中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用<code>imageEdgeInsets</code>、<code>titleEdgeInsets</code>组合的方案以及<code>imageRectContentRet</code>、<code>titleRectContentRect</code>组合的方案。</p>
+    <content type="html"><![CDATA[<p><code>UIButton</code>是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变<code>UIButton</code>中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用<code>imageEdgeInsets</code>、<code>titleEdgeInsets</code>组合的方案以及<code>imageRectContentRet</code>、<code>titleRectContentRect</code>组合的方案。<br><a id="more"></a></p>
 <h2 id="titleEdgeInsets、imageEdgeInsets组合"><a href="#titleEdgeInsets、imageEdgeInsets组合" class="headerlink" title="titleEdgeInsets、imageEdgeInsets组合"></a>titleEdgeInsets、imageEdgeInsets组合</h2><p>这个方案是使用的比较多的解决方案，它主要依赖的是两个方法：</p>
 <blockquote>
 <ul>
@@ -457,7 +457,7 @@
     
     <summary type="html">
     
-      &lt;p&gt;&lt;code&gt;UIButton&lt;/code&gt;是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变&lt;code&gt;UIButton&lt;/code&gt;中image和title位置和大小的需求。如果对UIButton中的titleLabel和image
+      &lt;p&gt;&lt;code&gt;UIButton&lt;/code&gt;是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变&lt;code&gt;UIButton&lt;/code&gt;中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用&lt;code&gt;imageEdgeInsets&lt;/code&gt;、&lt;code&gt;titleEdgeInsets&lt;/code&gt;组合的方案以及&lt;code&gt;imageRectContentRet&lt;/code&gt;、&lt;code&gt;titleRectContentRect&lt;/code&gt;组合的方案。&lt;br&gt;
     
     </summary>
     
