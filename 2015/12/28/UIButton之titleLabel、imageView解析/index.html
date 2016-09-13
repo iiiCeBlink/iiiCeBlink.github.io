@@ -86,15 +86,18 @@
 
 
 
-<meta name="description" content="Just Forcus">
-<meta property="og:type" content="website">
-<meta property="og:title" content="zakariyyaSv's Blog">
-<meta property="og:url" content="http://yoursite.com/page/2/index.html">
+<meta name="description" content="UIButton是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变UIButton中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用imageEdgeInsets、t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UIButton之titleLabel、imageView解析">
+<meta property="og:url" content="http://yoursite.com/2015/12/28/UIButton之titleLabel、imageView解析/index.html">
 <meta property="og:site_name" content="zakariyyaSv's Blog">
-<meta property="og:description" content="Just Forcus">
+<meta property="og:description" content="UIButton是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变UIButton中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用imageEdgeInsets、t">
+<meta property="og:image" content="http://yoursite.com/images/Btnimages/originRect.png">
+<meta property="og:updated_time" content="2016-09-13T12:14:40.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="zakariyyaSv's Blog">
-<meta name="twitter:description" content="Just Forcus">
+<meta name="twitter:title" content="UIButton之titleLabel、imageView解析">
+<meta name="twitter:description" content="UIButton是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变UIButton中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用imageEdgeInsets、t">
+<meta name="twitter:image" content="http://yoursite.com/images/Btnimages/originRect.png">
 
 
 
@@ -115,9 +118,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/page/2/"/>
+  <link rel="canonical" href="http://yoursite.com/2015/12/28/UIButton之titleLabel、imageView解析/"/>
 
-  <title> zakariyyaSv's Blog </title>
+  <title> UIButton之titleLabel、imageView解析 | zakariyyaSv's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -138,9 +141,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -240,9 +241,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -262,264 +263,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/01/20/UIImage加载图片方式的研究/" itemprop="url">
-                  UIImage加载图片方式的研究
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-01-20T19:56:39+08:00" content="2016-01-20">
-              2016-01-20
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/20/UIImage加载图片方式的研究/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/20/UIImage加载图片方式的研究/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>常用的UIImage加载图片的方式有以下几种：</p>
-<ul>
-<li><code>[UIImage imageNamed:name]</code></li>
-<li><code>[UIImage imageWithContentsOfFile:name]</code></li>
-<li><code>[UIImage imageWithData:data]</code></li>
-<li><code>[UIImage imageWithCGImage:imageRef]</code></li>
-<li><code>[UIImage imageWithCIImage:obj]</code></li>
-</ul>
-<p>以上方法中<code>imageNamed:</code>和<code>imageWitData:</code>应用程序会对其自动缓存，不过，它们缓存的实现方式并不相同，后面会有详细说明。除去这两个方法以外剩下的三个方法默认情况下是不会产生缓存的，这三个方法的主要区别在于它们的数据源：<code>imageWithContentsOfFile:</code>从指定文件中创建对象，<code>imageWithCGImage:</code>以CGImageRef来创建对象，<code>imageWithCIImage:</code>以CIImage对象来创建对象。<br>最后两种方法平时用的相对会少一些，简要解释一下CGImage与CIImage的区别：CGImageRef只能代表位图，如果你需要与bitmap数据打交道，无疑CGImage是非常合适的选择。CGImageRef以CG开头就不难想到CGImageRef的相关操作都需要在Core Graphics中进行，比如混合、遮罩等等。CIImage以CI开头，即Core Image，不难理解CIImage是底层的数据对象，它通常包含了与它相关的图像数据，而不是一个图像。默认情况下，CIImage对象是不会被绘图系统渲染的，除非是得到明确的指令。这种机制（“lazy evaluation”）允许核心绘图系统尽可能高效地运行。CIImage通常被运用在GPU优化图像滤镜算法当中。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/20/UIImage加载图片方式的研究/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/14/ApplePay线上支付教程/" itemprop="url">
-                  ApplePay线上支付教程
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-01-14T20:33:39+08:00" content="2016-01-14">
-              2016-01-14
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/14/ApplePay线上支付教程/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/14/ApplePay线上支付教程/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="第一部分-准备阶段"><a href="#第一部分-准备阶段" class="headerlink" title="第一部分 准备阶段"></a>第一部分 准备阶段</h2><p>1）硬件要求：<br>iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。</p>
-<p>2）系统要求：<br>iPhone或iPad至少要升到iOS 9.2版，手表至少watch OS 2.1。</p>
-<p>3）配置支付环境<br>1.进入苹果开发者中心，注册App ID。<br>App ID必须是explicit类型，否则无法使用ApplePay服务。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/14/ApplePay线上支付教程/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/12/28/UIButton之titleLabel、imageView解析/" itemprop="url">
-                  UIButton之titleLabel、imageView解析
-                </a>
+                UIButton之titleLabel、imageView解析
               
             
           </h1>
@@ -585,9 +329,7 @@
       
 
       
-        
-          
-            <p><code>UIButton</code>是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变<code>UIButton</code>中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用<code>imageEdgeInsets</code>、<code>titleEdgeInsets</code>组合的方案以及<code>imageRectContentRet</code>、<code>titleRectContentRect</code>组合的方案。</p>
+        <p><code>UIButton</code>是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变<code>UIButton</code>中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用<code>imageEdgeInsets</code>、<code>titleEdgeInsets</code>组合的方案以及<code>imageRectContentRet</code>、<code>titleRectContentRect</code>组合的方案。</p>
 <h2 id="titleEdgeInsets、imageEdgeInsets组合"><a href="#titleEdgeInsets、imageEdgeInsets组合" class="headerlink" title="titleEdgeInsets、imageEdgeInsets组合"></a>titleEdgeInsets、imageEdgeInsets组合</h2><p>这个方案是使用的比较多的解决方案，它主要依赖的是两个方法：</p>
 <blockquote>
 <ul>
@@ -624,16 +366,20 @@
 <p>简要说下实现的思路：由于在category中重写<code>imageRectForContentRect</code>、<code>titleRectForContentRect</code>会覆盖原来的方法实现，并且无法使用super关键字，因此重写方法行不通。转而我采用自己实现两个方法并分别与这两个方法的实现进行交换，这样就不会破坏原有方法的实现。此外，动态添加三个实例变量可以直接在实例对象中直接设置来调用<code>imageRectForContentRect</code>、<code>titleRectForContentRect</code>两个方法。</p>
 <p>使用的时候导入头文件，再相应的设置一下实例变量就可以达到效果，有没有很方便。</p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
@@ -641,23 +387,51 @@
       
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/01/14/ApplePay线上支付教程/" rel="prev" title="ApplePay线上支付教程">
+                ApplePay线上支付教程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
-  </nav>
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2015/12/28/UIButton之titleLabel、imageView解析/"
+     data-title="UIButton之titleLabel、imageView解析"
+     data-content=""
+     data-url="http://yoursite.com/2015/12/28/UIButton之titleLabel、imageView解析/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
 
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
 
 
           </div>
@@ -665,6 +439,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/12/28/UIButton之titleLabel、imageView解析/"
+           data-title="UIButton之titleLabel、imageView解析" data-url="http://yoursite.com/2015/12/28/UIButton之titleLabel、imageView解析/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -684,8 +466,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -746,6 +537,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#titleEdgeInsets、imageEdgeInsets组合"><span class="nav-number">1.</span> <span class="nav-text">titleEdgeInsets、imageEdgeInsets组合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#imageRectForContentRect、titleRectForContentRect组合"><span class="nav-number">2.</span> <span class="nav-text">imageRectForContentRect、titleRectForContentRect组合</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -844,6 +646,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 

@@ -86,19 +86,15 @@
 
 
 
-<meta name="description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
-<meta property="og:type" content="article">
-<meta property="og:title" content="runtime对containsString方法的小改进">
-<meta property="og:url" content="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/index.html">
+<meta name="description" content="Just Forcus">
+<meta property="og:type" content="website">
+<meta property="og:title" content="zakariyyaSv's Blog">
+<meta property="og:url" content="http://yoursite.com/archives/2015/12/index.html">
 <meta property="og:site_name" content="zakariyyaSv's Blog">
-<meta property="og:description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
-<meta property="og:updated_time" content="2016-09-06T15:27:00.000Z">
+<meta property="og:description" content="Just Forcus">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="runtime对containsString方法的小改进">
-<meta name="twitter:description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
+<meta name="twitter:title" content="zakariyyaSv's Blog">
+<meta name="twitter:description" content="Just Forcus">
 
 
 
@@ -119,9 +115,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/"/>
+  <link rel="canonical" href="http://yoursite.com/archives/2015/12/"/>
 
-  <title> runtime对containsString方法的小改进 | zakariyyaSv's Blog </title>
+  <title> Archive | zakariyyaSv's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -142,7 +138,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
+  <div class="container one-collumn sidebar-position-left  page-archive  ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -243,168 +239,66 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-collapse">
+    <span class="archive-move-on"></span>
+
+    <span class="archive-page-counter">
+      
+      
+      
+        
+      
+      Um..! 8 posts in total. Keep on posting.
+    </span>
+
     
 
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                runtime对containsString方法的小改进
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-02-20T23:23:28+08:00" content="2016-02-20">
-              2016-02-20
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/02/20/runtime对containsString方法的小改进/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/20/runtime对containsString方法的小改进/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
-      
-        <p>最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是<code>NSstring</code>的<code>containsString:</code>方法在从中作梗。看了一下文档发现原来<code>containsString:</code>是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替<code>containsString:</code>方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BOOL isContained = [aString rangeOfString:bString].location != NSNotFound</div></pre></td></tr></table></figure>
-<p>不过，我觉得要在每一个需要调用<code>containsString:</code>方法写一遍有点麻烦，把适配的代码抽离出来写入一个方法倒是可以，但我还是觉得有点麻烦，毕竟懒癌患者。于是，我想到了用runtime运行时机制动态添加<code>containsString:</code>方法就可以一劳永逸了。<br>实现的原理也很简单，在iOS 7下判断<code>NSString</code>中是否存在<code>containsString:</code>实例方法，若不存在，则动态添加该方法。这样就不用再需要调用<code>containsString:</code>实例方法去判断了。原理很简单，代码也很简单，还是很符合我这个懒癌患者的口味的嘛。<br><a id="more"></a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// NSString+containsStringCategory.h</div><div class="line"></div><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"></div><div class="line">#if __IPHONE_OS_VERSION_MIN_REQUIRED &lt; 80000</div><div class="line"></div><div class="line">@interface NSString (containsStringCategory)</div><div class="line"></div><div class="line">- (BOOL)containsString:(NSString *)str;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">#endif</div></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">// NSString+containsStringCategory.m</div><div class="line"></div><div class="line">#import &quot;NSString+containsStringCategory.h&quot;</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line"></div><div class="line">#if __IPHONE_OS_VERSION_MIN_REQUIRED &lt; 80000</div><div class="line"></div><div class="line">@implementation NSString (containsStringCategory)</div><div class="line"></div><div class="line">+ (void)load&#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line">        [self zs_modernizeSelector:@selector(containsString:) withSelector:@selector(zs_containsString:)];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)zs_modernizeSelector:(SEL)originSelector withSelector:(SEL)newSelector&#123;</div><div class="line">    if (![NSString instancesRespondToSelector:originSelector]) &#123;</div><div class="line">        Method newMethod = 	class_getInstanceMethod(self, newSelector);</div><div class="line">        class_addMethod(self, originSelector, method_getImplementation(newMethod), method_getTypeEncoding(newMethod));</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (BOOL)zs_containsString:(NSString *)str&#123;</div><div class="line">    return [self rangeOfString:str].location != NSNotFound;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">#endif</div></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    <div>
       
         
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/01/20/UIImage加载图片方式的研究/" rel="next" title="UIImage加载图片方式的研究">
-                <i class="fa fa-chevron-left"></i> UIImage加载图片方式的研究
-              </a>
-            
-          </div>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/03/06/YYCache源码学习/" rel="prev" title="YYCache源码学习">
-                YYCache源码学习 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
+        <div class="collection-title">
+          <h2 class="archive-year motion-element" id="archive-year-2015">2015</h2>
         </div>
       
+      
 
       
-      
-    </footer>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
+        
+            <a class="post-title-link" href="/2015/12/28/UIButton之titleLabel、imageView解析/" itemprop="url">
+              
+                <span itemprop="name">UIButton之titleLabel、imageView解析</span>
+              
+            </a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2015-12-28T10:28:19+08:00"
+              content="2015-12-28" >
+          12-28
+        </time>
+      </div>
+
+    </header>
   </article>
 
 
 
-    <div class="post-spread">
-      
-        <div class="ds-share flat" data-thread-key="2016/02/20/runtime对containsString方法的小改进/"
-     data-title="runtime对containsString方法的小改进"
-     data-content=""
-     data-url="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
+    
 
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+  </section>
 
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
+  
+
 
 
           </div>
@@ -412,14 +306,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-      <div class="ds-thread" data-thread-key="2016/02/20/runtime对containsString方法的小改进/"
-           data-title="runtime对containsString方法的小改进" data-url="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/">
-      </div>
-    
-  </div>
-
 
         </div>
         
@@ -439,17 +325,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel ">
+      <section class="site-overview sidebar-panel  sidebar-panel-active ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -510,17 +387,6 @@
 
       </section>
 
-      
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-            
-              
-            
-            
-              <p class="post-toc-empty">This post does not have a Table of Contents</p>
-            
-          </div>
-        </section>
       
 
     </div>
@@ -619,9 +485,11 @@
   
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
-
+  
+    <script type="text/javascript" id="motion.page.archive">
+      $('.archive-year').velocity('transition.slideLeftIn');
+    </script>
+  
 
 
   
