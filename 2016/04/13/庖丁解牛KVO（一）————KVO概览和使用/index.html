@@ -1,0 +1,864 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（-bind:toObject:withKeyPath:options:）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。
+KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="庖丁解牛KVO（一）————KVO概览和使用">
+<meta property="og:url" content="http://yoursite.com/2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（-bind:toObject:withKeyPath:options:）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。
+KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个">
+<meta property="og:updated_time" content="2016-09-19T12:30:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="庖丁解牛KVO（一）————KVO概览和使用">
+<meta name="twitter:description" content="KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（-bind:toObject:withKeyPath:options:）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。
+KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/"/>
+
+  <title> 庖丁解牛KVO（一）————KVO概览和使用 | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                庖丁解牛KVO（一）————KVO概览和使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-04-13T18:21:33+08:00" content="2016-04-13">
+              2016-04-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（<code>-bind:toObject:withKeyPath:options:</code>）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。</p>
+<p>KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。</p>
+<p>在通知机制中，KVO与<code>NSNotification</code>提供的通知机制类似，但是也存在很鲜明的区别。<code>NSNotification</code>是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。<br><a id="more"></a><br>由于基类<code>NSObject</code>提供了对于KVO的基本实现，因而所有的cocoa对象本质上都能够使用KVO。为了能够接收到KVO的通知，你必须要做以下几件事：</p>
+<blockquote>
+<ul>
+<li><p>你必须确保被观察类的属性符合KVO规则（KVO Compliance）。KVO规定被观察对象的类必须符合KVC规则（KVC Compliance）同时允许属性的自动观察者通知或者手动实现属性的KVO。</p>
+</li>
+<li><p>给值会发生改变的对象（即被观察者）添加观察者。你可以通过调用<code>addObserver:forKeyPath:options:context:</code>方法做到。</p>
+</li>
+<li><p>在观察者对象中，实现方法<code>observeValueForKeyPath:ofObject:change:context:</code>。该方法在被观察对象的属性值发生变化时会被调用。</p>
+</li>
+</ul>
+</blockquote>
+<p>第二点和第三点很好理解，第一点则需要多说一点。并不是说所有类的属性都满足KVO规则，他需要满足以下几个条件：</p>
+<blockquote>
+<ul>
+<li><p>类的属性必须满足KVC规则。KVO与KVC支持的数据类型相同，包括OC对象、标量和结构体。</p>
+</li>
+<li><p>类要发送属性变化的KVO通知。</p>
+</li>
+<li><p>依赖的键需要被正确的注册。</p>
+</li>
+</ul>
+</blockquote>
+<p>关于第一点，何为满足KVC规则？对于一个满足KVC规则的指定属性，它必须实现<code>valueForKey:</code>和<code>setValue:forKey:</code>来作用于指定属性。更详细地：</p>
+<blockquote>
+<p>对于対一关系的属性，它的类必须做到：</p>
+<ul>
+<li>实现方法名为<code>-&lt;key&gt;</code>，<code>-is&lt;key&gt;</code>的方法，或者创建对象名为<key>或者_<key>的实例对象。</key></key></li>
+<li>如果属性是可变的，那么它还需要实现<code>-set&lt;key&gt;:</code>方法。</li>
+<li><code>-set&lt;Key&gt;:</code>的方法实现不应该包含验证操作。</li>
+<li>若key需要进行验证它的类还需要实现<code>-validate&lt;Key&gt;:error:</code>方法。</li>
+</ul>
+<p>对于有索引的对多关系的属性，它的类必须要做到：</p>
+<ul>
+<li>实现方法名为<code>-&lt;key&gt;</code>的方法并返回数组。</li>
+<li>或者有变量名为<key>或_<key>的实例变量。</key></key></li>
+<li>或者实现方法<code>-countOf&lt;key&gt;</code>和<code>-objectIn&lt;key&gt;``-&lt;key&gt;AtIndexes:</code>两个方法中的一个。</li>
+<li>另外，你可以实现<code>-get&lt;key&gt;:range:</code>来优化性能。</li>
+</ul>
+<p>对于无序的对多关系的属性，它的类需要做到：</p>
+<ul>
+<li>实现方法名为<code>-&lt;key&gt;</code>的方法并并返回一个集合。</li>
+<li>或者创建变量名为<key>或_<key>的实例变量。</key></key></li>
+<li>或者实现方法<code>-countOf&lt;key&gt;</code>、<code>-enumeratorOf&lt;key&gt;</code>和<code>-memberOf&lt;key&gt;:</code>。<br>若该属性还是可变的，它的类还需做到：</li>
+<li>实现<code>-add&lt;key&gt;Object:</code>和<code>-add&lt;key&gt;:</code>中的一个或两个。</li>
+<li>实现<code>-remove&lt;key&gt;Object:</code>和<code>-remove&lt;key&gt;:</code>中的一个或两个。</li>
+<li>另外，你可以实现<code>-intersect&lt;key&gt;:</code>和<code>-set&lt;key&gt;:</code>来优化性能。</li>
+</ul>
+</blockquote>
+<p>关于第二点，如何确保通知被发送？对于所有满足KVC规则的类的属性已经自动支持KVO。因此，只要你遵守标准Cocoa编码和命名规范，你可以使用自动变化通知（Automatic Change Notification）————你不需要编写额外的代码。<br>以下代码示例会触发KVO变化通知被发送：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// Call the accessor method.</div><div class="line">[account setName:@&quot;Savings&quot;];</div><div class="line"> </div><div class="line">// Use setValue:forKey:.</div><div class="line">[account setValue:@&quot;Savings&quot; forKey:@&quot;name&quot;];</div><div class="line"> </div><div class="line">// Use a key path, where &apos;account&apos; is a kvc-compliant property of &apos;document&apos;.</div><div class="line">[document setValue:@&quot;Savings&quot; forKeyPath:@&quot;account.name&quot;];</div><div class="line"> </div><div class="line">// Use mutableArrayValueForKey: to retrieve a relationship proxy object.</div><div class="line">Transaction *newTransaction = &lt;#Create a new transaction for the account#&gt;;</div><div class="line">NSMutableArray *transactions = [account mutableArrayValueForKey:@&quot;transactions&quot;];</div><div class="line">[transactions addObject:newTransaction];</div></pre></td></tr></table></figure></p>
+<p>在某些情况下，你想控制通知的进程，比如想减少不必要的原因而触发通知的次数，或者想把多个变化整合进一个通知当中。这时候自动变化通知就无法满足需求，而手动变化通知（Manual Change Notification）则派上用场了。<br>在这种情况下，你需要重写<code>NSObject</code>的<code>automaticallyNotifiesObserversForKey:</code>方法。若你想将某个属性从自动变化通知中移除，则在<code>automaticallyNotifiesObserversForKey:</code>方法中返回NO。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)theKey &#123;</div><div class="line"> </div><div class="line">    BOOL automatic = NO;</div><div class="line">    if ([theKey isEqualToString:@&quot;balance&quot;]) &#123;</div><div class="line">        automatic = NO;</div><div class="line">    &#125;</div><div class="line">    else &#123;</div><div class="line">        automatic = [super automaticallyNotifiesObserversForKey:theKey];</div><div class="line">    &#125;</div><div class="line">    return automatic;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>为了实现手动变化通知，你需要在改变变量值�前触发<code>willChangeValueForKey:</code>方法并在改变变量值后触发<code>didChangeValueForKey:</code>方法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">- (void)setBalance:(double)theBalance &#123;</div><div class="line">    [self willChangeValueForKey:@&quot;balance&quot;];</div><div class="line">    _balance = theBalance;</div><div class="line">    [self didChangeValueForKey:@&quot;balance&quot;];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>你可以通过检验值是否发生改变来减少不必要的通知发送。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (void)setBalance:(double)theBalance &#123;</div><div class="line">    if (theBalance != _balance) &#123;</div><div class="line">        [self willChangeValueForKey:@&quot;balance&quot;];</div><div class="line">        _balance = theBalance;</div><div class="line">        [self didChangeValueForKey:@&quot;balance&quot;];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>若一个操作引起多个属性值发生变化，你必须像下面这样嵌套变化的通知：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">- (void)setBalance:(double)theBalance &#123;</div><div class="line">    [self willChangeValueForKey:@&quot;balance&quot;];</div><div class="line">    [self willChangeValueForKey:@&quot;itemChanged&quot;];</div><div class="line">    _balance = theBalance;</div><div class="line">    _itemChanged = _itemChanged+1;</div><div class="line">    [self didChangeValueForKey:@&quot;itemChanged&quot;];</div><div class="line">    [self didChangeValueForKey:@&quot;balance&quot;];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在有序的对多关系的属性中，你必须不仅指明改变的属性，而且还需指明改变的类型和涉及到的对象的索引值。改变的类型是<code>NSKeyValueChange</code>枚举，包含NSKeyValueChangeInsertion, NSKeyValueChangeRemoval, NSKeyValueChangeReplacement。受影响的对象的索引值传入的是NSIndexSet对象。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- (void)removeTransactionsAtIndexes:(NSIndexSet *)indexes &#123;</div><div class="line">    [self willChange:NSKeyValueChangeRemoval</div><div class="line">        valuesAtIndexes:indexes forKey:@&quot;transactions&quot;];</div><div class="line"> </div><div class="line">    // Remove the transaction objects at the specified indexes.</div><div class="line"> </div><div class="line">    [self didChange:NSKeyValueChangeRemoval</div><div class="line">        valuesAtIndexes:indexes forKey:@&quot;transactions&quot;];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>关于第三点，在很多情况下某个属性依赖于另一个对象的一个或多个属性。如果一个属性值发生改变，那么受影响的属性其值也会发生改变。那么如何确保存在依赖关系的属性的KVO通知能正确发送？</p>
+<p>在対一关系中，为了触发自动通知你需要重写<code>keyPathsForValuesAffectingValueForKey:</code>方法。<br>比如，一个人的名字包含姓和名。他的名字的全称可以用以下方法来写：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">- (NSString *)fullName &#123;</div><div class="line">    return [NSString stringWithFormat:@&quot;%@ %@&quot;,firstName, lastName];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当firstName或者lastName属性值发生改变时，观察fullName的对象必须接收到通知。其中一个解决方法是重写<code>keyPathsForValuesAffectingValueForKey:</code>方法来指明fullName属性依赖于lastName和firstName属性。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key &#123;</div><div class="line"> </div><div class="line">    NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];</div><div class="line"> </div><div class="line">    if ([key isEqualToString:@&quot;fullName&quot;]) &#123;</div><div class="line">        NSArray *affectingKeys = @[@&quot;lastName&quot;, @&quot;firstName&quot;];</div><div class="line">        keyPaths = [keyPaths setByAddingObjectsFromArray:affectingKeys];</div><div class="line">    &#125;</div><div class="line">    return keyPaths;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如上面代码示例中，你的重写方法实现中必须要触发super方法调用，并且返回的集合中要包含父类的keys。<br>你还可以通过实现命名规则遵循<code>keyPathsForValuesAffecting&lt;Key&gt;</code>（Key为属性名并且首字母大写）的类方法来得到同样的结果。使用该方案对上面代码进行改写如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">+ (NSSet *)keyPathsForValuesAffectingFullName &#123;</div><div class="line">    return [NSSet setWithObjects:@&quot;lastName&quot;, @&quot;firstName&quot;, nil];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当你使用分类给现有的类添加属性时，不能重写<code>keyPathsForValuesAffectingValueForKey:</code>方法，因为在分类中不支持重写该方法。在这种情况下，只能通过实现<code>keyPathsForValuesAffecting&lt;Key&gt;</code>类方法来达到效果。</p>
+<p>在对多关系中，<code>keyPathsForValuesAffectingValueForKey:</code>方法不支持。比如，你有一个Deprtment对象与employee对象的对多关系，并且employee有salary属性。在Department对象中有一个totalSalary属性依赖于所有的employee的salary的关系。<br>这里有两种解决方案：<br>1.你可以使用KVO注册父类（Department）为所有子类（employee）的salary属性的观察者。你必须在添加和移除子类对象的过程中添加和移除观察者。以下为示例代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context &#123;</div><div class="line"> </div><div class="line">    if (context == totalSalaryContext) &#123;</div><div class="line">        [self updateTotalSalary];</div><div class="line">    &#125;</div><div class="line">    else</div><div class="line">    // deal with other observations and/or invoke super...</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (void)updateTotalSalary &#123;</div><div class="line">    [self setTotalSalary:[self valueForKeyPath:@&quot;employees.@sum.salary&quot;]];</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (void)setTotalSalary:(NSNumber *)newTotalSalary &#123;</div><div class="line"> </div><div class="line">    if (_totalSalary != newTotalSalary) &#123;</div><div class="line">        [self willChangeValueForKey:@&quot;totalSalary&quot;];</div><div class="line">        _totalSalary = newTotalSalary;</div><div class="line">        [self didChangeValueForKey:@&quot;totalSalary&quot;];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (NSNumber *)totalSalary &#123;</div><div class="line">    return _totalSalary;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>2.如果你使用Core Data，你可以注册父类为它管理对象上下文的观察者。当子类相关属性值发生改变其父类就会得到相应的通知，类似于KVO。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/12/Mac workflow小记/" rel="next" title="Mac workflow小记">
+                <i class="fa fa-chevron-left"></i> Mac workflow小记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/24/拆解ARC下的self/" rel="prev" title="拆解ARC下的self">
+                拆解ARC下的self <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/"
+     data-title="庖丁解牛KVO（一）————KVO概览和使用"
+     data-content=""
+     data-url="http://yoursite.com/2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/"
+           data-title="庖丁解牛KVO（一）————KVO概览和使用" data-url="http://yoursite.com/2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>

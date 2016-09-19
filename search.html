@@ -29,6 +29,75 @@
     </entry>
     
     <entry>
+      <title><![CDATA[庖丁解牛KVO（一）————KVO概览和使用]]></title>
+      <url>http://yoursite.com/2016/04/13/%E5%BA%96%E4%B8%81%E8%A7%A3%E7%89%9BKVO%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E2%80%94%E2%80%94KVO%E6%A6%82%E8%A7%88%E5%92%8C%E4%BD%BF%E7%94%A8/</url>
+      <content type="html"><![CDATA[<p>KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（<code>-bind:toObject:withKeyPath:options:</code>）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。</p>
+<p>KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。</p>
+<p>在通知机制中，KVO与<code>NSNotification</code>提供的通知机制类似，但是也存在很鲜明的区别。<code>NSNotification</code>是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。<br><a id="more"></a><br>由于基类<code>NSObject</code>提供了对于KVO的基本实现，因而所有的cocoa对象本质上都能够使用KVO。为了能够接收到KVO的通知，你必须要做以下几件事：</p>
+<blockquote>
+<ul>
+<li><p>你必须确保被观察类的属性符合KVO规则（KVO Compliance）。KVO规定被观察对象的类必须符合KVC规则（KVC Compliance）同时允许属性的自动观察者通知或者手动实现属性的KVO。</p>
+</li>
+<li><p>给值会发生改变的对象（即被观察者）添加观察者。你可以通过调用<code>addObserver:forKeyPath:options:context:</code>方法做到。</p>
+</li>
+<li><p>在观察者对象中，实现方法<code>observeValueForKeyPath:ofObject:change:context:</code>。该方法在被观察对象的属性值发生变化时会被调用。</p>
+</li>
+</ul>
+</blockquote>
+<p>第二点和第三点很好理解，第一点则需要多说一点。并不是说所有类的属性都满足KVO规则，他需要满足以下几个条件：</p>
+<blockquote>
+<ul>
+<li><p>类的属性必须满足KVC规则。KVO与KVC支持的数据类型相同，包括OC对象、标量和结构体。</p>
+</li>
+<li><p>类要发送属性变化的KVO通知。</p>
+</li>
+<li><p>依赖的键需要被正确的注册。</p>
+</li>
+</ul>
+</blockquote>
+<p>关于第一点，何为满足KVC规则？对于一个满足KVC规则的指定属性，它必须实现<code>valueForKey:</code>和<code>setValue:forKey:</code>来作用于指定属性。更详细地：</p>
+<blockquote>
+<p>对于対一关系的属性，它的类必须做到：</p>
+<ul>
+<li>实现方法名为<code>-&lt;key&gt;</code>，<code>-is&lt;key&gt;</code>的方法，或者创建对象名为<key>或者_<key>的实例对象。</key></key></li>
+<li>如果属性是可变的，那么它还需要实现<code>-set&lt;key&gt;:</code>方法。</li>
+<li><code>-set&lt;Key&gt;:</code>的方法实现不应该包含验证操作。</li>
+<li>若key需要进行验证它的类还需要实现<code>-validate&lt;Key&gt;:error:</code>方法。</li>
+</ul>
+<p>对于有索引的对多关系的属性，它的类必须要做到：</p>
+<ul>
+<li>实现方法名为<code>-&lt;key&gt;</code>的方法并返回数组。</li>
+<li>或者有变量名为<key>或_<key>的实例变量。</key></key></li>
+<li>或者实现方法<code>-countOf&lt;key&gt;</code>和<code>-objectIn&lt;key&gt;``-&lt;key&gt;AtIndexes:</code>两个方法中的一个。</li>
+<li>另外，你可以实现<code>-get&lt;key&gt;:range:</code>来优化性能。</li>
+</ul>
+<p>对于无序的对多关系的属性，它的类需要做到：</p>
+<ul>
+<li>实现方法名为<code>-&lt;key&gt;</code>的方法并并返回一个集合。</li>
+<li>或者创建变量名为<key>或_<key>的实例变量。</key></key></li>
+<li>或者实现方法<code>-countOf&lt;key&gt;</code>、<code>-enumeratorOf&lt;key&gt;</code>和<code>-memberOf&lt;key&gt;:</code>。<br>若该属性还是可变的，它的类还需做到：</li>
+<li>实现<code>-add&lt;key&gt;Object:</code>和<code>-add&lt;key&gt;:</code>中的一个或两个。</li>
+<li>实现<code>-remove&lt;key&gt;Object:</code>和<code>-remove&lt;key&gt;:</code>中的一个或两个。</li>
+<li>另外，你可以实现<code>-intersect&lt;key&gt;:</code>和<code>-set&lt;key&gt;:</code>来优化性能。</li>
+</ul>
+</blockquote>
+<p>关于第二点，如何确保通知被发送？对于所有满足KVC规则的类的属性已经自动支持KVO。因此，只要你遵守标准Cocoa编码和命名规范，你可以使用自动变化通知（Automatic Change Notification）————你不需要编写额外的代码。<br>以下代码示例会触发KVO变化通知被发送：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// Call the accessor method.</div><div class="line">[account setName:@&quot;Savings&quot;];</div><div class="line"> </div><div class="line">// Use setValue:forKey:.</div><div class="line">[account setValue:@&quot;Savings&quot; forKey:@&quot;name&quot;];</div><div class="line"> </div><div class="line">// Use a key path, where &apos;account&apos; is a kvc-compliant property of &apos;document&apos;.</div><div class="line">[document setValue:@&quot;Savings&quot; forKeyPath:@&quot;account.name&quot;];</div><div class="line"> </div><div class="line">// Use mutableArrayValueForKey: to retrieve a relationship proxy object.</div><div class="line">Transaction *newTransaction = &lt;#Create a new transaction for the account#&gt;;</div><div class="line">NSMutableArray *transactions = [account mutableArrayValueForKey:@&quot;transactions&quot;];</div><div class="line">[transactions addObject:newTransaction];</div></pre></td></tr></table></figure></p>
+<p>在某些情况下，你想控制通知的进程，比如想减少不必要的原因而触发通知的次数，或者想把多个变化整合进一个通知当中。这时候自动变化通知就无法满足需求，而手动变化通知（Manual Change Notification）则派上用场了。<br>在这种情况下，你需要重写<code>NSObject</code>的<code>automaticallyNotifiesObserversForKey:</code>方法。若你想将某个属性从自动变化通知中移除，则在<code>automaticallyNotifiesObserversForKey:</code>方法中返回NO。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)theKey &#123;</div><div class="line"> </div><div class="line">    BOOL automatic = NO;</div><div class="line">    if ([theKey isEqualToString:@&quot;balance&quot;]) &#123;</div><div class="line">        automatic = NO;</div><div class="line">    &#125;</div><div class="line">    else &#123;</div><div class="line">        automatic = [super automaticallyNotifiesObserversForKey:theKey];</div><div class="line">    &#125;</div><div class="line">    return automatic;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>为了实现手动变化通知，你需要在改变变量值�前触发<code>willChangeValueForKey:</code>方法并在改变变量值后触发<code>didChangeValueForKey:</code>方法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">- (void)setBalance:(double)theBalance &#123;</div><div class="line">    [self willChangeValueForKey:@&quot;balance&quot;];</div><div class="line">    _balance = theBalance;</div><div class="line">    [self didChangeValueForKey:@&quot;balance&quot;];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>你可以通过检验值是否发生改变来减少不必要的通知发送。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (void)setBalance:(double)theBalance &#123;</div><div class="line">    if (theBalance != _balance) &#123;</div><div class="line">        [self willChangeValueForKey:@&quot;balance&quot;];</div><div class="line">        _balance = theBalance;</div><div class="line">        [self didChangeValueForKey:@&quot;balance&quot;];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>若一个操作引起多个属性值发生变化，你必须像下面这样嵌套变化的通知：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">- (void)setBalance:(double)theBalance &#123;</div><div class="line">    [self willChangeValueForKey:@&quot;balance&quot;];</div><div class="line">    [self willChangeValueForKey:@&quot;itemChanged&quot;];</div><div class="line">    _balance = theBalance;</div><div class="line">    _itemChanged = _itemChanged+1;</div><div class="line">    [self didChangeValueForKey:@&quot;itemChanged&quot;];</div><div class="line">    [self didChangeValueForKey:@&quot;balance&quot;];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在有序的对多关系的属性中，你必须不仅指明改变的属性，而且还需指明改变的类型和涉及到的对象的索引值。改变的类型是<code>NSKeyValueChange</code>枚举，包含NSKeyValueChangeInsertion, NSKeyValueChangeRemoval, NSKeyValueChangeReplacement。受影响的对象的索引值传入的是NSIndexSet对象。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- (void)removeTransactionsAtIndexes:(NSIndexSet *)indexes &#123;</div><div class="line">    [self willChange:NSKeyValueChangeRemoval</div><div class="line">        valuesAtIndexes:indexes forKey:@&quot;transactions&quot;];</div><div class="line"> </div><div class="line">    // Remove the transaction objects at the specified indexes.</div><div class="line"> </div><div class="line">    [self didChange:NSKeyValueChangeRemoval</div><div class="line">        valuesAtIndexes:indexes forKey:@&quot;transactions&quot;];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>关于第三点，在很多情况下某个属性依赖于另一个对象的一个或多个属性。如果一个属性值发生改变，那么受影响的属性其值也会发生改变。那么如何确保存在依赖关系的属性的KVO通知能正确发送？</p>
+<p>在対一关系中，为了触发自动通知你需要重写<code>keyPathsForValuesAffectingValueForKey:</code>方法。<br>比如，一个人的名字包含姓和名。他的名字的全称可以用以下方法来写：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">- (NSString *)fullName &#123;</div><div class="line">    return [NSString stringWithFormat:@&quot;%@ %@&quot;,firstName, lastName];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当firstName或者lastName属性值发生改变时，观察fullName的对象必须接收到通知。其中一个解决方法是重写<code>keyPathsForValuesAffectingValueForKey:</code>方法来指明fullName属性依赖于lastName和firstName属性。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key &#123;</div><div class="line"> </div><div class="line">    NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];</div><div class="line"> </div><div class="line">    if ([key isEqualToString:@&quot;fullName&quot;]) &#123;</div><div class="line">        NSArray *affectingKeys = @[@&quot;lastName&quot;, @&quot;firstName&quot;];</div><div class="line">        keyPaths = [keyPaths setByAddingObjectsFromArray:affectingKeys];</div><div class="line">    &#125;</div><div class="line">    return keyPaths;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如上面代码示例中，你的重写方法实现中必须要触发super方法调用，并且返回的集合中要包含父类的keys。<br>你还可以通过实现命名规则遵循<code>keyPathsForValuesAffecting&lt;Key&gt;</code>（Key为属性名并且首字母大写）的类方法来得到同样的结果。使用该方案对上面代码进行改写如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">+ (NSSet *)keyPathsForValuesAffectingFullName &#123;</div><div class="line">    return [NSSet setWithObjects:@&quot;lastName&quot;, @&quot;firstName&quot;, nil];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当你使用分类给现有的类添加属性时，不能重写<code>keyPathsForValuesAffectingValueForKey:</code>方法，因为在分类中不支持重写该方法。在这种情况下，只能通过实现<code>keyPathsForValuesAffecting&lt;Key&gt;</code>类方法来达到效果。</p>
+<p>在对多关系中，<code>keyPathsForValuesAffectingValueForKey:</code>方法不支持。比如，你有一个Deprtment对象与employee对象的对多关系，并且employee有salary属性。在Department对象中有一个totalSalary属性依赖于所有的employee的salary的关系。<br>这里有两种解决方案：<br>1.你可以使用KVO注册父类（Department）为所有子类（employee）的salary属性的观察者。你必须在添加和移除子类对象的过程中添加和移除观察者。以下为示例代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context &#123;</div><div class="line"> </div><div class="line">    if (context == totalSalaryContext) &#123;</div><div class="line">        [self updateTotalSalary];</div><div class="line">    &#125;</div><div class="line">    else</div><div class="line">    // deal with other observations and/or invoke super...</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (void)updateTotalSalary &#123;</div><div class="line">    [self setTotalSalary:[self valueForKeyPath:@&quot;employees.@sum.salary&quot;]];</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (void)setTotalSalary:(NSNumber *)newTotalSalary &#123;</div><div class="line"> </div><div class="line">    if (_totalSalary != newTotalSalary) &#123;</div><div class="line">        [self willChangeValueForKey:@&quot;totalSalary&quot;];</div><div class="line">        _totalSalary = newTotalSalary;</div><div class="line">        [self didChangeValueForKey:@&quot;totalSalary&quot;];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (NSNumber *)totalSalary &#123;</div><div class="line">    return _totalSalary;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>2.如果你使用Core Data，你可以注册父类为它管理对象上下文的观察者。当子类相关属性值发生改变其父类就会得到相应的通知，类似于KVO。</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Mac workflow小记]]></title>
       <url>http://yoursite.com/2016/03/12/Mac%20workflow%E5%B0%8F%E8%AE%B0/</url>
       <content type="html"><![CDATA[<p>在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。</p>
