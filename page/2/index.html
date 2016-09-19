@@ -333,7 +333,7 @@
       
         
           <p>最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是<code>NSstring</code>的<code>containsString:</code>方法在从中作梗。看了一下文档发现原来<code>containsString:</code>是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替<code>containsString:</code>方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BOOL isContained = [aString rangeOfString:bString].location != NSNotFound</div></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> isContained = [aString rangeOfString:bString].location != <span class="built_in">NSNotFound</span></div></pre></td></tr></table></figure>
 <p>不过，我觉得要在每一个需要调用<code>containsString:</code>方法写一遍有点麻烦，把适配的代码抽离出来写入一个方法倒是可以，但我还是觉得有点麻烦，毕竟懒癌患者。于是，我想到了用runtime运行时机制动态添加<code>containsString:</code>方法就可以一劳永逸了。<br>实现的原理也很简单，在iOS 7下判断<code>NSString</code>中是否存在<code>containsString:</code>实例方法，若不存在，则动态添加该方法。这样就不用再需要调用<code>containsString:</code>实例方法去判断了。原理很简单，代码也很简单，还是很符合我这个懒癌患者的口味的嘛。<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/02/20/runtime对containsString方法的小改进/#more" rel="contents">
