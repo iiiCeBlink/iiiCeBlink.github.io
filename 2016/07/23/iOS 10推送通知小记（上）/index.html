@@ -1,0 +1,852 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="概览最近在体验iOS 10Beta版的过程中，我发现iOS 10在锁屏界面的变动比较大，与之前的交互逻辑完全不同。与此同时，推送通知消息也有了改进，比如支持3D Touch，可以展示更多的信息，通知内容可以包含图片等等。按照逻辑推断iOS 10推送通知的API会有变化，于是，我赶紧查阅了Xcode 8Beta中的文档以及WWDC2016的视频，果然发现了玄机。
+推送机制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 10推送通知小记（上）">
+<meta property="og:url" content="http://yoursite.com/2016/07/23/iOS 10推送通知小记（上）/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="概览最近在体验iOS 10Beta版的过程中，我发现iOS 10在锁屏界面的变动比较大，与之前的交互逻辑完全不同。与此同时，推送通知消息也有了改进，比如支持3D Touch，可以展示更多的信息，通知内容可以包含图片等等。按照逻辑推断iOS 10推送通知的API会有变化，于是，我赶紧查阅了Xcode 8Beta中的文档以及WWDC2016的视频，果然发现了玄机。
+推送机制">
+<meta property="og:image" content="http://yoursite.com/images/userNotifications/4.png">
+<meta property="og:image" content="http://yoursite.com/images/userNotifications/5.png">
+<meta property="og:image" content="http://yoursite.com/images/userNotifications/6.png">
+<meta property="og:image" content="http://yoursite.com/images/userNotifications/7.png">
+<meta property="og:image" content="http://yoursite.com/images/userNotifications/1.png">
+<meta property="og:image" content="http://yoursite.com/images/userNotifications/2.png">
+<meta property="og:image" content="http://yoursite.com/images/userNotifications/3.png">
+<meta property="og:updated_time" content="2016-09-22T12:30:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 10推送通知小记（上）">
+<meta name="twitter:description" content="概览最近在体验iOS 10Beta版的过程中，我发现iOS 10在锁屏界面的变动比较大，与之前的交互逻辑完全不同。与此同时，推送通知消息也有了改进，比如支持3D Touch，可以展示更多的信息，通知内容可以包含图片等等。按照逻辑推断iOS 10推送通知的API会有变化，于是，我赶紧查阅了Xcode 8Beta中的文档以及WWDC2016的视频，果然发现了玄机。
+推送机制">
+<meta name="twitter:image" content="http://yoursite.com/images/userNotifications/4.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: '楼主大大'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/07/23/iOS 10推送通知小记（上）/"/>
+
+  <title> iOS 10推送通知小记（上） | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS 10推送通知小记（上）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-07-23T14:22:31+08:00" content="2016-07-23">
+              2016-07-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/23/iOS 10推送通知小记（上）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/23/iOS 10推送通知小记（上）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>最近在体验iOS 10Beta版的过程中，我发现iOS 10在锁屏界面的变动比较大，与之前的交互逻辑完全不同。与此同时，推送通知消息也有了改进，比如支持3D Touch，可以展示更多的信息，通知内容可以包含图片等等。按照逻辑推断iOS 10推送通知的API会有变化，于是，我赶紧查阅了Xcode 8Beta中的文档以及WWDC2016的视频，果然发现了玄机。</p>
+<h3 id="推送机制"><a href="#推送机制" class="headerlink" title="推送机制"></a>推送机制</h3><a id="more"></a>
+<p>推送机制在iOS 10上发生了一点变化。</p>
+<h4 id="iOS-lt-10-0"><a href="#iOS-lt-10-0" class="headerlink" title="iOS &lt; 10.0"></a>iOS &lt; 10.0</h4><p>推送按照通知发送源分为本地推送和远程推送。</p>
+<p>先说本地推送。本地推送是由设备上的app发起的，本地推送通知被加入到schedule中后，被诸如时间、位置、任务等触发通知而使其显示到设备上。当用户对通知消息做出反应，发起通知的app会得到回调。</p>
+<p><img src="/images/userNotifications/4.png" alt=""></p>
+<p>再说远程推送。远程推送是由app的服务器通过网络连接发送的。app先注册远程通知得到APNS(Apple Push Notification Service)返回的device token，app的服务端将推送通知的负载连同device token发送给APNS。APNS根据device token将推送通知发送到用户的设备上。设备接收到通知后会展示在屏幕上供用户浏览和处理，之后app会得到用户处理的回调。</p>
+<p><img src="/images/userNotifications/5.png" alt=""></p>
+<h4 id="iOS-gt-10-0"><a href="#iOS-gt-10-0" class="headerlink" title="iOS &gt;= 10.0"></a>iOS &gt;= 10.0</h4><p>iOS 10新增了<code>trigger</code>。依据字面意思理解就是推送通知的触发器，告诉设备什么时候触发通知显示在设备上。iOS 10支持四种类型的<code>trigger</code>：push、timer interval、calendar and location。其中push属于远程推送，其他三种属于本地推送。<br><img src="/images/userNotifications/6.png" alt=""></p>
+<p>iOS 10推送通知的过程变成了这样：app注册通知，创建通知的内容，trigger，identifier，将这些放入<code>UNNotificationRequest</code>对象中，最后将其放入schedule。</p>
+<p><img src="/images/userNotifications/7.png" alt=""></p>
+<h3 id="Notification-Service-Extensions"><a href="#Notification-Service-Extensions" class="headerlink" title="Notification Service Extensions"></a>Notification Service Extensions</h3><p>在iOS 10之前，推送通知的负载大小最多也就4KB，因而类似于声音、图像、视频等无法存储到推送通知当中。为了解决这个问题，iOS 10引入了新的扩展服务——<code>Notification Service Extensions</code>。<code>Notification Service Extensions</code>可以帮助我们在不打开app的情况下去下载或者是改变远程推送通知消息中的内容。由于推送通知的负载不足以存储多媒体文件本身，因而以URL的形式存储。一旦设备接收到来自于你的app的远程推送通知的负载，<code>Notification Service Extensions</code>便去下载URL当中的资源文件，然后会在用户查看通知消息时展现给用户。</p>
+<p><img src="/images/userNotifications/1.png" alt=""></p>
+<p><img src="/images/userNotifications/2.png" alt=""></p>
+<p>那么它是如何工作的呢？在通知的服务端，发送的通知会被service extension加工成两个部分：<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  aps: &#123;</div><div class="line">    alert: &#123;...&#125;</div><div class="line">    mutable-content: <span class="number">1</span></div><div class="line">  &#125;</div><div class="line">  my-attachment: <span class="string">"https://foo.bar/baz.jpg"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>mutable-content</code>字段告诉iOS在通知被发送之前通知中有内容要被service extension修改，<code>my-attachment</code>字段包含了被下载内容的URL。</p>
+<p>为了能让app的扩展服务能够处理通知消息，我们需要在app的Xcode project中添加<code>notification service extension</code>。Xcode会生成一个包含<code>UNNotificationServiceExtension</code>子类的文件。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(<span class="number">_</span> request: UNNotificationRequest, withContentHandler contentHandler:<span class="params">(UNNotificationContent)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</div><div class="line">  <span class="comment">// ...</span></div><div class="line">&#125;</div><div class="line"><span class="comment">// ...</span></div><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">serviceExtensionTimeWillExpire</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="comment">// Called just before the extension will be terminated by the system.</span></div><div class="line">    <span class="comment">// Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.</span></div><div class="line">  <span class="comment">// ...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个文件包含两个需要被重写的方法。第一个方法用来下载URL中的内容并将其添加到通知当中。由于网络是不可靠的，因此我们还需要在此方法中处理网络发生错误的情况。第二个方法是用来处理第一个方法运行超时的情况，当attachment下载消耗太长的时间时，操作系统会执行<code>serviceExtensionTimeWillExpire()</code>方法终止下载并发送类似于”best attempt”内容的通知。</p>
+<h3 id="Media-Attachments"><a href="#Media-Attachments" class="headerlink" title="Media Attachments"></a>Media Attachments</h3><p><code>Media Attachments</code>是用来附着在推送通知上负责存储多媒体文件的URL。目前支持的多媒体文件类型包括常用的音频、视频和图片（包括GIF）格式。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Adding an attachment to a user notification</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NotificationService</span>: <span class="title">UNNotificationServiceExtension</span> </span>&#123;</div><div class="line">    <span class="keyword">override</span> <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(<span class="number">_</span> request: UNNotificationRequest,withContentHandler contentHandler: <span class="params">(UNNotificationContent)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</div><div class="line">        <span class="keyword">let</span> fileURL = <span class="comment">// ...</span></div><div class="line">        <span class="keyword">let</span> attachment = <span class="type">UNNotificationAttachment</span>(identifier: <span class="string">"image"</span>,url: fileURL,</div><div class="line"> options: <span class="literal">nil</span>)</div><div class="line">        <span class="keyword">let</span> content = request.content.mutableCopy <span class="keyword">as</span>! <span class="type">UNMutableNotificationContent</span></div><div class="line">        content.attachments = [ attachment ]</div><div class="line">        contentHandler(content)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>Media Attachments</code>在本地推送与远程推送的工作机制有轻微差别。在本地推送中，它的<code>media attachment</code>在app创建通知时就必须包含某个本地磁盘文件的URL。当通知生效时，那份文件会被拷贝一份随着通知一起发送出去。除此之外，不需要做别的工作。在远程推送中，远程通知服务会将<code>media attachment</code>作为APNS通知负载的一部分发送出去。<code>media attachment</code>中包含的URL的内容不限定必须是已经存在设备中的文件。然而，iOS 10无法自动发送attachment内容不存储在本地的通知，这就要借助到前面提到的<code>Notification Service Extensions</code>。</p>
+<h3 id="Notification-Content-Extensions"><a href="#Notification-Content-Extensions" class="headerlink" title="Notification Content Extensions"></a>Notification Content Extensions</h3><p>如果我们想在通知中展现app中一样的界面内容时，该怎么办？<code>Notification Content Extensions</code>派上用场了。<code>Notification Content Extensions</code>与<code>Notification Service Extensions</code>在通知中提供新的内容方面有相似之处，但两者有两个重要的区别。第一，<code>Notification Content Extensions</code>在本地推送和远程推送当中都起作用，而<code>Notification Service Extensions</code>只在远程推送中工作。第二，<code>Notification Content Extensions</code>只能处理media attachment中的内容，而<code>Notification Service Extensions</code>不仅能处理media attachment中的内容，更能在通知详情中展示整个的<code>UIViewController</code>。</p>
+<p><img src="/images/userNotifications/3.png" alt=""></p>
+<p>在上图中我们看到了日历通知的日历事件就是用到了<code>Notification Content Extensions</code>。在Xcode项目中添加<code>Notification Content Extensions</code>与<code>Notification Service Extensions</code>的操作类似。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Minimal Content Extension</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">NotificationViewController</span>: <span class="title">UIViewController</span>, <span class="title">UNNotificationContentExtension</span> </span>&#123;</div><div class="line">    <span class="meta">@IBOutlet</span> <span class="keyword">var</span> label: <span class="type">UILabel</span>?</div><div class="line"></div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="keyword">super</span>.viewDidLoad()</div><div class="line">        <span class="comment">// Do any required interface initialization here.</span></div><div class="line"> &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(<span class="number">_</span> notification: UNNotification)</span></span> &#123;</div><div class="line">        label?.text = notification.request.content.body</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建成功后，Xcode会生成一个storyboard文件、代码文件以及可以自定义contentn extension内容的info.plist文件。代码文件中包含了一个实现<code>UNNotificationContentExtension</code>协议的UIViewController的子类。要想让它生效，我们需要实现协议中必须实现的方法，在storyboard中自定义view设置info.plist文件中的category ID。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>原理部分的内容就这么多了，关于推送的UserNotifications.framework代码方面的内容会放到下一篇中。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一下吧~</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/alipay.png" alt="zakariyyaSv Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/23/庖丁解牛KVO（二）————KVO实现原理/" rel="next" title="庖丁解牛KVO（二）————KVO实现原理">
+                <i class="fa fa-chevron-left"></i> 庖丁解牛KVO（二）————KVO实现原理
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/24/拆解ARC下的self/" rel="prev" title="拆解ARC下的self">
+                拆解ARC下的self <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/07/23/iOS 10推送通知小记（上）/"
+     data-title="iOS 10推送通知小记（上）"
+     data-content=""
+     data-url="http://yoursite.com/2016/07/23/iOS 10推送通知小记（上）/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/23/iOS 10推送通知小记（上）/"
+           data-title="iOS 10推送通知小记（上）" data-url="http://yoursite.com/2016/07/23/iOS 10推送通知小记（上）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概览"><span class="nav-number">1.</span> <span class="nav-text">概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#推送机制"><span class="nav-number">2.</span> <span class="nav-text">推送机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#iOS-lt-10-0"><span class="nav-number">2.1.</span> <span class="nav-text">iOS < 10.0</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iOS-gt-10-0"><span class="nav-number">2.2.</span> <span class="nav-text">iOS >= 10.0</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Notification-Service-Extensions"><span class="nav-number">3.</span> <span class="nav-text">Notification Service Extensions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Media-Attachments"><span class="nav-number">4.</span> <span class="nav-text">Media Attachments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Notification-Content-Extensions"><span class="nav-number">5.</span> <span class="nav-text">Notification Content Extensions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">6.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>
