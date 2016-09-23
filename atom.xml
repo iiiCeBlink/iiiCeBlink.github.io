@@ -108,7 +108,7 @@
     <link href="http://yoursite.com/2016/07/18/iOS%2010%20UICollectionView%E6%96%B0%E7%89%B9%E6%80%A7%E5%B0%8F%E8%AE%B0/"/>
     <id>http://yoursite.com/2016/07/18/iOS 10 UICollectionView新特性小记/</id>
     <published>2016-07-18T06:36:31.000Z</published>
-    <updated>2016-09-23T16:02:25.000Z</updated>
+    <updated>2016-09-23T16:07:52.000Z</updated>
     
     <content type="html"><![CDATA[<h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p>iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：</p>
 <blockquote>
@@ -118,7 +118,7 @@
 <li>interactive reording</li>
 </ul>
 </blockquote>
-<h3 id="一、平滑的滑动体验"><a href="#一、平滑的滑动体验" class="headerlink" title="一、平滑的滑动体验"></a>一、平滑的滑动体验</h3><h5 id="1-卡顿的原因"><a href="#1-卡顿的原因" class="headerlink" title="1.卡顿的原因"></a>1.卡顿的原因</h5><a id="more"></a>
+<h3 id="平滑的滑动体验"><a href="#平滑的滑动体验" class="headerlink" title="平滑的滑动体验"></a>平滑的滑动体验</h3><h5 id="1-卡顿的原因"><a href="#1-卡顿的原因" class="headerlink" title="1.卡顿的原因"></a>1.卡顿的原因</h5><a id="more"></a>
 <p>在iOS 10之前我们在使用UICollectionview大幅度滑动加载复杂的视图时，很可能会出现卡顿掉帧的情况，这是很影响用户体验的。那为什么会出现这种情况呢？从下面的图可以看出，当cell准备显示到屏幕上时，cell的加载工作就已经完成了。但注意，在屏幕外加载的数据是一整行的cell。这样大量的加载工作在快速滑动的过程中便会稍显吃力，也就造成了卡顿和掉帧。</p>
 <p><img src="/images/wwdcCollectionView/1.gif" alt=""></p>
 <p>下图中绘制出了上图的实验数据。其中，x轴表示显示刷新事件，y轴表示主线程中CPU处理的时间。我们知道手机屏幕的刷新率在60FPS，也就意味着每16ms就要刷新一次，若CPU处理的时间超过16ms，便会将加载挤压到下一帧从而引起卡顿。从图中可以看到当屏幕快速滑动时，CPU处理时间超过16ms，会有卡顿，而在缓慢滑动过程中，CPU的处理时间很短，不会有卡顿。</p>
@@ -158,7 +158,7 @@
 <p>1.在调用方法时，确保所处理的工作都是在后台线程中进行。配合GCD和NSOperationQueue去处理多线程任务。<br>2.记住pre-fetch是自适应技术。当滑动缓慢时，pre-fetch会做额外的工作去优化。当滑动快速时，需要频繁刷新屏幕，这时候就不再做pre-fetch。<br>3.调用<code>cancelPrefetchingForItemsAt indexPaths</code>方法去处理用户滑动操作的切换。</p>
 </blockquote>
 <p>在iOS 10中，与UICollectionview一脉相承的UItableview也加入了相同的API。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">UITableViewDataSourcePrefetching</span> </span>&#123;</div><div class="line">     <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(<span class="number">_</span> tableView: UITableView, prefetchRowsAt indexPaths:[NSIndexPath])</span></span></div><div class="line">     <span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(<span class="number">_</span> tableView: UITableView, cancelPrefetchingForRowsAt indexPaths:[NSIndexPath])</span></span></div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UITableView</span> : <span class="title">UIScrollView</span> </span>&#123;</div><div class="line">     <span class="keyword">weak</span> <span class="keyword">var</span> prefetchDataSource: <span class="type">UITableViewDataSourcePrefetching</span>?</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="二、self-sizing-cell"><a href="#二、self-sizing-cell" class="headerlink" title="二、self-sizing cell"></a>二、self-sizing cell</h3><p>在<code>UICollectionView</code>中有一个实体布局类<code>UICollectionViewFlowLayout</code>，它已经全面支持self-sizing cells。要开启这一特性，需要设置<code>estimated item size</code>为不为0的CGSize。它会告诉<code>UICollectionView</code>你想要在内容显示的时候动态计算布局。</p>
+<h3 id="self-sizing-cell"><a href="#self-sizing-cell" class="headerlink" title="self-sizing cell"></a>self-sizing cell</h3><p>在<code>UICollectionView</code>中有一个实体布局类<code>UICollectionViewFlowLayout</code>，它已经全面支持self-sizing cells。要开启这一特性，需要设置<code>estimated item size</code>为不为0的CGSize。它会告诉<code>UICollectionView</code>你想要在内容显示的时候动态计算布局。</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">layout.estimatedItemSize = <span class="type">CGSize</span>(width:<span class="number">50</span>,height:<span class="number">50</span>)</div></pre></td></tr></table></figure>
 <p>为了能够准确的得到cell的真实尺寸，有三种方法可以达到需求。</p>
 <blockquote>
@@ -172,7 +172,7 @@
 <p><img src="/images/wwdcCollectionView/14.gif" alt=""></p>
 <p>在iOS 10中，当第一个cell的size发生改变时，系统会自动计算出所有cell的size大小，然后刷新界面。</p>
 <p><img src="/images/wwdcCollectionView/15.gif" alt=""></p>
-<h3 id="三、Interactive-Reordering"><a href="#三、Interactive-Reordering" class="headerlink" title="三、Interactive Reordering"></a>三、Interactive Reordering</h3><p>先看看iOS 9里面的API：</p>
+<h3 id="Interactive-Reordering"><a href="#Interactive-Reordering" class="headerlink" title="Interactive Reordering"></a>Interactive Reordering</h3><p>先看看iOS 9里面的API：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UICollectionView</span> : <span class="title">UIScrollView</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">beginInteractiveMovementForItem</span><span class="params">(at indexPath: NSIndexPath)</span></span> -&gt; <span class="type">Bool</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateInteractiveMovementTargetPosition</span><span class="params">(<span class="number">_</span> targetPosition: CGPoint)</span></span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">endInteractiveMovement</span><span class="params">()</span></span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">cancelInteractiveMovement</span><span class="params">()</span></span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>要想开启<code>interactive movement</code>，我们就需要调用<code>beginInteractiveMovementForItem()</code>方法，其中indexPath代表了我们将要移动走的cell。接着每次手势的刷新，我们都需要刷新cell的位置，去响应我们手指的移动操作。这时我们就需要调用<code>updateInteractiveMovementTargetPosition()</code>方法。我们通过手势来传递坐标的变化。当我们移动结束之后，就会调用<code>endInteractiveMovement()</code>方法。 <code>UICollectionView</code>就会放下cell，处理完整个layout，此时你也可以重新刷新model或者处理数据model。如果中间突然手势取消了，那么这个时候就应该调用<code>cancelInteractiveMovement()</code>方法。如果我们重新把cell移动一圈之后又放回原位，其实就是取消了移动，那这个时候就应该在<code>cancelInteractiveMovement()</code>方法里面不用去刷新data source。</p>
 <p>在iOS 10中，如果你使用UICollectionViewController，那么这个重排对于你来说会更加的简单。</p>
@@ -184,7 +184,7 @@
 <p><img src="/images/wwdcCollectionView/16.gif" alt=""></p>
 <p>开启分页后：</p>
 <p><img src="/images/wwdcCollectionView/17.gif" alt=""></p>
-<h3 id="四、UIRefreshControl"><a href="#四、UIRefreshControl" class="headerlink" title="四、UIRefreshControl"></a>四、UIRefreshControl</h3><p>UIRefreshControl现在可以直接在CollectionView里面使用，同样的，也可以直接在UITableView里面使用，并且可以脱离UITableViewController。因为现在RefreshControl成为了ScrollView的一个属性了。</p>
+<h3 id="UIRefreshControl"><a href="#UIRefreshControl" class="headerlink" title="UIRefreshControl"></a>UIRefreshControl</h3><p>UIRefreshControl现在可以直接在CollectionView里面使用，同样的，也可以直接在UITableView里面使用，并且可以脱离UITableViewController。因为现在RefreshControl成为了ScrollView的一个属性了。</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> refreshControl = <span class="type">UIRefreshControl</span>()</div><div class="line">refreshControl.addTarget(<span class="keyword">self</span>, action: #selector(refreshControlDidFire(<span class="number">_</span>:)),</div><div class="line">                         <span class="keyword">for</span>: .valueChanged)</div><div class="line">collectionView.refreshControl = refreshControl</div></pre></td></tr></table></figure>
 <p>UIRefreshControl的使用方法很简单，先创建一个refreshControl，再关联一个action事件，最后把这个新的refreshControl赋给想要的控件的对应的属性即可。</p>
 ]]></content>
@@ -199,7 +199,7 @@
 &lt;li&gt;interactive reording&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/blockquote&gt;
-&lt;h3 id=&quot;一、平滑的滑动体验&quot;&gt;&lt;a href=&quot;#一、平滑的滑动体验&quot; class=&quot;headerlink&quot; title=&quot;一、平滑的滑动体验&quot;&gt;&lt;/a&gt;一、平滑的滑动体验&lt;/h3&gt;&lt;h5 id=&quot;1-卡顿的原因&quot;&gt;&lt;a href=&quot;#1-卡顿的原因&quot; class=&quot;headerlink&quot; title=&quot;1.卡顿的原因&quot;&gt;&lt;/a&gt;1.卡顿的原因&lt;/h5&gt;
+&lt;h3 id=&quot;平滑的滑动体验&quot;&gt;&lt;a href=&quot;#平滑的滑动体验&quot; class=&quot;headerlink&quot; title=&quot;平滑的滑动体验&quot;&gt;&lt;/a&gt;平滑的滑动体验&lt;/h3&gt;&lt;h5 id=&quot;1-卡顿的原因&quot;&gt;&lt;a href=&quot;#1-卡顿的原因&quot; class=&quot;headerlink&quot; title=&quot;1.卡顿的原因&quot;&gt;&lt;/a&gt;1.卡顿的原因&lt;/h5&gt;
     
     </summary>
     
