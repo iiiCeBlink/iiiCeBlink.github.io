@@ -1,0 +1,933 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="预览iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：
+
+
+平滑的滑动体验
+self-sizing改进
+interactive reording
+
+
+一、平滑的滑动体验1.卡顿的原因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 10 UICollectionView新特性小记">
+<meta property="og:url" content="http://yoursite.com/2016/07/18/iOS 10 UICollectionView新特性小记/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="预览iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：
+
+
+平滑的滑动体验
+self-sizing改进
+interactive reording
+
+
+一、平滑的滑动体验1.卡顿的原因">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/1.gif">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/2.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/3.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/4.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/5.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/6.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/7.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/8.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/9.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/10.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/11.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/12.jpg">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/13.gif">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/14.gif">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/15.gif">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/16.gif">
+<meta property="og:image" content="http://yoursite.com/images/wwdcCollectionView/17.gif">
+<meta property="og:updated_time" content="2016-09-23T16:02:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 10 UICollectionView新特性小记">
+<meta name="twitter:description" content="预览iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：
+
+
+平滑的滑动体验
+self-sizing改进
+interactive reording
+
+
+一、平滑的滑动体验1.卡顿的原因">
+<meta name="twitter:image" content="http://yoursite.com/images/wwdcCollectionView/1.gif">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: '楼主大大'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/07/18/iOS 10 UICollectionView新特性小记/"/>
+
+  <title> iOS 10 UICollectionView新特性小记 | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS 10 UICollectionView新特性小记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-07-18T14:36:31+08:00" content="2016-07-18">
+              2016-07-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/18/iOS 10 UICollectionView新特性小记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/18/iOS 10 UICollectionView新特性小记/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p>iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：</p>
+<blockquote>
+<ul>
+<li>平滑的滑动体验</li>
+<li>self-sizing改进</li>
+<li>interactive reording</li>
+</ul>
+</blockquote>
+<h3 id="一、平滑的滑动体验"><a href="#一、平滑的滑动体验" class="headerlink" title="一、平滑的滑动体验"></a>一、平滑的滑动体验</h3><h5 id="1-卡顿的原因"><a href="#1-卡顿的原因" class="headerlink" title="1.卡顿的原因"></a>1.卡顿的原因</h5><a id="more"></a>
+<p>在iOS 10之前我们在使用UICollectionview大幅度滑动加载复杂的视图时，很可能会出现卡顿掉帧的情况，这是很影响用户体验的。那为什么会出现这种情况呢？从下面的图可以看出，当cell准备显示到屏幕上时，cell的加载工作就已经完成了。但注意，在屏幕外加载的数据是一整行的cell。这样大量的加载工作在快速滑动的过程中便会稍显吃力，也就造成了卡顿和掉帧。</p>
+<p><img src="/images/wwdcCollectionView/1.gif" alt=""></p>
+<p>下图中绘制出了上图的实验数据。其中，x轴表示显示刷新事件，y轴表示主线程中CPU处理的时间。我们知道手机屏幕的刷新率在60FPS，也就意味着每16ms就要刷新一次，若CPU处理的时间超过16ms，便会将加载挤压到下一帧从而引起卡顿。从图中可以看到当屏幕快速滑动时，CPU处理时间超过16ms，会有卡顿，而在缓慢滑动过程中，CPU的处理时间很短，不会有卡顿。</p>
+<p><img src="/images/wwdcCollectionView/2.jpg" alt=""></p>
+<p>那如何解决这个问题呢？我们需要将Cell的加载工作分摊，达到下图的效果，就可以解决这个问题了。那如何分摊cell的加载工作呢？这就要涉及到Cell的生命周期了。</p>
+<p><img src="/images/wwdcCollectionView/3.jpg" alt=""></p>
+<h5 id="2-Cell-Life-Cycle"><a href="#2-Cell-Life-Cycle" class="headerlink" title="2.Cell Life Cycle"></a>2.Cell Life Cycle</h5><p>在iOS 10之前，当我们滑动<code>UICollectionView</code>时，就需要添加新的cell。我们将它从reuse队列中拿出来，然后调用<code>prepareForReuse</code>。这个方法让cell将其本身重置为默认状态，接收并加载app中的新数据。</p>
+<p><img src="/images/wwdcCollectionView/4.jpg" alt=""></p>
+<p>接下来，我们会继续调用<code>cellForItemAtIndexPath</code>方法。这里主要是你做填充cell工作的地方，你可以加载数据模型，并将其设置到cell中，然后返回给系统。</p>
+<p><img src="/images/wwdcCollectionView/5.jpg" alt=""></p>
+<p>之后，在cell显示到屏幕之前，我们会调用<code>willDisplayCell</code>方法。这个方法是让你做cell显示到屏幕上最后工作的地方。</p>
+<p><img src="/images/wwdcCollectionView/6.jpg" alt=""></p>
+<p>当Cell从屏幕上滑出时，我们会调用<code>didEndDisplayingCell</code>方法。这就是iOS 10之前整个cell的生命周期。</p>
+<p><img src="/images/wwdcCollectionView/7.jpg" alt=""></p>
+<p>在iOS 10中，当我们滑动<code>UICollectionView</code>需要添加新的cell时，我们会从reuse队列中拿出来，然后，调用<code>prepareForReuse</code>方法。</p>
+<p><img src="/images/wwdcCollectionView/8.jpg" alt=""></p>
+<p>接下来，在<code>cellForItemAtIndexPath</code>方法中填充cell的内容。</p>
+<p><img src="/images/wwdcCollectionView/9.jpg" alt=""></p>
+<p>用户继续滑动，接下来发生的事情有所不同。我们不再在创建cell的时候就调用<code>willDisplayCell</code>方法，该方法的调用时机放到cell显示到屏幕上的时候。</p>
+<p><img src="/images/wwdcCollectionView/10.jpg" alt=""></p>
+<p>接着，用户继续滑动。当cell离开UICollectionview的可视区域时，我们会调用<code>didEndDisplayingCell</code>方法。在iOS 10之前，在此时cell就进入了reuse队列中。当这个cell需要重新显示数据的时候，我们就必须要重新进行一遍cell的生命周期。但是在iOS 10中，我们会将cell保持一段时间。在这段时间内，用户想查看已经滑出屏幕的cell往回滑动时，cell不需要再重新走一遍生命周期，只需要调用<code>willDisplayCell</code>即可。</p>
+<p><img src="/images/wwdcCollectionView/11.jpg" alt=""></p>
+<p>在一行多列的情况中同样适用。我们一次加载一个cell而不是一行cell来获得更好的滑动体验。我们先加载第一个cell，加载完再加载第二个cell，当两个cell加载完成后并且cell即将显示到屏幕上时，我们调用两者的<code>willDisplayCell</code>方法。</p>
+<p><img src="/images/wwdcCollectionView/12.jpg" alt=""></p>
+<p>下图是模拟iOS 10下系统加载cell的情况。可以看到iOS 10下的滑动相比iOS 9流畅很多，没有卡顿。</p>
+<p><img src="/images/wwdcCollectionView/13.gif" alt=""></p>
+<h5 id="3-Cell-Pre-Fetching"><a href="#3-Cell-Pre-Fetching" class="headerlink" title="3.Cell Pre-Fetching"></a>3.Cell Pre-Fetching</h5><p>iOS 10引入了Pre-Fetching，默认情况下是开启的。若你必须用到iOS 10之前老的生命周期，只需要在UICollectionview中添加<code>isPrefetchingEnabled</code>属性。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">collectionView.isPrefetchingEnabled = <span class="literal">false</span></div></pre></td></tr></table></figure>
+<p>为了能最好地发挥这个特性，我们要做到在<code>cellForItemAtIndexPath</code>方法中做耗费资源和时间的工作，包括cell的所有内容的创建。另外，我们要确保在<code>willDisplayCell</code>和<code>didEndDisplayCell</code>方法中做轻量甚至不做工作。</p>
+<p>更进一步，我们该如何处理繁重的data models？在cell内容创建的过程中需要处理繁重的任务，比如图片解码、连接数据库、从CoreData中加载数据。为了解决这个问题，iOS 10引入了新的API帮助告诉你的数据模型如何加载内容。</p>
+<p>UICollectionView有两个组成部分：dataSource和delegate。iOS 10引入新的组成元素：prefetchDataSource。它是可选的，并且只必须实现一个方法。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">UICollectionViewDataSourcePrefetching</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: UICollectionView, prefetchItemsAt indexPaths: [NSIndexPath])</span></span></div><div class="line">    <span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [NSIndexPath])</span></span></div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UICollectionView</span> : <span class="title">UIScrollView</span> </span>&#123;</div><div class="line">    <span class="keyword">weak</span> <span class="keyword">var</span> prefetchDataSource: <span class="type">UICollectionViewDataSourcePrefetching</span>?</div><div class="line">    <span class="keyword">var</span> isPrefetchingEnabled: <span class="type">Bool</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第一个方法叫<code>prefetchItemsAt indexPaths</code>。该方法会在你异步预加载模型中的内容时在prefetch data source中调用。方法中的indexpath参数是有序数组可以帮助更好的读取模型中的数据。第二个方法叫<code>cancelPrefetchingForItemsAt indexPaths</code>（可选）。当我们决定不再滑动到某个indexPath集合时会被prefetch data source调用。你可以调用它来取消或者降低任何预加载的优先级。</p>
+<p>需要注意的是，这不是对数据模型的代替。它只是对已经存在的异步加载数据方法的起到辅助作用。</p>
+<p>下面总结一下使用预加载的注意点：</p>
+<blockquote>
+<p>1.在调用方法时，确保所处理的工作都是在后台线程中进行。配合GCD和NSOperationQueue去处理多线程任务。<br>2.记住pre-fetch是自适应技术。当滑动缓慢时，pre-fetch会做额外的工作去优化。当滑动快速时，需要频繁刷新屏幕，这时候就不再做pre-fetch。<br>3.调用<code>cancelPrefetchingForItemsAt indexPaths</code>方法去处理用户滑动操作的切换。</p>
+</blockquote>
+<p>在iOS 10中，与UICollectionview一脉相承的UItableview也加入了相同的API。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">UITableViewDataSourcePrefetching</span> </span>&#123;</div><div class="line">     <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(<span class="number">_</span> tableView: UITableView, prefetchRowsAt indexPaths:[NSIndexPath])</span></span></div><div class="line">     <span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(<span class="number">_</span> tableView: UITableView, cancelPrefetchingForRowsAt indexPaths:[NSIndexPath])</span></span></div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UITableView</span> : <span class="title">UIScrollView</span> </span>&#123;</div><div class="line">     <span class="keyword">weak</span> <span class="keyword">var</span> prefetchDataSource: <span class="type">UITableViewDataSourcePrefetching</span>?</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="二、self-sizing-cell"><a href="#二、self-sizing-cell" class="headerlink" title="二、self-sizing cell"></a>二、self-sizing cell</h3><p>在<code>UICollectionView</code>中有一个实体布局类<code>UICollectionViewFlowLayout</code>，它已经全面支持self-sizing cells。要开启这一特性，需要设置<code>estimated item size</code>为不为0的CGSize。它会告诉<code>UICollectionView</code>你想要在内容显示的时候动态计算布局。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">layout.estimatedItemSize = <span class="type">CGSize</span>(width:<span class="number">50</span>,height:<span class="number">50</span>)</div></pre></td></tr></table></figure>
+<p>为了能够准确的得到cell的真实尺寸，有三种方法可以达到需求。</p>
+<blockquote>
+<p>1.AutoLayout。当给cell的contentView的所有层级的视图添加约束后，自动布局系统自动计算出cell的大小。<br>2.重写<code>sizeThatFits()</code>方法。如果你不想使用自动布局，并想手动控制就用这个方法。<br>3.重写<code>preferredLayoutAttributesFittingAttributes()</code>方法。该方法不仅提供尺寸信息还能提供像变换、alpha等属性信息。</p>
+</blockquote>
+<p>但是在实际操作中，我们很难去设置合适的<code>estimated item size</code>。如果flowlayout可以依据数学计算出的尺寸而不是根据布局内容的真实尺寸去适应那会非常棒。为此，iOS 10引入了新的API。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">layout.estimatedItemSize = <span class="type">UICollectionViewFlowLayoutAutomaticSize</span></div></pre></td></tr></table></figure>
+<p>我们需要做的就是将<code>estimated item size</code>设置为<code>UICollectionViewFlowLayoutAutomaticSize</code>，flowlayout会自动计算布局，它不仅能计算所有cell当前的size，还能依此动态预测接下来的cell的size大小。</p>
+<p>接下来看两个例子更能明显看出差别。</p>
+<p>在下图中可以看到在iOS 10之前，当单个cell的尺寸改变时，其他的cell没有变化，布局需要重新计算。</p>
+<p><img src="/images/wwdcCollectionView/14.gif" alt=""></p>
+<p>在iOS 10中，当第一个cell的size发生改变时，系统会自动计算出所有cell的size大小，然后刷新界面。</p>
+<p><img src="/images/wwdcCollectionView/15.gif" alt=""></p>
+<h3 id="三、Interactive-Reordering"><a href="#三、Interactive-Reordering" class="headerlink" title="三、Interactive Reordering"></a>三、Interactive Reordering</h3><p>先看看iOS 9里面的API：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UICollectionView</span> : <span class="title">UIScrollView</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">beginInteractiveMovementForItem</span><span class="params">(at indexPath: NSIndexPath)</span></span> -&gt; <span class="type">Bool</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateInteractiveMovementTargetPosition</span><span class="params">(<span class="number">_</span> targetPosition: CGPoint)</span></span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">endInteractiveMovement</span><span class="params">()</span></span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">cancelInteractiveMovement</span><span class="params">()</span></span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>要想开启<code>interactive movement</code>，我们就需要调用<code>beginInteractiveMovementForItem()</code>方法，其中indexPath代表了我们将要移动走的cell。接着每次手势的刷新，我们都需要刷新cell的位置，去响应我们手指的移动操作。这时我们就需要调用<code>updateInteractiveMovementTargetPosition()</code>方法。我们通过手势来传递坐标的变化。当我们移动结束之后，就会调用<code>endInteractiveMovement()</code>方法。 <code>UICollectionView</code>就会放下cell，处理完整个layout，此时你也可以重新刷新model或者处理数据model。如果中间突然手势取消了，那么这个时候就应该调用<code>cancelInteractiveMovement()</code>方法。如果我们重新把cell移动一圈之后又放回原位，其实就是取消了移动，那这个时候就应该在<code>cancelInteractiveMovement()</code>方法里面不用去刷新data source。</p>
+<p>在iOS 10中，如果你使用UICollectionViewController，那么这个重排对于你来说会更加的简单。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UICollectionViewController</span> : <span class="title">UIViewController</span> </span>&#123;</div><div class="line">    <span class="keyword">var</span> installsStandardGestureForInteractiveMovement: <span class="type">Bool</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>你只需要把<code>installsStandardGestureForInteractiveMovement</code>这个属性设置为True即可。CollectionViewController会自动为你加入手势，并且自动为你调用上面的方法。</p>
+<p>iOS 10在iOS 9的基础上增加了翻页功能。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">collectionView.isPagingEnabled = <span class="literal">true</span></div></pre></td></tr></table></figure>
+<p>开启分页前：</p>
+<p><img src="/images/wwdcCollectionView/16.gif" alt=""></p>
+<p>开启分页后：</p>
+<p><img src="/images/wwdcCollectionView/17.gif" alt=""></p>
+<h3 id="四、UIRefreshControl"><a href="#四、UIRefreshControl" class="headerlink" title="四、UIRefreshControl"></a>四、UIRefreshControl</h3><p>UIRefreshControl现在可以直接在CollectionView里面使用，同样的，也可以直接在UITableView里面使用，并且可以脱离UITableViewController。因为现在RefreshControl成为了ScrollView的一个属性了。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> refreshControl = <span class="type">UIRefreshControl</span>()</div><div class="line">refreshControl.addTarget(<span class="keyword">self</span>, action: #selector(refreshControlDidFire(<span class="number">_</span>:)),</div><div class="line">                         <span class="keyword">for</span>: .valueChanged)</div><div class="line">collectionView.refreshControl = refreshControl</div></pre></td></tr></table></figure>
+<p>UIRefreshControl的使用方法很简单，先创建一个refreshControl，再关联一个action事件，最后把这个新的refreshControl赋给想要的控件的对应的属性即可。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一下吧~</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/alipay.png" alt="zakariyyaSv Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/23/庖丁解牛KVO（二）————KVO实现原理/" rel="next" title="庖丁解牛KVO（二）————KVO实现原理">
+                <i class="fa fa-chevron-left"></i> 庖丁解牛KVO（二）————KVO实现原理
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/23/iOS 10推送通知小记（上）/" rel="prev" title="iOS 10推送通知小记（上）">
+                iOS 10推送通知小记（上） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/07/18/iOS 10 UICollectionView新特性小记/"
+     data-title="iOS 10 UICollectionView新特性小记"
+     data-content=""
+     data-url="http://yoursite.com/2016/07/18/iOS 10 UICollectionView新特性小记/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/18/iOS 10 UICollectionView新特性小记/"
+           data-title="iOS 10 UICollectionView新特性小记" data-url="http://yoursite.com/2016/07/18/iOS 10 UICollectionView新特性小记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#预览"><span class="nav-number">1.</span> <span class="nav-text">预览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一、平滑的滑动体验"><span class="nav-number">2.</span> <span class="nav-text">一、平滑的滑动体验</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-卡顿的原因"><span class="nav-number">2.0.1.</span> <span class="nav-text">1.卡顿的原因</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Cell-Life-Cycle"><span class="nav-number">2.0.2.</span> <span class="nav-text">2.Cell Life Cycle</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Cell-Pre-Fetching"><span class="nav-number">2.0.3.</span> <span class="nav-text">3.Cell Pre-Fetching</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、self-sizing-cell"><span class="nav-number">3.</span> <span class="nav-text">二、self-sizing cell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、Interactive-Reordering"><span class="nav-number">4.</span> <span class="nav-text">三、Interactive Reordering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、UIRefreshControl"><span class="nav-number">5.</span> <span class="nav-text">四、UIRefreshControl</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>

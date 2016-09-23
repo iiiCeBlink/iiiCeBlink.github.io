@@ -104,6 +104,111 @@
   </entry>
   
   <entry>
+    <title>iOS 10 UICollectionView新特性小记</title>
+    <link href="http://yoursite.com/2016/07/18/iOS%2010%20UICollectionView%E6%96%B0%E7%89%B9%E6%80%A7%E5%B0%8F%E8%AE%B0/"/>
+    <id>http://yoursite.com/2016/07/18/iOS 10 UICollectionView新特性小记/</id>
+    <published>2016-07-18T06:36:31.000Z</published>
+    <updated>2016-09-23T16:02:25.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p>iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：</p>
+<blockquote>
+<ul>
+<li>平滑的滑动体验</li>
+<li>self-sizing改进</li>
+<li>interactive reording</li>
+</ul>
+</blockquote>
+<h3 id="一、平滑的滑动体验"><a href="#一、平滑的滑动体验" class="headerlink" title="一、平滑的滑动体验"></a>一、平滑的滑动体验</h3><h5 id="1-卡顿的原因"><a href="#1-卡顿的原因" class="headerlink" title="1.卡顿的原因"></a>1.卡顿的原因</h5><a id="more"></a>
+<p>在iOS 10之前我们在使用UICollectionview大幅度滑动加载复杂的视图时，很可能会出现卡顿掉帧的情况，这是很影响用户体验的。那为什么会出现这种情况呢？从下面的图可以看出，当cell准备显示到屏幕上时，cell的加载工作就已经完成了。但注意，在屏幕外加载的数据是一整行的cell。这样大量的加载工作在快速滑动的过程中便会稍显吃力，也就造成了卡顿和掉帧。</p>
+<p><img src="/images/wwdcCollectionView/1.gif" alt=""></p>
+<p>下图中绘制出了上图的实验数据。其中，x轴表示显示刷新事件，y轴表示主线程中CPU处理的时间。我们知道手机屏幕的刷新率在60FPS，也就意味着每16ms就要刷新一次，若CPU处理的时间超过16ms，便会将加载挤压到下一帧从而引起卡顿。从图中可以看到当屏幕快速滑动时，CPU处理时间超过16ms，会有卡顿，而在缓慢滑动过程中，CPU的处理时间很短，不会有卡顿。</p>
+<p><img src="/images/wwdcCollectionView/2.jpg" alt=""></p>
+<p>那如何解决这个问题呢？我们需要将Cell的加载工作分摊，达到下图的效果，就可以解决这个问题了。那如何分摊cell的加载工作呢？这就要涉及到Cell的生命周期了。</p>
+<p><img src="/images/wwdcCollectionView/3.jpg" alt=""></p>
+<h5 id="2-Cell-Life-Cycle"><a href="#2-Cell-Life-Cycle" class="headerlink" title="2.Cell Life Cycle"></a>2.Cell Life Cycle</h5><p>在iOS 10之前，当我们滑动<code>UICollectionView</code>时，就需要添加新的cell。我们将它从reuse队列中拿出来，然后调用<code>prepareForReuse</code>。这个方法让cell将其本身重置为默认状态，接收并加载app中的新数据。</p>
+<p><img src="/images/wwdcCollectionView/4.jpg" alt=""></p>
+<p>接下来，我们会继续调用<code>cellForItemAtIndexPath</code>方法。这里主要是你做填充cell工作的地方，你可以加载数据模型，并将其设置到cell中，然后返回给系统。</p>
+<p><img src="/images/wwdcCollectionView/5.jpg" alt=""></p>
+<p>之后，在cell显示到屏幕之前，我们会调用<code>willDisplayCell</code>方法。这个方法是让你做cell显示到屏幕上最后工作的地方。</p>
+<p><img src="/images/wwdcCollectionView/6.jpg" alt=""></p>
+<p>当Cell从屏幕上滑出时，我们会调用<code>didEndDisplayingCell</code>方法。这就是iOS 10之前整个cell的生命周期。</p>
+<p><img src="/images/wwdcCollectionView/7.jpg" alt=""></p>
+<p>在iOS 10中，当我们滑动<code>UICollectionView</code>需要添加新的cell时，我们会从reuse队列中拿出来，然后，调用<code>prepareForReuse</code>方法。</p>
+<p><img src="/images/wwdcCollectionView/8.jpg" alt=""></p>
+<p>接下来，在<code>cellForItemAtIndexPath</code>方法中填充cell的内容。</p>
+<p><img src="/images/wwdcCollectionView/9.jpg" alt=""></p>
+<p>用户继续滑动，接下来发生的事情有所不同。我们不再在创建cell的时候就调用<code>willDisplayCell</code>方法，该方法的调用时机放到cell显示到屏幕上的时候。</p>
+<p><img src="/images/wwdcCollectionView/10.jpg" alt=""></p>
+<p>接着，用户继续滑动。当cell离开UICollectionview的可视区域时，我们会调用<code>didEndDisplayingCell</code>方法。在iOS 10之前，在此时cell就进入了reuse队列中。当这个cell需要重新显示数据的时候，我们就必须要重新进行一遍cell的生命周期。但是在iOS 10中，我们会将cell保持一段时间。在这段时间内，用户想查看已经滑出屏幕的cell往回滑动时，cell不需要再重新走一遍生命周期，只需要调用<code>willDisplayCell</code>即可。</p>
+<p><img src="/images/wwdcCollectionView/11.jpg" alt=""></p>
+<p>在一行多列的情况中同样适用。我们一次加载一个cell而不是一行cell来获得更好的滑动体验。我们先加载第一个cell，加载完再加载第二个cell，当两个cell加载完成后并且cell即将显示到屏幕上时，我们调用两者的<code>willDisplayCell</code>方法。</p>
+<p><img src="/images/wwdcCollectionView/12.jpg" alt=""></p>
+<p>下图是模拟iOS 10下系统加载cell的情况。可以看到iOS 10下的滑动相比iOS 9流畅很多，没有卡顿。</p>
+<p><img src="/images/wwdcCollectionView/13.gif" alt=""></p>
+<h5 id="3-Cell-Pre-Fetching"><a href="#3-Cell-Pre-Fetching" class="headerlink" title="3.Cell Pre-Fetching"></a>3.Cell Pre-Fetching</h5><p>iOS 10引入了Pre-Fetching，默认情况下是开启的。若你必须用到iOS 10之前老的生命周期，只需要在UICollectionview中添加<code>isPrefetchingEnabled</code>属性。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">collectionView.isPrefetchingEnabled = <span class="literal">false</span></div></pre></td></tr></table></figure>
+<p>为了能最好地发挥这个特性，我们要做到在<code>cellForItemAtIndexPath</code>方法中做耗费资源和时间的工作，包括cell的所有内容的创建。另外，我们要确保在<code>willDisplayCell</code>和<code>didEndDisplayCell</code>方法中做轻量甚至不做工作。</p>
+<p>更进一步，我们该如何处理繁重的data models？在cell内容创建的过程中需要处理繁重的任务，比如图片解码、连接数据库、从CoreData中加载数据。为了解决这个问题，iOS 10引入了新的API帮助告诉你的数据模型如何加载内容。</p>
+<p>UICollectionView有两个组成部分：dataSource和delegate。iOS 10引入新的组成元素：prefetchDataSource。它是可选的，并且只必须实现一个方法。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">UICollectionViewDataSourcePrefetching</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: UICollectionView, prefetchItemsAt indexPaths: [NSIndexPath])</span></span></div><div class="line">    <span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [NSIndexPath])</span></span></div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UICollectionView</span> : <span class="title">UIScrollView</span> </span>&#123;</div><div class="line">    <span class="keyword">weak</span> <span class="keyword">var</span> prefetchDataSource: <span class="type">UICollectionViewDataSourcePrefetching</span>?</div><div class="line">    <span class="keyword">var</span> isPrefetchingEnabled: <span class="type">Bool</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第一个方法叫<code>prefetchItemsAt indexPaths</code>。该方法会在你异步预加载模型中的内容时在prefetch data source中调用。方法中的indexpath参数是有序数组可以帮助更好的读取模型中的数据。第二个方法叫<code>cancelPrefetchingForItemsAt indexPaths</code>（可选）。当我们决定不再滑动到某个indexPath集合时会被prefetch data source调用。你可以调用它来取消或者降低任何预加载的优先级。</p>
+<p>需要注意的是，这不是对数据模型的代替。它只是对已经存在的异步加载数据方法的起到辅助作用。</p>
+<p>下面总结一下使用预加载的注意点：</p>
+<blockquote>
+<p>1.在调用方法时，确保所处理的工作都是在后台线程中进行。配合GCD和NSOperationQueue去处理多线程任务。<br>2.记住pre-fetch是自适应技术。当滑动缓慢时，pre-fetch会做额外的工作去优化。当滑动快速时，需要频繁刷新屏幕，这时候就不再做pre-fetch。<br>3.调用<code>cancelPrefetchingForItemsAt indexPaths</code>方法去处理用户滑动操作的切换。</p>
+</blockquote>
+<p>在iOS 10中，与UICollectionview一脉相承的UItableview也加入了相同的API。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">UITableViewDataSourcePrefetching</span> </span>&#123;</div><div class="line">     <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(<span class="number">_</span> tableView: UITableView, prefetchRowsAt indexPaths:[NSIndexPath])</span></span></div><div class="line">     <span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(<span class="number">_</span> tableView: UITableView, cancelPrefetchingForRowsAt indexPaths:[NSIndexPath])</span></span></div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UITableView</span> : <span class="title">UIScrollView</span> </span>&#123;</div><div class="line">     <span class="keyword">weak</span> <span class="keyword">var</span> prefetchDataSource: <span class="type">UITableViewDataSourcePrefetching</span>?</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="二、self-sizing-cell"><a href="#二、self-sizing-cell" class="headerlink" title="二、self-sizing cell"></a>二、self-sizing cell</h3><p>在<code>UICollectionView</code>中有一个实体布局类<code>UICollectionViewFlowLayout</code>，它已经全面支持self-sizing cells。要开启这一特性，需要设置<code>estimated item size</code>为不为0的CGSize。它会告诉<code>UICollectionView</code>你想要在内容显示的时候动态计算布局。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">layout.estimatedItemSize = <span class="type">CGSize</span>(width:<span class="number">50</span>,height:<span class="number">50</span>)</div></pre></td></tr></table></figure>
+<p>为了能够准确的得到cell的真实尺寸，有三种方法可以达到需求。</p>
+<blockquote>
+<p>1.AutoLayout。当给cell的contentView的所有层级的视图添加约束后，自动布局系统自动计算出cell的大小。<br>2.重写<code>sizeThatFits()</code>方法。如果你不想使用自动布局，并想手动控制就用这个方法。<br>3.重写<code>preferredLayoutAttributesFittingAttributes()</code>方法。该方法不仅提供尺寸信息还能提供像变换、alpha等属性信息。</p>
+</blockquote>
+<p>但是在实际操作中，我们很难去设置合适的<code>estimated item size</code>。如果flowlayout可以依据数学计算出的尺寸而不是根据布局内容的真实尺寸去适应那会非常棒。为此，iOS 10引入了新的API。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">layout.estimatedItemSize = <span class="type">UICollectionViewFlowLayoutAutomaticSize</span></div></pre></td></tr></table></figure>
+<p>我们需要做的就是将<code>estimated item size</code>设置为<code>UICollectionViewFlowLayoutAutomaticSize</code>，flowlayout会自动计算布局，它不仅能计算所有cell当前的size，还能依此动态预测接下来的cell的size大小。</p>
+<p>接下来看两个例子更能明显看出差别。</p>
+<p>在下图中可以看到在iOS 10之前，当单个cell的尺寸改变时，其他的cell没有变化，布局需要重新计算。</p>
+<p><img src="/images/wwdcCollectionView/14.gif" alt=""></p>
+<p>在iOS 10中，当第一个cell的size发生改变时，系统会自动计算出所有cell的size大小，然后刷新界面。</p>
+<p><img src="/images/wwdcCollectionView/15.gif" alt=""></p>
+<h3 id="三、Interactive-Reordering"><a href="#三、Interactive-Reordering" class="headerlink" title="三、Interactive Reordering"></a>三、Interactive Reordering</h3><p>先看看iOS 9里面的API：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UICollectionView</span> : <span class="title">UIScrollView</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">beginInteractiveMovementForItem</span><span class="params">(at indexPath: NSIndexPath)</span></span> -&gt; <span class="type">Bool</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateInteractiveMovementTargetPosition</span><span class="params">(<span class="number">_</span> targetPosition: CGPoint)</span></span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">endInteractiveMovement</span><span class="params">()</span></span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">cancelInteractiveMovement</span><span class="params">()</span></span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>要想开启<code>interactive movement</code>，我们就需要调用<code>beginInteractiveMovementForItem()</code>方法，其中indexPath代表了我们将要移动走的cell。接着每次手势的刷新，我们都需要刷新cell的位置，去响应我们手指的移动操作。这时我们就需要调用<code>updateInteractiveMovementTargetPosition()</code>方法。我们通过手势来传递坐标的变化。当我们移动结束之后，就会调用<code>endInteractiveMovement()</code>方法。 <code>UICollectionView</code>就会放下cell，处理完整个layout，此时你也可以重新刷新model或者处理数据model。如果中间突然手势取消了，那么这个时候就应该调用<code>cancelInteractiveMovement()</code>方法。如果我们重新把cell移动一圈之后又放回原位，其实就是取消了移动，那这个时候就应该在<code>cancelInteractiveMovement()</code>方法里面不用去刷新data source。</p>
+<p>在iOS 10中，如果你使用UICollectionViewController，那么这个重排对于你来说会更加的简单。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UICollectionViewController</span> : <span class="title">UIViewController</span> </span>&#123;</div><div class="line">    <span class="keyword">var</span> installsStandardGestureForInteractiveMovement: <span class="type">Bool</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>你只需要把<code>installsStandardGestureForInteractiveMovement</code>这个属性设置为True即可。CollectionViewController会自动为你加入手势，并且自动为你调用上面的方法。</p>
+<p>iOS 10在iOS 9的基础上增加了翻页功能。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">collectionView.isPagingEnabled = <span class="literal">true</span></div></pre></td></tr></table></figure>
+<p>开启分页前：</p>
+<p><img src="/images/wwdcCollectionView/16.gif" alt=""></p>
+<p>开启分页后：</p>
+<p><img src="/images/wwdcCollectionView/17.gif" alt=""></p>
+<h3 id="四、UIRefreshControl"><a href="#四、UIRefreshControl" class="headerlink" title="四、UIRefreshControl"></a>四、UIRefreshControl</h3><p>UIRefreshControl现在可以直接在CollectionView里面使用，同样的，也可以直接在UITableView里面使用，并且可以脱离UITableViewController。因为现在RefreshControl成为了ScrollView的一个属性了。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> refreshControl = <span class="type">UIRefreshControl</span>()</div><div class="line">refreshControl.addTarget(<span class="keyword">self</span>, action: #selector(refreshControlDidFire(<span class="number">_</span>:)),</div><div class="line">                         <span class="keyword">for</span>: .valueChanged)</div><div class="line">collectionView.refreshControl = refreshControl</div></pre></td></tr></table></figure>
+<p>UIRefreshControl的使用方法很简单，先创建一个refreshControl，再关联一个action事件，最后把这个新的refreshControl赋给想要的控件的对应的属性即可。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;预览&quot;&gt;&lt;a href=&quot;#预览&quot; class=&quot;headerlink&quot; title=&quot;预览&quot;&gt;&lt;/a&gt;预览&lt;/h3&gt;&lt;p&gt;iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;平滑的滑动体验&lt;/li&gt;
+&lt;li&gt;self-sizing改进&lt;/li&gt;
+&lt;li&gt;interactive reording&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;一、平滑的滑动体验&quot;&gt;&lt;a href=&quot;#一、平滑的滑动体验&quot; class=&quot;headerlink&quot; title=&quot;一、平滑的滑动体验&quot;&gt;&lt;/a&gt;一、平滑的滑动体验&lt;/h3&gt;&lt;h5 id=&quot;1-卡顿的原因&quot;&gt;&lt;a href=&quot;#1-卡顿的原因&quot; class=&quot;headerlink&quot; title=&quot;1.卡顿的原因&quot;&gt;&lt;/a&gt;1.卡顿的原因&lt;/h5&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>庖丁解牛KVO（二）————KVO实现原理</title>
     <link href="http://yoursite.com/2016/04/23/%E5%BA%96%E4%B8%81%E8%A7%A3%E7%89%9BKVO%EF%BC%88%E4%BA%8C%EF%BC%89%E2%80%94%E2%80%94%E2%80%94%E2%80%94KVO%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
     <id>http://yoursite.com/2016/04/23/庖丁解牛KVO（二）————KVO实现原理/</id>
