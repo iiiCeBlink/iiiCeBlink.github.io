@@ -1,0 +1,895 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Overview在上一篇iOS 10推送通知小记（上）中，已经将iOS 10推送机制的改进以及原理讲完了。本篇文章的着重点放在心的推送框架UserNotification.framework上面。
+先说说iOS 10之前的推送API中存在的问题。比如，本地推送和远程推送使用的是不同的回调方法但有可能回调方法中的代码是重复的。当你的app将通知发送给用户之后就没办法再去控制它了。为了解决这些问题，i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 10推送通知小记（下）">
+<meta property="og:url" content="http://yoursite.com/2016/07/26/iOS 10推送通知小记（下）/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="Overview在上一篇iOS 10推送通知小记（上）中，已经将iOS 10推送机制的改进以及原理讲完了。本篇文章的着重点放在心的推送框架UserNotification.framework上面。
+先说说iOS 10之前的推送API中存在的问题。比如，本地推送和远程推送使用的是不同的回调方法但有可能回调方法中的代码是重复的。当你的app将通知发送给用户之后就没办法再去控制它了。为了解决这些问题，i">
+<meta property="og:image" content="http://yoursite.com/images/notificationAPI/1.png">
+<meta property="og:image" content="http://yoursite.com/images/notificationAPI/2.png">
+<meta property="og:image" content="http://yoursite.com/images/notificationAPI/3.png">
+<meta property="og:image" content="http://yoursite.com/images/notificationAPI/4.png">
+<meta property="og:image" content="http://yoursite.com/images/notificationAPI/5.png">
+<meta property="og:updated_time" content="2016-09-24T16:37:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 10推送通知小记（下）">
+<meta name="twitter:description" content="Overview在上一篇iOS 10推送通知小记（上）中，已经将iOS 10推送机制的改进以及原理讲完了。本篇文章的着重点放在心的推送框架UserNotification.framework上面。
+先说说iOS 10之前的推送API中存在的问题。比如，本地推送和远程推送使用的是不同的回调方法但有可能回调方法中的代码是重复的。当你的app将通知发送给用户之后就没办法再去控制它了。为了解决这些问题，i">
+<meta name="twitter:image" content="http://yoursite.com/images/notificationAPI/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: '楼主大大'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/07/26/iOS 10推送通知小记（下）/"/>
+
+  <title> iOS 10推送通知小记（下） | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS 10推送通知小记（下）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-07-26T10:50:03+08:00" content="2016-07-26">
+              2016-07-26
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/26/iOS 10推送通知小记（下）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/26/iOS 10推送通知小记（下）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><p>在上一篇<a href="http://zakariyyasv.pub/2016/07/23/iOS%2010%E6%8E%A8%E9%80%81%E9%80%9A%E7%9F%A5%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8A%EF%BC%89/" target="_blank" rel="external">iOS 10推送通知小记（上）</a>中，已经将iOS 10推送机制的改进以及原理讲完了。本篇文章的着重点放在心的推送框架<code>UserNotification.framework</code>上面。</p>
+<p>先说说iOS 10之前的推送API中存在的问题。比如，本地推送和远程推送使用的是不同的回调方法但有可能回调方法中的代码是重复的。当你的app将通知发送给用户之后就没办法再去控制它了。为了解决这些问题，iOS 10推出了新的推送框架——<code>UserNotification.framework</code>。<br><a id="more"></a><br>新框架的主要特性有：</p>
+<blockquote>
+<ul>
+<li>与之前的API相似，改写原来的代码很简单。</li>
+<li>扩展通知的内容。</li>
+<li>本地推送和远程推送执行相同的回调方法。</li>
+<li>简化代理方法。</li>
+<li>更好的推送管理。app可以访问将被发送或者已经发送给用户的通知并且允许在更新通知的时候移除它。</li>
+<li>通知内容可以展示app内的界面内容。</li>
+</ul>
+</blockquote>
+<h3 id="Registration"><a href="#Registration" class="headerlink" title="Registration"></a>Registration</h3><p>如今，通知消息对用户来说是种干扰或者打断。因此，在你给用户发送通知消息之前得到用户的授权和允许是非常重要的。你可以向用户请求横幅、声音或者app角标的权限，这样用户可以第一时间看到你的推送通知。本地推送与远程推送都需要做注册操作。</p>
+<p>注册代码编写很简单，只需要调用UN的userNotification对象的request方法，并传入正确的参数即可。注意，现在用户对于每个应用允许的权限可以在应用的设置菜单中单独设置，用户可以依据个人的偏好去开启或关闭通知。在iOS 10中，开发者可以获取用户设置的权限，因而可以依据用户的偏好设置而发送对应的通知消息。</p>
+<p>本地推送的注册到此就结束了，但是远程推送还没有结束。注册远程推送需要连接网络跟APNS进行通信获取设备的device token，你需要将这个token发送给应用的服务端。这个token非常重要，远程推送通知的负载需要包含这个token。device token相当于验证你的设备和应用程序之间的钥匙。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">// RequestAuthorization</span></div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().requestAuthorization([.alert, .sound, .badge])</div><div class="line"> &#123; (granted, error) <span class="keyword">in</span> <span class="comment">// ... &#125;</span></div><div class="line"> </div><div class="line"> <span class="comment">// Access to user-defined settings</span></div><div class="line"> <span class="type">UNUserNotificationCenter</span>.current().getNotificationSettings &#123; (settings) <span class="keyword">in</span> <span class="comment">// ... &#125;</span></div><div class="line"> </div><div class="line"> <span class="comment">// Register remote notifications</span></div><div class="line"> <span class="type">UIApplication</span>.shared().registerForRemoteNotifications()</div></pre></td></tr></table></figure>
+<h3 id="Content"><a href="#Content" class="headerlink" title="Content"></a>Content</h3><p>在iOS 10中，推送通知加入了subtitle，可以给用户展示更多的信息。</p>
+<p><img src="/images/notificationAPI/1.png" alt=""></p>
+<p>创建通知内容很简单，只需要创建<code>UNMutableNotificationContent</code>对象并且设置里面不同的属性就可以了。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// local notification</span></div><div class="line"><span class="keyword">let</span> content = <span class="type">UNMutableNotificationContent</span>()</div><div class="line">content.title = <span class="string">"Introduction to Notifications"</span></div><div class="line">content.subtitle = <span class="string">"Session 707"</span></div><div class="line">content.body = <span class="string">"Woah! These new notifications look amazing! Don’t you agree?"</span></div><div class="line">content.badge = <span class="number">1</span></div></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// remote notification payload</span></div><div class="line">&#123;</div><div class="line"> <span class="string">"aps"</span> : &#123;</div><div class="line"> <span class="string">"alert"</span> : &#123;</div><div class="line"> <span class="string">"title"</span> : <span class="string">"Introduction to Notifications"</span>,</div><div class="line"> <span class="string">"subtitle"</span> : <span class="string">"Session 707"</span></div><div class="line">,</div><div class="line"> <span class="string">"body"</span> : <span class="string">"Woah! These new notifications look amazing! Don’t you agree?"</span></div><div class="line"> &#125;,</div><div class="line"> <span class="string">"badge"</span> : <span class="number">1</span></div><div class="line"> &#125;,</div><div class="line"> my-attachment : https:<span class="comment">//example.com/phtos.jpg"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Scheduling"><a href="#Scheduling" class="headerlink" title="Scheduling"></a>Scheduling</h3><p>iOS 10发送通知的过程可以总结如下：</p>
+<blockquote>
+<ul>
+<li>注册通知申请权限。</li>
+<li>设置通知的内容</li>
+<li>设置触发器</li>
+<li>设置通知标识符</li>
+<li>发送通知</li>
+</ul>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Notification Delivery Summary</span></div><div class="line"><span class="keyword">import</span> UserNotifications</div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().requestAuthorization([.alert, .sound, .badge])</div><div class="line"> &#123; (granted, error) <span class="keyword">in</span> <span class="comment">// ... &#125;</span></div><div class="line"><span class="keyword">let</span> content = <span class="type">UNMutableNotificationContent</span>()</div><div class="line">content.title = <span class="string">"Introduction to Notifications"</span></div><div class="line">content.body = <span class="string">"Let's talk about notifications!"</span></div><div class="line"></div><div class="line"><span class="keyword">let</span> trigger = <span class="type">UNTimeIntervalNotificationTrigger</span>(timeInterval: <span class="number">5</span>, repeats: <span class="literal">false</span>)</div><div class="line"></div><div class="line"><span class="keyword">let</span> requestIdentifier = <span class="string">"sampleRequest"</span></div><div class="line"><span class="keyword">let</span> request = <span class="type">UNNotificationRequest</span>(identifier: requestIdentifier,</div><div class="line"> content: content,</div><div class="line"> trigger: trigger)</div><div class="line"></div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().add(request) &#123; (error) <span class="keyword">in</span> <span class="comment">// ... &#125;</span></div></pre></td></tr></table></figure>
+<p>以上说的是应用程序在后台的时候推送通知的产生过程。那要是应用程序在前台运行呢？这时候我们需要实现<code>UNUserNotificationCenter</code>的代理方法才能支持在前台中处理推送通知。代理方法中有个叫做<code>willPresent notification:</code>，该方法能让你获取推送通知中的内容。如果你想设置弹窗、声音或者in-app显示，可以通过调用<code>handlerBlock</code>方法设置不同的参数达到效果。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">UNUserNotificationCenterDelegate</span> : <span class="title">NSObjectProtocol</span></span></div><div class="line"><span class="title">func</span> <span class="title">userNotificationCenter</span>(<span class="title">_</span> <span class="title">center</span>: <span class="title">UNUserNotificationCenter</span>, <span class="title">willPresent</span> <span class="title">notification</span>: <span class="title">UNNotification</span>, <span class="title">withCompletionHandler</span> <span class="title">completionHandler</span>: (<span class="title">UNNotificationPresentationOptions</span>) -&gt; <span class="title">Void</span>)&#123;</div><div class="line">    <span class="comment">// Roll banner and sound alert</span></div><div class="line">     handlerBlock([.alert, .sound]) </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Management"><a href="#Management" class="headerlink" title="Management"></a>Management</h3><p>在iOS 10新的推送框架中，推送通知的管理可以做的事情很多：</p>
+<blockquote>
+<p>访问推送消息</p>
+<ul>
+<li>将要发送的通知</li>
+<li>已经发送的通知<br>移除推送消息<br>更新修改推送消息 </li>
+</ul>
+</blockquote>
+<p>在推送通知管理中非常重要的一部分是<code>request identifier</code>。在本地推送中，请求标识符被设置在消息请求当中，在远程推送中，请求标识符被设置在新的HTTP/2请求头中——<code>apns-collapse-id</code>。系统通过这个标识符知道哪个通知是需要移除或者更新的。</p>
+<p>在下面例子中，你的app想发送关于游戏的通知，它想通知游戏开始的时间。因此你创建推送请求并且将其放入系统的schedule中。但是，现在需要告知游戏被取消了。这时候就需要调用<code>removePendingNotificationRequests</code>方法并传入创建推送请求时传入的标识符。那如何更新游戏的开始时间呢？你需要创建新的请求，并传入与之前相同的标识符，设置新的时间并放入系统的schedule中。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Pending Notification Removal</span></div><div class="line"><span class="keyword">let</span> gameStartIdentifier = <span class="string">"game1.start.identifier"</span></div><div class="line"><span class="keyword">let</span> gameStartRequest = <span class="type">UNNotificationRequest</span>(identifier: gameStartIdentifier, content: content, trigger: startTrigger)</div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().add(gameStartRequest) &#123; (error) <span class="keyword">in</span> <span class="comment">// ... &#125;</span></div><div class="line"><span class="comment">// Game was cancelled</span></div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().removePendingNotificationRequests(withIdentifiers: [gameStartIdentifier])</div><div class="line"><span class="comment">// Game start time was updated</span></div><div class="line"><span class="keyword">let</span> updatedGameStartRequest = <span class="type">UNNotificationRequest</span>(identifier: gameStartIdentifier,</div><div class="line"> content: content,</div><div class="line"> trigger: newStartTrigger)</div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().add(updatedGameStartRequest) &#123; (error) <span class="keyword">in</span> <span class="comment">// ... &#125;</span></div></pre></td></tr></table></figure>
+<p>下面再来说说通知已经发送出去的情况。我们举足球比分的例子来说明。你创建了通知请求并将其发送到系统。但是通知更新的是错误的比分，这时候你可以很简单地通过调用<code>removeDeliveredNotifications</code>来移除之前的通知。当然，你也可以创建新的推送请求更新原来通知的比分。当然，这两种做法都要传入相同的请求标识符。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Delivered Notification Removal</span></div><div class="line"><span class="keyword">let</span> gameScoreIdentifier = <span class="string">"game1.score.identifier"</span></div><div class="line"><span class="keyword">let</span> gameScoreRequest = <span class="type">UNNotificationRequest</span>(identifier: gameScoreIdentifier,</div><div class="line"> content: scoreContent,</div><div class="line"> trigger: trigger)</div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().add(gameScoreRequest) &#123; (error) <span class="keyword">in</span> <span class="comment">// ... &#125;</span></div><div class="line"><span class="comment">// Wrong game score was published</span></div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().removeDeliveredNotifications(withIdentifiers: [gameScoreIdentifier])</div><div class="line"><span class="comment">// Score game was updated</span></div><div class="line"><span class="keyword">let</span> updateGameScoreRequest = <span class="type">UNNotificationRequest</span>(identifier: gameScoreIdentifier,</div><div class="line"> content: newScoreContent,</div><div class="line"> trigger: newTrigger)</div><div class="line"><span class="type">UNUserNotificationCenter</span>.current().add(updateGameScoreRequest) &#123; (error) <span class="keyword">in</span> <span class="comment">// ... &#125;</span></div></pre></td></tr></table></figure>
+<h3 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a>Actions</h3><p>下面介绍用户接收到推送通知后的处理操作。app可以识别用户对于通知消息处理的三种类型操作。</p>
+<p>第一种类型操作是最常规的，那就是用户点击推送消息打开app。这个操作可以在设备解锁并且接收到推送消息，用户点击横幅时发生。也可以在锁屏状态下用户向右滑动消息，在下拉通知中心点击消息发生这个操作。</p>
+<p><img src="/images/notificationAPI/2.png" alt=""></p>
+<p>第二种类型操作是自定义快捷操作行为。这时候的推送消息就是可以执行操作的消息。这些自定义操作行为以按钮的形式出现在推送消息的下面。在iOS 9中引入了textinput action，这样用户可以快速回复消息。这些自定义的快捷操作行为可以在前台可以在后台中。</p>
+<p>在后台中执行action会移除消息并且会给后台很短的一段时间去处理用户点击的action触发的事件。另一方面，在前台中执行action会移除消息并且启动app这样app就可以处理action触发的事件。</p>
+<p><img src="/images/notificationAPI/3.png" alt=""></p>
+<p>所有的自定义快捷操作都需要与category关联起来。category需要唯一的标识符，这个标识符会设置到所有你想要的action中。除此之外，你还可以设置intent标识符，关于intent的更多信息可以参考SiriKit Session。当你创建完所有的action和category时，你需要做的唯一的事情就是将它们注册到<code>UNUserNotificationCenter</code>对象中与你的应用程序相关联。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let action = UNNotificationAction(identifier:”reply",title:"Reply",options:[])</div><div class="line">let category = UNNotificationCategory(identifier: "message", actions: [action], minimalActions: [action], intentIdentifiers: [], options: [])</div><div class="line">UNUserNotificationCenter.current().setNotificationCategories([category])</div></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Remote Notifications</span></div><div class="line">&#123;</div><div class="line">    aps : &#123;</div><div class="line">        alert : “<span class="type">Welcome</span> to <span class="type">WWDC</span> !”,</div><div class="line">        category: <span class="string">"message"</span></div><div class="line">        &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Local Notifications</span></div><div class="line">content.categoryIdentifier = <span class="string">"message"</span></div></pre></td></tr></table></figure>
+<p>接下来说说如何将自定义的aciton展示给你的用户。在远程推送中，你需要在远程推送通知的APS字典中设置category标识符。现在这个标识符需要与之前注册的category标识符能匹配上。在本地推送中，你需要在创建的推送内容中设置category标识符。同样的，这个category标识符必须与注册的category标识符能匹配上。</p>
+<p>第三种类型操作是dismiss行为。该行为在用户移除指定的通知消息时触发。比如说，你有个日历app，你给用户发送了一条关于即将到来的会议的远程推送通知。用户看到了这则通知并移除它时，你想要停止向该用户其他的设备再发送这条用户已经看到的远程推送通知。那用户如何才算是真正地移除通知消息呢？用户可以在锁屏界面或者下拉通知中心中从右向左滑动消息并点击“清除”按钮。</p>
+<p>在之前讨论的注册不同的category时，我们提到一些选项，<code>customDismissAction</code>选项是其中的一个。我们需要做的是将<code>customDismissAction</code>添加到category中，那么当用户移除跟category关联的通知消息时，app将会接收到dismiss行为。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">customDismissAction: <span class="type">UNNotificationCategoryOptions</span></div><div class="line"><span class="keyword">let</span> category = <span class="type">UNNotificationCategory</span>(identifier: <span class="string">"message"</span>, actions: [action],</div><div class="line">minimalActions: [action], intentIdentifiers: [], options: [.customDismissAction])</div></pre></td></tr></table></figure>
+<p>以上就是关于自定义通知行为的三种类型的介绍。那么自定义行为的操作的处理在哪里进行呢？在<code>UNUserNotificationCenter</code>代理方法中有这样一个方法——<code>didReceive response:</code>,实现这个方法来处理自定义行为的操作。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">UNUserNotificationCenterDelegate</span> : <span class="title">NSObjectProtocol</span></span></div><div class="line">    <span class="title">func</span> <span class="title">userNotificationCenter</span>(<span class="title">_</span> <span class="title">center</span>: <span class="title">UNUserNotificationCenter</span>, <span class="title">didReceive</span> <span class="title">response</span>: <span class="title">UNNotificationResponse</span>, <span class="title">withCompletionHandler</span> <span class="title">completionHandler</span>: () -&gt; <span class="title">Void</span>)</div></pre></td></tr></table></figure>
+<p>我们把目光聚焦到该方法中的<code>UNNotificationResponse</code>上。这个对象中包含你创建的action的<code>action identifier</code>，如果这个action是<code>text input action</code>，那还会有<code>user text</code>属性。它还包含一个通知消息对象，消息对象中自然还包含请求对象以及标识符。</p>
+<p><img src="/images/notificationAPI/4.png" alt=""></p>
+<h3 id="Service-extension"><a href="#Service-extension" class="headerlink" title="Service extension"></a>Service extension</h3><p>再来谈谈远程推送。iOS 10引入了<code>service extension</code>，它的作用是在远程推送中在推送通知展示到用户之前添加或者修改通知消息中的内容，同时，还会对消息中的内容进行端对端的加密。注意，它是在后台运行工作的。关于<code>service extension</code>工作原理的介绍已经在前一篇文章中解释过了。现在重点讲述如何代码实现<code>service extension</code>。</p>
+<p>首先，你需要做的是在Xcode项目中添加新的target，如下图所示。</p>
+<p><img src="/images/notificationAPI/5.png" alt=""></p>
+<p>之后在这个模板中会有一个类。它是<code>UNNotificationServiceExtension</code>类的子类。它有两个主要的方法。第一个方法可以获取当前的推送请求对象，可以在其中修改推送消息的内容。当<code>service extension</code>运行超时时，第二个方法会被触发。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Service Extension</span></div><div class="line"><span class="keyword">import</span> UserNotifications</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">NotificationService</span>: <span class="title">UNNotificationServiceExtension</span> </span>&#123;</div><div class="line">     <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(request: UNNotificationRequest, withContentHandler contentHandler:<span class="params">(UNNotificationContent)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</div><div class="line">     <span class="comment">// Modify the notification content</span></div><div class="line"> &#125;</div><div class="line">     <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">serviceExtensionTimeWillExpire</span><span class="params">()</span></span> &#123;</div><div class="line">     <span class="comment">// Called before the extension will be terminated by the system</span></div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接下来我们来看看如何在远程推送中真正地触发上面这段代码。下面是远程推送消息的简易版本，其中有一个新的<code>mutable-content</code>字段。你需要用这个字段来让系统知道你想要系统启动<code>service extension</code>去更新远程推送消息中的内容。当然你不必每次都去启动<code>service extension</code>服务，只需要在需要更新推送通知内容的时候再去启动它。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Example payload</span></div><div class="line">&#123;</div><div class="line">    aps : &#123;</div><div class="line">        alert : “<span class="type">New</span> <span class="type">Message</span> <span class="type">Available</span>”,</div><div class="line">        mutable-content : <span class="number">1</span></div><div class="line">    &#125;,</div><div class="line">    encrypted-content : “#myencryptedcontent”</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们再来看看如何去解密远程推送通知中加密的内容。在下面代码中，我们看到了<code>didReceive</code>方法。该方法是推送请求的方法，在这个方法中要做的事情就是解密远程推送通知中加密的内容。然后，我们创建一个<code>UNMutableNotificationContent</code>对象并将解密出来的内容赋给它。最后，我们调用<code>contentHandler</code>方法将解密的内容展示在用户面前。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Decrypt Remote Notification Payload in Service Extension and Update Notification Content</span></div><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(request: UNNotificationRequest, withContentHandler contentHandler:<span class="params">(UNNotificationContent)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</div><div class="line">     <span class="comment">// Decrypt the payload</span></div><div class="line">     <span class="keyword">let</span> decryptedBody = decrypt(request.content.userInfo[“encrypted-content”])</div><div class="line">     <span class="keyword">let</span> newContent = <span class="type">UNMutableNotificationContent</span>()</div><div class="line">     <span class="comment">// Modify the notification content</span></div><div class="line">     newContent.body = decryptedBody</div><div class="line">     <span class="comment">// Call content handler with updated content</span></div><div class="line">     contentHandler(newContent)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一下吧~</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/alipay.png" alt="zakariyyaSv Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/23/iOS 10推送通知小记（上）/" rel="next" title="iOS 10推送通知小记（上）">
+                <i class="fa fa-chevron-left"></i> iOS 10推送通知小记（上）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/24/拆解ARC下的self/" rel="prev" title="拆解ARC下的self">
+                拆解ARC下的self <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/07/26/iOS 10推送通知小记（下）/"
+     data-title="iOS 10推送通知小记（下）"
+     data-content=""
+     data-url="http://yoursite.com/2016/07/26/iOS 10推送通知小记（下）/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/26/iOS 10推送通知小记（下）/"
+           data-title="iOS 10推送通知小记（下）" data-url="http://yoursite.com/2016/07/26/iOS 10推送通知小记（下）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">14</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Overview"><span class="nav-number">1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Registration"><span class="nav-number">2.</span> <span class="nav-text">Registration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Content"><span class="nav-number">3.</span> <span class="nav-text">Content</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Scheduling"><span class="nav-number">4.</span> <span class="nav-text">Scheduling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Management"><span class="nav-number">5.</span> <span class="nav-text">Management</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Actions"><span class="nav-number">6.</span> <span class="nav-text">Actions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-extension"><span class="nav-number">7.</span> <span class="nav-text">Service extension</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>
