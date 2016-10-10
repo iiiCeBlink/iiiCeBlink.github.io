@@ -60,18 +60,18 @@
     <link href="http://yoursite.com/2016/07/30/CallKit%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
     <id>http://yoursite.com/2016/07/30/CallKit学习笔记/</id>
     <published>2016-07-30T02:21:17.000Z</published>
-    <updated>2016-10-10T11:57:12.000Z</updated>
+    <updated>2016-10-10T12:03:09.000Z</updated>
     
     <content type="html"><![CDATA[<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>近几年4G大规模的普及使得VoIP（Voice over Internet Protocol）变得可靠和稳定。iOS 10开始全面支持VOIP，于是推出了<code>CallKit</code>框架。</p>
 <p><code>CallKit</code>框架能让你的第三方VoIP应用程序获得原声应用程序的体验效果。为了能更好得讲述<code>CallKit</code>新特性，我们以一个第三方VoIP应用程序——“Speakerbox”举例来说明。<br><a id="more"></a><br>在iOS 10之前，当用户收到“Speakerbox”的电话时的界面如同下图。在锁屏状态下，我们无法区分iMessage和VoIP电话的区别，它只是一则通知。如果想要接听“Speakerbox”中的来电，我们需要先右滑通知，输入密码，进入app才能接听电话。这是非常糟糕的体验。而在解锁状态下，来电会显示为一条横幅，我们有时候可能会错过这些通知，这样的体验也是很糟糕的。</p>
-<p>!()[/images/callkit/1.png]</p>
-<p>!()[/images/callkit/2.png]</p>
+<p><img src="/images/callkit/1.png" alt=""></p>
+<p><img src="/images/callkit/2.png" alt=""></p>
 <p>在iOS 10中，“Speakerbox”可以像原生电话UI那样接听和显示VoIP通话。</p>
-<p>!()[/images/callkit/3.png]</p>
-<p>!()[/images/callkit/4.png]</p>
-<p>!()[/images/callkit/5.png]</p>
+<p><img src="/images/callkit/3.png" alt=""></p>
+<p><img src="/images/callkit/4.png" alt=""></p>
+<p><img src="/images/callkit/5.png" alt=""></p>
 <h3 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h3><p>在iOS 10以前，像系统服务如蓝牙、Siri、CarPlay与VoIP的应用程序如“Speakerbox”是相互独立的两部分。在iOS 10中，通过<code>CallKit</code>框架可以将两者连接起来，现在在“Speakerbox”上发起的通信电话可以被系统获取然后系统会与目的设备之间建立起通信。</p>
-<p>!()[/images/callkit/6.png]</p>
+<p><img src="/images/callkit/6.png" alt=""></p>
 <p>现在我们进一步来聊聊“Speakerbox”。在下图中，我们有“Speakerbox”以及它所有的代码，它与网络进行通信并有自己的UI。接下来，我们要与<code>CallKit</code>连接。这里有两个类需要我们着重去注意，分别是<code>CXProvider</code>和<code>CXCallController</code>。</p>
 <blockquote>
 <h5 id="CXProvider"><a href="#CXProvider" class="headerlink" title="CXProvider"></a>CXProvider</h5><p>Out-of-band nontifications<br>Not user actions<br>External events</p>
@@ -86,10 +86,10 @@
 <p><code>CXProvider</code>的作用是告知系统所有的带外（out-of-band）通知信息。带外通知的意思是指非用户操作而是外在真实发生的事件，比如来电（incoming call）。</p>
 <p><code>CXCallController</code>的作用是让系统感知来自于app自身的请求。这里的请求是真实的用户操作就像内部事件，如开始通话操作。<code>CXCallController</code>会与系统上其他的通话产生相互影响。例如，用户已经处于通话状态了，而他还想通过“Speakerbox”再开启一个通话。这时候<code>CXCallController</code>会告诉系统用户的开启通话的操作，系统会告知通话提供者保持当前的通话，这样可以让“Speakerbox”开始它的通话。</p>
 <p>所以，当<code>CXProvider</code>想与系统进行通信时它会使用<code>CSXCallUpdate</code>类，当系统想让“Speakerbox”接收用户操作，它会使用<code>CXAction</code>类来让“Speakerbox”知道。<code>CXCallController</code>会将这些用户操作装进<code>CSTransaction</code>对象中来告知系统用户产生的操作。</p>
-<p>!()[/images/callkit/7.png]</p>
+<p><img src="/images/callkit/7.png" alt=""></p>
 <p>现在我们来看看来电的整体工作流程。现在比如说一个叫做Jane的人收到了来自他妈妈的来电通话请求。“Speakerbox”收到了来电，然后会创建<code>CXCallUpdate</code>对象并通过<code>CXProvider</code>发送给系统。接着，系统将来电告知包括UI的所有服务。如果Jane想应答，Jane可以通过通话界面的应答按钮接通通话。这时候系统会告诉“Speakerbox”只要它需要随时可以接通来电通话。如果Jane想通过操作app的UI来结束通话，<code>CXCallController</code>会将结束action打包进一个<code>CXTransaction</code>对象中并将其发送给系统。如果一切ok，系统会通过<code>CXProvider</code>将其发送给“Speakerbox”，这样“Speakerbox”就可以随时结束通话。</p>
-<p>!()[/images/callkit/8.png]</p>
-<p>!()[/images/callkit/9.png]</p>
+<p><img src="/images/callkit/8.png" alt=""></p>
+<p><img src="/images/callkit/9.png" alt=""></p>
 <h5 id="来电"><a href="#来电" class="headerlink" title="来电"></a>来电</h5><p>下面以代码的形式简要概述来电发生的过程：</p>
 <p>1.将来电信息通知到系统<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">provider.reportNewIncomingCall(with: <span class="type">UUID</span>, update: <span class="type">CXCallUpdate</span>) &#123; error <span class="keyword">in</span> <span class="comment">/* ... */</span> &#125;</div></pre></td></tr></table></figure></p>
 <p>2.用户点击通话按钮进行通话，<code>ProviderDelegate</code>会调用<code>PerformAnswerCallAction</code>方法。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">provider</span><span class="params">(<span class="number">_</span> provider: CXProvider, perform action: CXAnswerCallAction)</span></span> &#123; <span class="comment">/* ... */</span> &#125;</div></pre></td></tr></table></figure></p>
@@ -107,28 +107,28 @@
 </ul>
 </blockquote>
 <h5 id="Multiple-Call"><a href="#Multiple-Call" class="headerlink" title="Multiple Call"></a>Multiple Call</h5><p>接下来花点时间讲讲多来电通话时的管理。例如，现在“Speakerbox”已经处于通话状态了，这时候又有一个通话请求进来。</p>
-<p>!()[/images/callkit/11.png]</p>
+<p><img src="/images/callkit/11.png" alt=""></p>
 <p>如果用户想要结束现在进行的通话并且回应刚进来的通话时，系统会给“Speakerbox”发送<code>CXTransaction</code>。<code>CXTransaction</code>只是一个或多个action组合起来的集合，在现在这种情况下它就是<code>end</code>和<code>answer</code>操作的集合。一旦“Speakerbox”处理并执行集合中的action，系统就会了解到并且换UI。</p>
-<p>!()[/images/callkit/12.png]</p>
+<p><img src="/images/callkit/12.png" alt=""></p>
 <h5 id="Outgoing-Call"><a href="#Outgoing-Call" class="headerlink" title="Outgoing Call"></a>Outgoing Call</h5><p>再来看看去电的流程。要拨出电话首先要找到你需要联系的联系人再进行操作发起通话请求（start call intent）。intent是代表用户意愿操作的对象，被打包成<code>NSUser activity</code>后传回你的app中。app接收到开始通话的intent然后在intent信息的基础上构建开始通话action。我们通过<code>CallController</code>来执行和请求action，之后，<code>CallController</code>会将action传递给系统。如果通话请求被接受了，action会通过<code>ProviderDelegate</code>返回你的app中。最后，app通过网络执行必要的命令建立起通话连接。</p>
-<p>!()[/images/callkit/13.png]</p>
+<p><img src="/images/callkit/13.png" alt=""></p>
 <p>我们来看下整个去电的生命周期。我们以执行开始通话操作为起始点。这时候通话处于starting状态，之后，我们会执行完action操作并将通话状态变成started。当通话的另一端响应通话时，我们会通知provider通话已经开始连接（connecting）。最后，我们告诉provider通话已经连接上了（connected）来通知系统两端可以开始互相说话。</p>
-<p>!()[/images/callkit/14.png]</p>
+<p><img src="/images/callkit/14.png" alt=""></p>
 <p>最后我们以代码的形式来简要回顾一下去电的流程：</p>
 <p>1.通过<code>CallController</code>请求开始通话action<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">callController.request(startCallTransaction) &#123; error <span class="keyword">in</span> <span class="comment">/* ... */</span> &#125;</div></pre></td></tr></table></figure></p>
 <p>2.action通过<code>ProviderDelegate</code>被接受，然后执行。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">startCallAction.fulfill()</div></pre></td></tr></table></figure></p>
 <p>3.app通知call将其状态从connecting转变成connected。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">provider.reportOutgoingCall(with: call.uuid, startedConnectingAt: call.connectingDate)</div><div class="line">provider.reportOutgoingCall(with: call.uuid, connectedAt: call.connectDate)</div></pre></td></tr></table></figure></p>
 <h3 id="API-Details"><a href="#API-Details" class="headerlink" title="API Details"></a>API Details</h3><h5 id="Authorization"><a href="#Authorization" class="headerlink" title="Authorization"></a>Authorization</h5><p>跟其他如contacts、core location的API类似，<code>CallKit</code>也需要向用户请求准许的权限。正因为如此，每次app启动之后，你的app要做的第一件事就是检查当前的授权状态。因为可能在上次启动app之后用户进入到设置中修改了权限。如果你发现你的app的授权状态是不允许的，你应该为你的app请求授权。系统会弹框向用户请求允许权限。最后，当你的app启动时，你应该去观察并监听任何授权状态的改变，这样你才能一直将最新的UI展示给你的用户。</p>
-<p>!()[/images/callkit/10.png]</p>
+<p><img src="/images/callkit/10.png" alt=""></p>
 <h5 id="Provider-Configuration"><a href="#Provider-Configuration" class="headerlink" title="Provider Configuration"></a>Provider Configuration</h5><p><code>Provider Configuration</code>可以帮助你的app自定义通话界面。比如说，你的app在通话界面显示的名称，还有是否支持视频通话，指定显示在通话UI最后的button图片，点击这个button可以直接跳转到你的app中。</p>
 <h5 id="Actions-Error"><a href="#Actions-Error" class="headerlink" title="Actions Error"></a>Actions Error</h5><p>我们已经知道了在不发生错误的情况下action发生的过程。那么要是在执行过程中发生错误了呢？比如，网络连接发生异常，我们无法建立起通话连接。在这种情况下，action会执行失败。</p>
-<p>!()[/images/callkit/15.png]</p>
+<p><img src="/images/callkit/15.png" alt=""></p>
 <p>其中的过程是这样的：action通知系统发生错误，系统转而通过像通话失败UI来告诉用户通话请求失败。与这些action错误连同一起的是<code>action timeouts</code>。系统的每个action都有其特定的过期时间，这些时间很重要，它们确保了被用户启动的action执行的顺畅。如果action执行超时，provider的代理方法会通知app来正确响应此时的操作。</p>
 <h5 id="System-Restrictions"><a href="#System-Restrictions" class="headerlink" title="System Restrictions"></a>System Restrictions</h5><p>现实中你可能会遇到来电被拒。来电被拒绝的原因可能是用户禁用了你的app并且不再给予授权，可能是你的来电被用户列入黑名单中，可能是用户开启勿扰模式。在这些情况下，API中的competition handler会通知你的app。例如<code>reportNewIncomingCall</code>API会在它的completion handler传入一个error。</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">provider.reportNewIncomingCall(with: <span class="type">UUID</span>(), update: <span class="type">CXCallUpdate</span>()) &#123; error <span class="keyword">in</span></div><div class="line">    <span class="keyword">if</span> <span class="keyword">let</span> incomingCallError = error,</div><div class="line">    incomingCallErrorCode = <span class="type">CXErrorCodeIncomingCallError</span>(rawValue: incomingCallError.code) <span class="keyword">where</span> incomingCallErrorCode == .filteredByDoNotDisturb &#123;</div><div class="line"> <span class="comment">// handle do not disturb</span></div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h5 id="Audio"><a href="#Audio" class="headerlink" title="Audio"></a>Audio</h5><p>由于有<code>CallKit</code>，你的app的通话音频得到了很多好处。其中最大的好处就是你的音频会话的优先级比系统通话和Facetime更高，这意味着系统其它的app不能够打断你的app的音频通话。</p>
 <p>现在以来电流程举例。我们知道当有来电时，app会收到应答action然后执行action。在接收action后是配置音频会话最佳的时间点，这是因为我们知道这时候通话即将变成connected状态。当我们执行应答action后，系统会优先自动为app开启音频会话，然后通过音频会话提供者的代理方法的回调来告诉app发生了什么。</p>
-<p>!()[/images/callkit/16.png]</p>
+<p><img src="/images/callkit/16.png" alt=""></p>
 ]]></content>
     
     <summary type="html">
