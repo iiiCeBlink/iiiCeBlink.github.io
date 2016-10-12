@@ -263,8 +263,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/04/23/庖丁解牛KVO（二）————KVO实现原理/" itemprop="url">
-                  庖丁解牛KVO（二）——KVO实现原理
+                <a class="post-title-link" href="/2016/05/17/H5游戏接入技术小结（上）/" itemprop="url">
+                  H5游戏接入技术小结（上）
                 </a>
               
             
@@ -277,8 +277,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-04-23T16:38:13+08:00" content="2016-04-23">
-              2016-04-23
+            <time itemprop="dateCreated" datetime="2016-05-17T16:17:55+08:00" content="2016-05-17">
+              2016-05-17
             </time>
           </span>
 
@@ -307,8 +307,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/04/23/庖丁解牛KVO（二）————KVO实现原理/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/23/庖丁解牛KVO（二）————KVO实现原理/" itemprop="commentsCount"></span>
+                <a href="/2016/05/17/H5游戏接入技术小结（上）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/17/H5游戏接入技术小结（上）/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -332,16 +332,10 @@
 
       
         
-          <h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。</p>
-<p>KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：</p>
-<blockquote>
-<p>Automatic key-value observing is implemented using a technique called isa-swizzling.</p>
-<p>The is a pointer, as the name suggests, points to the object’s class which maintains a dispatch table. This dispatch table essentially contains pointers to the methods the class implements, among other data.</p>
-<p>When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class. As a result the value of the isa pointer does not necessarily reflect the actual class of the instance.</p>
-<p>You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.</p>
-</blockquote>
+          <h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>这段时间忙着做游戏平台H5游戏的接入，趁着刚做完还热乎劲儿，将其中的技术要点总结下来。H5游戏的接入主要分为两个部分：游戏的下载和游戏对战。本篇博客着重讲述游戏的下载部分，下篇博客将着重讲述H5游戏与app通过JS进行数据交互以及在线对战的技术要点。</p>
+<p>H5游戏资源本质上是由一些目录以及目录下的文件资源组成，要能够在app中运行H5游戏，就是要在<code>WKWebView</code>的浏览器中用HTTPServer搭建本地服务，然后去加载游戏资源根目录下的index.html文件，换句话说index.html文件是游戏的入口文件。
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/04/23/庖丁解牛KVO（二）————KVO实现原理/#more" rel="contents">
+            <a class="btn" href="/2016/05/17/H5游戏接入技术小结（上）/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -392,7 +386,136 @@
             
               
                 
-                <a class="post-title-link" href="/2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/" itemprop="url">
+                <a class="post-title-link" href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/" itemprop="url">
+                  庖丁解牛KVO（二）——KVO实现原理
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-04-23T16:38:13+08:00" content="2016-04-23">
+              2016-04-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/23/庖丁解牛KVO（二）——KVO实现原理/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。</p>
+<p>KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：</p>
+<blockquote>
+<p>Automatic key-value observing is implemented using a technique called isa-swizzling.</p>
+<p>The is a pointer, as the name suggests, points to the object’s class which maintains a dispatch table. This dispatch table essentially contains pointers to the methods the class implements, among other data.</p>
+<p>When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class. As a result the value of the isa pointer does not necessarily reflect the actual class of the instance.</p>
+<p>You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.</p>
+</blockquote>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" itemprop="url">
                   庖丁解牛KVO（一）——KVO概览和使用
                 </a>
               
@@ -436,8 +559,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/" itemprop="commentsCount"></span>
+                <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -465,7 +588,7 @@
 <p>KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。</p>
 <p>在通知机制中，KVO与<code>NSNotification</code>提供的通知机制类似，但是也存在很鲜明的区别。<code>NSNotification</code>是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。<br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/04/13/庖丁解牛KVO（一）————KVO概览和使用/#more" rel="contents">
+            <a class="btn" href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -742,142 +865,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/03/06/YYCache源码学习/" itemprop="url">
-                  YYCache源码学习
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-03-06T14:17:28+08:00" content="2016-03-06">
-              2016-03-06
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/03/06/YYCache源码学习/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/06/YYCache源码学习/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>这篇文章并不是对YYCache的设计思路的范范分析，而是对YYCache代码实现的详细分析。一方面YYCache的设计思路作者已经写得比较清楚了，我就没必要再多此一举了，有兴趣的可以到大神的博客去看<a href="http://blog.ibireme.com/2015/10/26/yycache/">YYCache 设计思路</a>。从代码层面进行分析，一方面是因为很多思路上的东西很虚理解起来大都很容易，但是要能用代码实现却往往不那么轻松，另一方面是因为代码分析可以学习优秀代码的编码风格以及加深对iOS技术上的理解，这样做给自己带来的帮助或许会更多。</p>
-<h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><p>YYCache文件数并不多，主要包含四个文件：</p>
-<blockquote>
-<ul>
-<li>YYCache</li>
-<li>YYDiskCache  </li>
-<li>YYMemoryCache</li>
-<li>YYKVStorage</li>
-</ul>
-</blockquote>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/03/06/YYCache源码学习/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -918,7 +910,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-count">16</span>
               <span class="site-state-item-name">posts</span>
             </a>
           </div>

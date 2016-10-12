@@ -1,0 +1,837 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="概览这段时间忙着做游戏平台H5游戏的接入，趁着刚做完还热乎劲儿，将其中的技术要点总结下来。H5游戏的接入主要分为两个部分：游戏的下载和游戏对战。本篇博客着重讲述游戏的下载部分，下篇博客将着重讲述H5游戏与app通过JS进行数据交互以及在线对战的技术要点。
+H5游戏资源本质上是由一些目录以及目录下的文件资源组成，要能够在app中运行H5游戏，就是要在WKWebView的浏览器中用HTTPServer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="H5游戏接入技术小结（上）">
+<meta property="og:url" content="http://yoursite.com/2016/05/17/H5游戏接入技术小结（上）/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="概览这段时间忙着做游戏平台H5游戏的接入，趁着刚做完还热乎劲儿，将其中的技术要点总结下来。H5游戏的接入主要分为两个部分：游戏的下载和游戏对战。本篇博客着重讲述游戏的下载部分，下篇博客将着重讲述H5游戏与app通过JS进行数据交互以及在线对战的技术要点。
+H5游戏资源本质上是由一些目录以及目录下的文件资源组成，要能够在app中运行H5游戏，就是要在WKWebView的浏览器中用HTTPServer">
+<meta property="og:image" content="http://yoursite.com/images/h5game/1.png">
+<meta property="og:image" content="http://yoursite.com/images/h5game/2.png">
+<meta property="og:updated_time" content="2016-10-12T13:48:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="H5游戏接入技术小结（上）">
+<meta name="twitter:description" content="概览这段时间忙着做游戏平台H5游戏的接入，趁着刚做完还热乎劲儿，将其中的技术要点总结下来。H5游戏的接入主要分为两个部分：游戏的下载和游戏对战。本篇博客着重讲述游戏的下载部分，下篇博客将着重讲述H5游戏与app通过JS进行数据交互以及在线对战的技术要点。
+H5游戏资源本质上是由一些目录以及目录下的文件资源组成，要能够在app中运行H5游戏，就是要在WKWebView的浏览器中用HTTPServer">
+<meta name="twitter:image" content="http://yoursite.com/images/h5game/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: '楼主大大'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/05/17/H5游戏接入技术小结（上）/"/>
+
+  <title> H5游戏接入技术小结（上） | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                H5游戏接入技术小结（上）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-05-17T16:17:55+08:00" content="2016-05-17">
+              2016-05-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/17/H5游戏接入技术小结（上）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/17/H5游戏接入技术小结（上）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>这段时间忙着做游戏平台H5游戏的接入，趁着刚做完还热乎劲儿，将其中的技术要点总结下来。H5游戏的接入主要分为两个部分：游戏的下载和游戏对战。本篇博客着重讲述游戏的下载部分，下篇博客将着重讲述H5游戏与app通过JS进行数据交互以及在线对战的技术要点。</p>
+<p>H5游戏资源本质上是由一些目录以及目录下的文件资源组成，要能够在app中运行H5游戏，就是要在<code>WKWebView</code>的浏览器中用HTTPServer搭建本地服务，然后去加载游戏资源根目录下的index.html文件，换句话说index.html文件是游戏的入口文件。<a id="more"></a>HTTPServer我们采用的是开源的<a href="https://github.com/robbiehanson/CocoaHTTPServer" target="_blank" rel="external">CocoaHTTPServer</a>，关于在app中搭建HTTPServer服务的内容就不多赘述，感兴趣的可以去Github上了解。当然，这也需要H5与iOS开发人员沟通和调试才能真正地在<code>WKWebView</code>中流畅运行。</p>
+<h3 id="游戏资源下载思路"><a href="#游戏资源下载思路" class="headerlink" title="游戏资源下载思路"></a>游戏资源下载思路</h3><p>知道了怎样在app中运行H5游戏，接下来最重要的就是游戏资源的下载。当用户进入一个游戏后，游戏的状态分为三种：未下载，已下载，暂停下载和需要更新。如何判断游戏此时的状态呢？首先我们需要区分每一个游戏，因此，约定将游戏资源的URL进行MD5加密后的字符串作为游戏的唯一标识符。之后，我们创建<code>game.plist</code>文件，文件中存储一个字典，字典的key为游戏的标识符，value为游戏资源的大小。每当一个游戏开始下载，则在plist文件中添加一条记录。检查游戏的状态时，拿游戏的标识符与plist文件中所有的记录进行对比，若未找到相同的记录则状态为未下载。否则，在存储游戏资源的文件夹中查找以游戏标识符命名的.zip压缩包，若找到将其包的大小与plist文件中找到的记录的大小进行比较，若大小不同，则状态为暂停下载，若未找到压缩包且未找到解压后的资源文件夹显示为未下载。否则，状态为已下载。至于更新的状态则需要与服务器端进行沟通和约定，在此就不讲了。</p>
+<p><img src="/images/h5game/1.png" alt=""></p>
+<p>确定完当前进入游戏的状态后，当游戏处于未下载或者暂停的状态时，用户可以点击下载按钮进行下载。下载的过程分为两种情况：未下载开始下载和暂停继续下载。第一种情况的下载过程是这样：在资源下载目录下创建以游戏标识符命名的.zip压缩文件，用<code>NSURLSession</code>创建<code>NSURLSessionDataTask</code>任务负责资源数据的接收，用<code>NSOutputStream</code>负责数据流的写入工作。写入完毕后，关闭<code>NSOutputStream</code>服务，验证资源包数据的完整性。若资源包数据完整，则对其进行解压缩，得到游戏运行的全部资源文件后便可以开始游戏。第二种情况则是在资源下载目录下查找以游戏标识符命名的.zip压缩包，获取包文件的内容大小，将其放入<code>NSURLRequest</code>的HTTP请求头中，剩下的步骤与第一种情况相同。</p>
+<p><img src="/images/h5game/2.png" alt=""></p>
+<h3 id="游戏资源下载的代码实现"><a href="#游戏资源下载的代码实现" class="headerlink" title="游戏资源下载的代码实现"></a>游戏资源下载的代码实现</h3><p>思路厘清了，就需要用代码去实现它。因此，我创建了名为<code>XRDownloadManger</code>的类负责游戏资源的下载工作。为了更好的辅助<code>XRDownloadManager</code>工作，又创建了模型类<code>XRSessionModel</code>来存储游戏资源的相关数据。</p>
+<p>下面列出的是<code>XRSessionModel</code>的类结构：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// XRSessionModel.h</span></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> &#123;</div><div class="line">    DownloadStateStart = <span class="number">0</span>,     <span class="comment">/** 下载中 */</span></div><div class="line">    DownloadStateSuspended,     <span class="comment">/** 下载暂停 */</span></div><div class="line">    DownloadStateCompleted,     <span class="comment">/** 下载完成 */</span></div><div class="line">    DownloadStateFailed         <span class="comment">/** 下载失败 */</span></div><div class="line">&#125;DownloadState;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XRSessionModel</span> : <span class="title">NSObject</span></span></div><div class="line"><span class="comment">/** 流 */</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSOutputStream</span> *stream;</div><div class="line"><span class="comment">/** 下载地址 */</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *url;</div><div class="line"><span class="comment">/** 游戏版本号*/</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *update;</div><div class="line"><span class="comment">/** 获得服务器这次请求 返回数据的总长度 */</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) <span class="built_in">NSInteger</span> totalLength;</div><div class="line"><span class="comment">/** 下载进度 */</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="keyword">void</span>(^progressBlock)(<span class="built_in">NSInteger</span> receivedSize, <span class="built_in">NSInteger</span> expectedSize, <span class="built_in">CGFloat</span> progress);</div><div class="line"><span class="comment">/** 下载状态 */</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="keyword">void</span>(^stateBlock)(DownloadState state);</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p><code>XRDownloadManger</code>采用了单例设计模式，该类主要的工作包括开启任务下载游戏资源并回调下载进度和下载状态，获取资源大小，删除已下载资源，判断游戏资源是否下载完成等。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XRDownloadManager</span> : <span class="title">NSObject</span></span></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  单例</div><div class="line"> *  @return 返回单例对象</div><div class="line"> */</div><div class="line">+ (<span class="keyword">instancetype</span>)sharedInstance;</div><div class="line"><span class="comment">/**</span></div><div class="line"> *  开启任务下载资源</div><div class="line"> *  @param url           下载地址</div><div class="line"> *  @param progressBlock 回调下载进度</div><div class="line"> *  @param stateBlock    下载状态</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)download:(<span class="built_in">NSString</span> *)url update:(<span class="built_in">NSString</span> *)update progress:(<span class="keyword">void</span>(^)(<span class="built_in">NSInteger</span> receivedSize, <span class="built_in">NSInteger</span> expectedSize, <span class="built_in">CGFloat</span> progress))progressBlock state:(<span class="keyword">void</span>(^)(DownloadState state))stateBlock;</div><div class="line"><span class="comment">/**</span></div><div class="line"> *  查询该资源的下载进度值</div><div class="line"> *  @param url 下载地址</div><div class="line"> *  @return 返回下载进度值</div><div class="line"> */</div><div class="line">- (<span class="built_in">CGFloat</span>)progress:(<span class="built_in">NSString</span> *)url;</div><div class="line"><span class="comment">/**</span></div><div class="line"> *  获取该资源总大小</div><div class="line"> *  @param url 下载地址</div><div class="line"> *  @return 资源总大小</div><div class="line"> */</div><div class="line">- (<span class="built_in">NSInteger</span>)fileTotalLength:(<span class="built_in">NSString</span> *)url;</div><div class="line"><span class="comment">/**</span></div><div class="line"> *  判断该资源是否下载完成</div><div class="line"> *  @param url 下载地址</div><div class="line"> *  @return YES: 完成</div><div class="line"> */</div><div class="line">- (<span class="built_in">BOOL</span>)isCompletion:(<span class="built_in">NSString</span> *)url;</div><div class="line"><span class="comment">/**</span></div><div class="line"> *  删除该资源</div><div class="line"> *  @param url 下载地址</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)deleteFile:(<span class="built_in">NSString</span> *)url;</div><div class="line"><span class="comment">/**</span></div><div class="line"> *  清空所有下载资源</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)deleteAllFile;</div><div class="line"><span class="comment">/**</span></div><div class="line"> *  根据下载地址查找该资源路径</div><div class="line"> **/</div><div class="line">- (<span class="built_in">NSString</span> *)getPathWithUrl:(<span class="built_in">NSString</span> *)url;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p><code>XRDownloadManger</code>实现文件中包含两个可变字典类型的成员变量<code>tasks</code>和<code>sessionModels</code>，<code>tasks</code>负责保存所有的下载任务，<code>sessionModels</code>负责保存所有的下载资源的相关信息。<code>tasks</code>和<code>sessionModels</code>均是以url为key，但value分别为<code>NSURLSessionDataTask</code>和<code>XRSessionModel</code>的键值对。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSMutableDictionary</span> *)tasks&#123;</div><div class="line">    <span class="keyword">if</span> (!_tasks) &#123;</div><div class="line">        _tasks = [<span class="built_in">NSMutableDictionary</span> dictionary];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> _tasks;</div><div class="line">&#125;</div><div class="line">- (<span class="built_in">NSMutableDictionary</span> *)sessionModels&#123;</div><div class="line">    <span class="keyword">if</span> (!_sessionModels) &#123;</div><div class="line">        _sessionModels = [<span class="built_in">NSMutableDictionary</span> dictionary];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> _sessionModels;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>download:::</code>方法是负责下载的主要方法。每一个<code>NSURLSessionDataTask</code>对象负责一个游戏资源的下载，并将该对象存入tasks中。当下载完成并验证压缩包内容的完整性后将<code>NSURLSessionDataTask</code>对象移除，当需要暂停的时候，以游戏URL的md5字符串为key拿到<code>NSURLSessionDataTask</code>对象并执行suspend方法将下载任务暂停。暂停后继续下载也与之类似，同样是从tasks中拿到<code>NSURLSessionDataTask</code>对象并执行resume方法继续下载任务。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> *  开启任务下载资源</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)download:(<span class="built_in">NSString</span> *)url update:(<span class="built_in">NSString</span> *)update progress:(<span class="keyword">void</span> (^)(<span class="built_in">NSInteger</span>, <span class="built_in">NSInteger</span>, <span class="built_in">CGFloat</span>))progressBlock state:(<span class="keyword">void</span> (^)(DownloadState))stateBlock</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> (!url) <span class="keyword">return</span>;</div><div class="line">    <span class="comment">// 判断资源是否下载完成</span></div><div class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span> isCompletion:url]) &#123;</div><div class="line">        stateBlock(DownloadStateCompleted);</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 暂停下载</span></div><div class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span>.tasks valueForKey:XRFileName(url)]) &#123;</div><div class="line">        [<span class="keyword">self</span> handle:url];</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 创建缓存目录文件</span></div><div class="line">    [<span class="keyword">self</span> createCacheDirectory];</div><div class="line">   <span class="built_in">NSURLSession</span> *session = [<span class="built_in">NSURLSession</span> sessionWithConfiguration:[<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration] delegate:<span class="keyword">self</span> delegateQueue:[[<span class="built_in">NSOperationQueue</span> alloc] init]];</div><div class="line">    <span class="comment">// 创建流</span></div><div class="line">    <span class="built_in">NSOutputStream</span> *stream = [<span class="built_in">NSOutputStream</span> outputStreamToFileAtPath:XRFileFullpath(url) append:<span class="literal">YES</span>];</div><div class="line">    <span class="comment">// 创建URL请求</span></div><div class="line">    <span class="built_in">NSMutableURLRequest</span> *request = [<span class="built_in">NSMutableURLRequest</span> requestWithURL:[<span class="built_in">NSURL</span> URLWithString:url]];</div><div class="line">    <span class="comment">// 设置下载内容范围的请求头</span></div><div class="line">    <span class="built_in">NSString</span> *range = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"bytes=%zd-"</span>, XRDownloadLength(url)];</div><div class="line">    [request setValue:range forHTTPHeaderField:<span class="string">@"Range"</span>];</div><div class="line">    <span class="comment">// 创建一个Data任务</span></div><div class="line">    <span class="built_in">NSURLSessionDataTask</span> *task = [session dataTaskWithRequest:request];</div><div class="line">    <span class="built_in">NSUInteger</span> taskIdentifier = arc4random() % ((arc4random() % <span class="number">10000</span> + arc4random() % <span class="number">10000</span>));</div><div class="line">    [task setValue:@(taskIdentifier) forKeyPath:<span class="string">@"taskIdentifier"</span>];</div><div class="line">    <span class="comment">// 保存任务</span></div><div class="line">    [<span class="keyword">self</span>.tasks setValue:task forKey:XRFileName(url)];</div><div class="line">    XRSessionModel *sessionModel = [[XRSessionModel alloc] init];</div><div class="line">    sessionModel.url = url;</div><div class="line">    sessionModel.update = update;</div><div class="line">    sessionModel.progressBlock = progressBlock;</div><div class="line">    sessionModel.stateBlock = stateBlock;</div><div class="line">    sessionModel.stream = stream;</div><div class="line">    [<span class="keyword">self</span>.sessionModels setValue:sessionModel forKey:@(task.taskIdentifier).stringValue];</div><div class="line">    [<span class="keyword">self</span> start:url];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  判断该文件是否下载完成</div><div class="line"> */</div><div class="line">- (<span class="built_in">BOOL</span>)isCompletion:(<span class="built_in">NSString</span> *)url&#123;</div><div class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span> fileTotalLength:url] &amp;&amp; XRDownloadLength(url) == [<span class="keyword">self</span> fileTotalLength:url]) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">YES</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 若暂停则继续下载，若正在下载则暂停下载</span></div><div class="line">- (<span class="keyword">void</span>)handle:(<span class="built_in">NSString</span> *)url&#123;</div><div class="line">    <span class="built_in">NSURLSessionDataTask</span> *task = [<span class="keyword">self</span> getTask:url];</div><div class="line">    <span class="keyword">if</span> (task.state == <span class="built_in">NSURLSessionTaskStateRunning</span>) &#123;</div><div class="line">        [<span class="keyword">self</span> pause:url];</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        [<span class="keyword">self</span> start:url];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  根据url获得对应的下载任务</div><div class="line"> */</div><div class="line">- (<span class="built_in">NSURLSessionDataTask</span> *)getTask:(<span class="built_in">NSString</span> *)url&#123;</div><div class="line">    <span class="keyword">return</span> (<span class="built_in">NSURLSessionDataTask</span> *)[<span class="keyword">self</span>.tasks valueForKey:XRFileName(url)];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  开始下载</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)start:(<span class="built_in">NSString</span> *)url&#123;</div><div class="line">    <span class="built_in">NSURLSessionDataTask</span> *task = [<span class="keyword">self</span> getTask:url];</div><div class="line">    [task resume];</div><div class="line">    [<span class="keyword">self</span> getSessionModel:task.taskIdentifier].stateBlock(DownloadStateStart);</div><div class="line">    <span class="comment">// 删除暂停状态</span></div><div class="line">    <span class="built_in">NSFileManager</span> *fileManager = [<span class="built_in">NSFileManager</span> defaultManager];</div><div class="line">    <span class="keyword">if</span> ([fileManager fileExistsAtPath:XRPausePath]) &#123;</div><div class="line">        <span class="built_in">NSMutableDictionary</span> *dict = [<span class="built_in">NSMutableDictionary</span> dictionaryWithContentsOfFile:XRPausePath];</div><div class="line">        [dict removeObjectForKey:XRFileName(url)];</div><div class="line">        [dict writeToFile:XRPausePath atomically:<span class="literal">YES</span>];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  暂停下载</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)pause:(<span class="built_in">NSString</span> *)url&#123;</div><div class="line">    <span class="built_in">NSURLSessionDataTask</span> *task = [<span class="keyword">self</span> getTask:url];</div><div class="line">    [task suspend];</div><div class="line">    [<span class="keyword">self</span> getSessionModel:task.taskIdentifier].stateBlock(DownloadStateSuspended);</div><div class="line">    <span class="comment">// 存储暂停状态</span></div><div class="line">    <span class="built_in">NSMutableDictionary</span> *dict = [<span class="built_in">NSMutableDictionary</span> dictionaryWithContentsOfFile:XRPausePath];</div><div class="line">    <span class="keyword">if</span> (dict == <span class="literal">nil</span>) dict = [<span class="built_in">NSMutableDictionary</span> dictionary];</div><div class="line">    dict[XRFileName(url)] = <span class="string">@"pause"</span>;</div><div class="line">    [dict writeToFile:XRPausePath atomically:<span class="literal">YES</span>];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  根据url获取对应的下载信息模型</div><div class="line"> */</div><div class="line">- (XRSessionModel *)getSessionModel:(<span class="built_in">NSUInteger</span>)taskIdentifier&#123;</div><div class="line">    <span class="keyword">return</span> (XRSessionModel *)[<span class="keyword">self</span>.sessionModels valueForKey:@(taskIdentifier).stringValue];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  查询该资源的下载进度值</div><div class="line"> */</div><div class="line">- (<span class="built_in">CGFloat</span>)progress:(<span class="built_in">NSString</span> *)url&#123;</div><div class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> fileTotalLength:url] == <span class="number">0</span> ? <span class="number">0.0</span> : <span class="number">1.0</span> * XRDownloadLength(url) /  [<span class="keyword">self</span> fileTotalLength:url];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  获取该资源总大小</div><div class="line"> */</div><div class="line">- (<span class="built_in">NSInteger</span>)fileTotalLength:(<span class="built_in">NSString</span> *)url&#123;</div><div class="line">    <span class="keyword">return</span> [[<span class="built_in">NSDictionary</span> dictionaryWithContentsOfFile:XRTotalLengthFullpath][XRFileName(url)] integerValue];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  根据下载地址查找该资源路径</div><div class="line"> **/</div><div class="line">-(<span class="built_in">NSString</span> *)getPathWithUrl:(<span class="built_in">NSString</span> *)url&#123;</div><div class="line">    <span class="built_in">NSString</span> *str = XRFileFullpath(url);</div><div class="line">    <span class="keyword">return</span> str;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>整个网络数据的请求和处理都依赖于<code>NSURLSessionDataDelegate</code>的代理方法。请求得到反馈时根据response拿到游戏资源的完整大小，并将其写入到<code>game.plist</code>文件中。当客户端开始接收服务器返回的数据时，打开<code>NSOutputStream</code>并开始将接收到的数据写入到指定路径下的文件中，并返回下载进度。接收数据完成后对数据包进行解压缩，解压成功则将写入流关闭并将下载任务从tasks中移除。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#pragma mark - NSURLSessionDataDelegate</span></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 接收到响应</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)URLSession:(<span class="built_in">NSURLSession</span> *)session dataTask:(<span class="built_in">NSURLSessionDataTask</span> *)dataTask didReceiveResponse:(<span class="built_in">NSHTTPURLResponse</span> *)response completionHandler:(<span class="keyword">void</span> (^)(<span class="built_in">NSURLSessionResponseDisposition</span>))completionHandler&#123;</div><div class="line">    XRSessionModel *sessionModel = [<span class="keyword">self</span> getSessionModel:dataTask.taskIdentifier];</div><div class="line">    <span class="comment">// 打开流</span></div><div class="line">    [sessionModel.stream open];</div><div class="line">    <span class="comment">// 获得服务器这次请求 返回数据的总长度</span></div><div class="line">    <span class="built_in">NSInteger</span> totalLength = [response.allHeaderFields[<span class="string">@"Content-Length"</span>] integerValue] + XRDownloadLength(sessionModel.url);</div><div class="line">    sessionModel.totalLength = totalLength;</div><div class="line">    <span class="comment">// 存储总长度</span></div><div class="line">    <span class="built_in">NSMutableDictionary</span> *dict = [<span class="built_in">NSMutableDictionary</span> dictionaryWithContentsOfFile:XRTotalLengthFullpath];</div><div class="line">    <span class="keyword">if</span> (dict == <span class="literal">nil</span>) dict = [<span class="built_in">NSMutableDictionary</span> dictionary];</div><div class="line">    dict[XRFileName(sessionModel.url)] = @(totalLength);</div><div class="line">    [dict writeToFile:XRTotalLengthFullpath atomically:<span class="literal">YES</span>];</div><div class="line">    <span class="comment">// 接收这个请求，允许接收服务器的数据</span></div><div class="line">    completionHandler(<span class="built_in">NSURLSessionResponseAllow</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 接收到服务器返回的数据</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)URLSession:(<span class="built_in">NSURLSession</span> *)session dataTask:(<span class="built_in">NSURLSessionDataTask</span> *)dataTask didReceiveData:(<span class="built_in">NSData</span> *)data&#123;</div><div class="line">    XRSessionModel *sessionModel = [<span class="keyword">self</span> getSessionModel:dataTask.taskIdentifier];</div><div class="line">    <span class="comment">// 写入数据</span></div><div class="line">    [sessionModel.stream write:data.bytes maxLength:data.length];</div><div class="line">    <span class="comment">// 下载进度</span></div><div class="line">    <span class="built_in">NSUInteger</span> receivedSize = XRDownloadLength(sessionModel.url);</div><div class="line">    <span class="built_in">NSUInteger</span> expectedSize = sessionModel.totalLength;</div><div class="line">    <span class="built_in">CGFloat</span> progress = <span class="number">1.0</span> * receivedSize / expectedSize;</div><div class="line">    sessionModel.progressBlock(receivedSize, expectedSize, progress);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 请求完毕（成功|失败）</div><div class="line"> */</div><div class="line">- (<span class="keyword">void</span>)URLSession:(<span class="built_in">NSURLSession</span> *)session task:(<span class="built_in">NSURLSessionTask</span> *)task didCompleteWithError:(<span class="built_in">NSError</span> *)error&#123;</div><div class="line">    XRSessionModel *sessionModel = [<span class="keyword">self</span> getSessionModel:task.taskIdentifier];</div><div class="line">    <span class="keyword">if</span> (!sessionModel) <span class="keyword">return</span>;</div><div class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span> isCompletion:sessionModel.url]) &#123;</div><div class="line">        <span class="comment">//  下载完成，解压缩</span></div><div class="line">        [SSZipArchive unzipFileAtPath:XRFileFullpath(sessionModel.url) toDestination:XRWebDirectory];</div><div class="line">        sessionModel.stateBlock(DownloadStateCompleted);</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (error)&#123;</div><div class="line">        <span class="comment">// 下载失败</span></div><div class="line">        sessionModel.stateBlock(DownloadStateFailed);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 关闭流</span></div><div class="line">    [sessionModel.stream close];</div><div class="line">    sessionModel.stream = <span class="literal">nil</span>;</div><div class="line">    <span class="comment">// 清除任务</span></div><div class="line">    [<span class="keyword">self</span>.tasks removeObjectForKey:XRFileName(sessionModel.url)];</div><div class="line">    [<span class="keyword">self</span>.sessionModels removeObjectForKey:@(task.taskIdentifier).stringValue];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>以上是对下载过程实现的大概描述，其中的实现细节还有很多值得推敲和优化的地方，接下来会发时间去优化并会将优化后的效果总结出来。如果其中有错误的地方欢迎指正。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一下吧~</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/alipay.png" alt="zakariyyaSv Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/" rel="next" title="庖丁解牛KVO（二）——KVO实现原理">
+                <i class="fa fa-chevron-left"></i> 庖丁解牛KVO（二）——KVO实现原理
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/18/iOS 10 UICollectionView新特性小记/" rel="prev" title="iOS 10 UICollectionView新特性小记">
+                iOS 10 UICollectionView新特性小记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/17/H5游戏接入技术小结（上）/"
+     data-title="H5游戏接入技术小结（上）"
+     data-content=""
+     data-url="http://yoursite.com/2016/05/17/H5游戏接入技术小结（上）/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/17/H5游戏接入技术小结（上）/"
+           data-title="H5游戏接入技术小结（上）" data-url="http://yoursite.com/2016/05/17/H5游戏接入技术小结（上）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概览"><span class="nav-number">1.</span> <span class="nav-text">概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#游戏资源下载思路"><span class="nav-number">2.</span> <span class="nav-text">游戏资源下载思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#游戏资源下载的代码实现"><span class="nav-number">3.</span> <span class="nav-text">游戏资源下载的代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>

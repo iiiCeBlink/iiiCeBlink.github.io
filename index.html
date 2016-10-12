@@ -333,7 +333,7 @@
       
         
           <p>最近在研究AFNetworking源码的过程中碰到了很多处地方用到了<code>weakSelf</code>和<code>strongSelf</code>。依据自己之前的理解，正常情况下使用<code>weakSelf</code>是为了避免发生循环引用，而使用<code>strongSelf</code>是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。</p>
-<h3 id="self的本质"><a href="#self的本质" class="headerlink" title="self的本质"></a>self的本质</h3><p>self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是const Class self，在实例方法中self是Person const* self（以Person类举例）。事实确实如此么？来验证一下。<br>
+<h3 id="self的本质"><a href="#self的本质" class="headerlink" title="self的本质"></a>self的本质</h3><p>self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是<code>const Class self</code>，在实例方法中self是<code>Person const* self</code>（以Person类举例）。事实确实如此么？来验证一下。<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/08/24/拆解ARC下的self/#more" rel="contents">
               Read more &raquo;
@@ -868,7 +868,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -909,7 +909,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-count">16</span>
               <span class="site-state-item-name">posts</span>
             </a>
           </div>
