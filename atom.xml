@@ -289,14 +289,14 @@
     <link href="http://yoursite.com/2016/07/18/iOS%2010%20UICollectionView%E6%96%B0%E7%89%B9%E6%80%A7%E5%B0%8F%E8%AE%B0/"/>
     <id>http://yoursite.com/2016/07/18/iOS 10 UICollectionView新特性小记/</id>
     <published>2016-07-18T06:36:31.000Z</published>
-    <updated>2016-09-23T16:07:52.000Z</updated>
+    <updated>2016-10-14T12:42:10.000Z</updated>
     
     <content type="html"><![CDATA[<h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p>iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：</p>
 <blockquote>
 <ul>
 <li>平滑的滑动体验</li>
 <li>self-sizing改进</li>
-<li>interactive reording</li>
+<li>interactive reordering</li>
 </ul>
 </blockquote>
 <h3 id="平滑的滑动体验"><a href="#平滑的滑动体验" class="headerlink" title="平滑的滑动体验"></a>平滑的滑动体验</h3><h5 id="1-卡顿的原因"><a href="#1-卡顿的原因" class="headerlink" title="1.卡顿的原因"></a>1.卡顿的原因</h5><a id="more"></a>
@@ -377,7 +377,7 @@
 &lt;ul&gt;
 &lt;li&gt;平滑的滑动体验&lt;/li&gt;
 &lt;li&gt;self-sizing改进&lt;/li&gt;
-&lt;li&gt;interactive reording&lt;/li&gt;
+&lt;li&gt;interactive reordering&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/blockquote&gt;
 &lt;h3 id=&quot;平滑的滑动体验&quot;&gt;&lt;a href=&quot;#平滑的滑动体验&quot; class=&quot;headerlink&quot; title=&quot;平滑的滑动体验&quot;&gt;&lt;/a&gt;平滑的滑动体验&lt;/h3&gt;&lt;h5 id=&quot;1-卡顿的原因&quot;&gt;&lt;a href=&quot;#1-卡顿的原因&quot; class=&quot;headerlink&quot; title=&quot;1.卡顿的原因&quot;&gt;&lt;/a&gt;1.卡顿的原因&lt;/h5&gt;
