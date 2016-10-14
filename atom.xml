@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2016-10-10T13:14:53.000Z</updated>
+  <updated>2016-10-14T16:26:12.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,39 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>iOS APP中调用私有方法</title>
+    <link href="http://yoursite.com/2016/09/04/iOS%20APP%E4%B8%AD%E8%B0%83%E7%94%A8%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95/"/>
+    <id>http://yoursite.com/2016/09/04/iOS APP中调用私有方法/</id>
+    <published>2016-09-04T15:08:43.000Z</published>
+    <updated>2016-10-14T16:26:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>得益于苹果封闭的生态系统，iOS平台才能如此优秀和健壮。然而，对于开发者而言，开源永远是最受欢迎的，闭源只会让开发者束手束脚。我们在开发的过程中可能会遇到有需求需要依赖于iOS私有API，但由于iOS的封闭，我们无法直接调用私有方法，这让人很是头疼。那有没有方法能让我们在不越狱的情况下去调用私有API呢？<br><a id="more"></a><br>答案是有的，并且就我目前了解而言有两种方案。为了更好地解释这两种方案，我写了个小Demo。在Demo中只有一个类<code>TestClass</code>。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// TestClass.h</span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">TestClass</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)publicMethod;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// TestClass.m</span></div><div class="line"><span class="meta">#import <span class="meta-string">"TestClass.h"</span></span></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">TestClass</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)publicMethod&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Call public method"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)privateMethod&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"call private method"</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>在这个类中有两个方法：<code>publicMethod</code>和<code>privateMethod</code>。其中，<code>publicMethod</code>是公有方法，<code>privateMethod</code>是私有方法。如果我们直接在实例中调用<code>privateMethod</code>，会得到”No visible @interface for ‘TestClass’ declares the selector ‘privateMethod’”的错误。因此，直接调用私有方法肯定是行不通的，那就换个套路试试。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// main.m</span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">"TestClass.h"</span></span></div><div class="line"></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</div><div class="line">    <span class="keyword">@autoreleasepool</span> &#123;</div><div class="line">        TestClass *obj = [[TestClass alloc] init];</div><div class="line">        [obj privateMethod];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="利用runtime特性"><a href="#利用runtime特性" class="headerlink" title="利用runtime特性"></a>利用runtime特性</h3><p>这里需要用到两个runtime相关的方法：<code>respondsToSelector:</code>和<code>performSelector:</code>。前者是用来判断类或者类实例是否实现了某个方法选择子，后者是调用指定的方法选择子。</p>
+<p>这里提一下<code>performSelector:</code>与直接调用方法之间的区别。由于OC的运行时，使得程序可以在运行时动态添加方法，因此在编译时动态方法是不存在的。为了能调用动态方法，就有了<code>performSelector:</code>。因此两者的区别就在于直接调用方法在编译期是会自动校验公有方法，若不存在该方法则编译无法通过，而调用<code>performSelector:</code>则在编译期不会进行校验，它会在运行时去查找并调用指定方法，若运行时找不到指定方法则会发生崩溃。考虑到程序的健壮性，会先调用<code>respondsToSelector:</code>检查方法是否存在。</p>
+<p>采用该方案去调用<code>privateMethod</code>的正确做法应该是这样：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// main.m</span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">"TestClass.h"</span></span></div><div class="line"></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</div><div class="line">    <span class="keyword">@autoreleasepool</span> &#123;</div><div class="line">        TestClass *obj = [[TestClass alloc] init];</div><div class="line">        <span class="keyword">if</span> ([obj respondsToSelector:<span class="keyword">@selector</span>(privateMethod)]) &#123;</div><div class="line">            [obj performSelector:<span class="keyword">@selector</span>(privateMethod)];</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="匿名category欺骗编译器"><a href="#匿名category欺骗编译器" class="headerlink" title="匿名category欺骗编译器"></a>匿名category欺骗编译器</h3><p>从刚才的方案中我们知道，直接调用方法会失败是因为编译器自动校验失败而报错，那如果我们欺骗编译器让它误以为校验的方法存在呢？这倒是个不错的思路，第二个方案也就由此产生。那就是写一个匿名的category声明想要调用的私有方法，这样编译器就会认为该方法存在而不会报错。</p>
+<p>采用该方案调用<code>privateMethod</code>的正确姿势是：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// main.m</span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">"TestClass.h"</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">TestClass</span>()</span></div><div class="line">- (<span class="keyword">void</span>)privateMethod;</div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</div><div class="line">    <span class="keyword">@autoreleasepool</span> &#123;</div><div class="line">        TestClass *obj = [[TestClass alloc] init];</div><div class="line">        [obj privateMethod];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>理论上这两种方法均可以实现对私有API的调用，不过，我更推荐第一种方案。因为第一种方案在程序的健壮性上会更好，并且书写上也更简单。友情提醒，可以在程序中调用私有API并不意味着就可以通过苹果的审核。其实，我也不太懂苹果的审核机制，有些APP调用私有API可以通过审核，有些APP则会被拒绝，所以，要想通过审核往往是要碰运气的。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h3&gt;&lt;p&gt;得益于苹果封闭的生态系统，iOS平台才能如此优秀和健壮。然而，对于开发者而言，开源永远是最受欢迎的，闭源只会让开发者束手束脚。我们在开发的过程中可能会遇到有需求需要依赖于iOS私有API，但由于iOS的封闭，我们无法直接调用私有方法，这让人很是头疼。那有没有方法能让我们在不越狱的情况下去调用私有API呢？&lt;br&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>拆解ARC下的self</title>
