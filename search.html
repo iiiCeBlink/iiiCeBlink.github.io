@@ -4,6 +4,23 @@
   
     
     <entry>
+      <title><![CDATA[iOS OpenDev踩坑记录]]></title>
+      <url>http://yoursite.com/2016/09/20/iOS%20OpenDev%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近在研究iOS逆向工程，需要用到iOSDev工具，心想那就安装呗，多大点事儿。谁知道自己有点too young too simple，原以为下载完安装包再按步骤点点点就完了，谁知道到了最后一步，它给我来个安装失败。真是没有一点点防备啊，于是各种找办法解决安装问题，最终解决了，于是，决定把解决的过程写下来，方便以后回顾。<br><a id="more"></a><br><img src="/images/openDev/1.png" alt=""></p>
+<h3 id="安装必要的软件包和工具"><a href="#安装必要的软件包和工具" class="headerlink" title="安装必要的软件包和工具"></a>安装必要的软件包和工具</h3><p>1.安装MacPort。在<a href="https://www.macports.org/install.php" target="_blank" rel="external">官网</a>根据当前电脑系统下载对应的pkg安装包，然后进行安装。安装过程会很慢，建议全程开启VPN会好一些。</p>
+<p>2.更新MacPort。在命令行中输入命令进行更新：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo port -v selfupdate</div></pre></td></tr></table></figure></p>
+<p>3.安装dpkg工具。在命令行中输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo port <span class="_">-f</span> install dpkg</div></pre></td></tr></table></figure></p>
+<p>4.安装theos工具。首先，打开环境变量配置文件，并添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">export</span> THEOS=/opt/theos</div></pre></td></tr></table></figure>
+<p>然后，下载兼容iOSOpenDev版本的theos，在命令行中输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> -b stableversion https://github.com/haorenqq/theos/ <span class="variable">$THEOS</span></div></pre></td></tr></table></figure></p>
+<h3 id="修改Xcode目录文件"><a href="#修改Xcode目录文件" class="headerlink" title="修改Xcode目录文件"></a>修改Xcode目录文件</h3><p>由于Xcode更新后的文件位置移动，自Xcode 7开始不支持dylib，我们需要把缺失的文件放到指定目录下。我们可以从<a href="https://github.com/heardrwt/RHObjectiveBeagle/tree/master/libBeagle/Xcode%20iOS%20dylib%20Support" target="_blank" rel="external">这里</a>下载所需要的四个文件。然后，在”/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/“路径下创建名为”Specifications”文件夹，并将名为”iPhoneOSPackageTypes.xcspec”和”iPhoneOSProductTypes.xcspec”的文件复制到该文件夹下。同样的操作发生在”/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode”路径下，只不过是将名为”iPhone Simulator PackageTypes.xcspec”和”iPhone Simulator ProductTypes.xcspec”的文件放到”Specifications”文件夹下。之后，在”/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer”路径下创建名为”usr”的文件夹，并且在该文件夹内创建名为”bin”的文件夹。</p>
+<h3 id="安装iOSOpenDev，运行脚本"><a href="#安装iOSOpenDev，运行脚本" class="headerlink" title="安装iOSOpenDev，运行脚本"></a>安装iOSOpenDev，运行脚本</h3><p>打开iOSOpenDev安装包进行安装，结果肯定又是安装失败。别急，继续按照步骤走。进入/opt目录下，我们会发现有名为iosopendevsetup的文件夹，并且在该文件夹下的bin目录下有一个叫iod-setup的脚本，在命令行中输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo ./iod-setup base</div><div class="line">sudo ./iod-setup sdk -sdk iphoneos</div></pre></td></tr></table></figure></p>
+<p>之后，一切就OK了。重启Xcode，新建项目，就可以看到iOSOpenDev了。</p>
+<p><img src="/images/openDev/2.png" alt=""></p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[iOS APP砸壳小记]]></title>
       <url>http://yoursite.com/2016/09/18/iOS%20APP%E7%A0%B8%E5%A3%B3%E5%B0%8F%E8%AE%B0/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在逆向工程中，砸壳是很必要并且不可缺少的一个步骤。所谓“壳”，其实就是苹果给应用加密的一层保护，我们只要是从APP Store上下载的APP都是带壳的。带壳的APP是无法进行class-dump以及hook等操作，因此，需要对APP进行砸壳。接下来，我以微信为例来进行砸壳。<br><a id="more"></a></p>

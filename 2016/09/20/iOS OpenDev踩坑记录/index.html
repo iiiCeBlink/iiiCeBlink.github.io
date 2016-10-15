@@ -86,19 +86,19 @@
 
 
 
-<meta name="description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
+<meta name="description" content="前言最近在研究iOS逆向工程，需要用到iOSDev工具，心想那就安装呗，多大点事儿。谁知道自己有点too young too simple，原以为下载完安装包再按步骤点点点就完了，谁知道到了最后一步，它给我来个安装失败。真是没有一点点防备啊，于是各种找办法解决安装问题，最终解决了，于是，决定把解决的过程写下来，方便以后回顾。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="runtime对containsString方法的小改进">
-<meta property="og:url" content="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/index.html">
+<meta property="og:title" content="iOS OpenDev踩坑记录">
+<meta property="og:url" content="http://yoursite.com/2016/09/20/iOS OpenDev踩坑记录/index.html">
 <meta property="og:site_name" content="zakariyyaSv's Blog">
-<meta property="og:description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
-<meta property="og:updated_time" content="2016-09-19T15:24:32.000Z">
+<meta property="og:description" content="前言最近在研究iOS逆向工程，需要用到iOSDev工具，心想那就安装呗，多大点事儿。谁知道自己有点too young too simple，原以为下载完安装包再按步骤点点点就完了，谁知道到了最后一步，它给我来个安装失败。真是没有一点点防备啊，于是各种找办法解决安装问题，最终解决了，于是，决定把解决的过程写下来，方便以后回顾。">
+<meta property="og:image" content="http://yoursite.com/images/openDev/1.png">
+<meta property="og:image" content="http://yoursite.com/images/openDev/2.png">
+<meta property="og:updated_time" content="2016-10-15T14:53:23.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="runtime对containsString方法的小改进">
-<meta name="twitter:description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
+<meta name="twitter:title" content="iOS OpenDev踩坑记录">
+<meta name="twitter:description" content="前言最近在研究iOS逆向工程，需要用到iOSDev工具，心想那就安装呗，多大点事儿。谁知道自己有点too young too simple，原以为下载完安装包再按步骤点点点就完了，谁知道到了最后一步，它给我来个安装失败。真是没有一点点防备啊，于是各种找办法解决安装问题，最终解决了，于是，决定把解决的过程写下来，方便以后回顾。">
+<meta name="twitter:image" content="http://yoursite.com/images/openDev/1.png">
 
 
 
@@ -119,9 +119,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/09/20/iOS OpenDev踩坑记录/"/>
 
-  <title> runtime对containsString方法的小改进 | zakariyyaSv's Blog </title>
+  <title> iOS OpenDev踩坑记录 | zakariyyaSv's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -264,7 +264,7 @@
             
             
               
-                runtime对containsString方法的小改进
+                iOS OpenDev踩坑记录
               
             
           </h1>
@@ -276,8 +276,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-02-20T23:23:28+08:00" content="2016-02-20">
-              2016-02-20
+            <time itemprop="dateCreated" datetime="2016-09-20T22:52:58+08:00" content="2016-09-20">
+              2016-09-20
             </time>
           </span>
 
@@ -290,8 +290,8 @@
               <span class="post-meta-item-text">In</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS</span>
+                  <a href="/categories/iOS逆向工程/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS逆向工程</span>
                   </a>
                 </span>
 
@@ -306,8 +306,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/02/20/runtime对containsString方法的小改进/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/20/runtime对containsString方法的小改进/" itemprop="commentsCount"></span>
+                <a href="/2016/09/20/iOS OpenDev踩坑记录/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/20/iOS OpenDev踩坑记录/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -330,11 +330,17 @@
       
 
       
-        <p>最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是<code>NSstring</code>的<code>containsString:</code>方法在从中作梗。看了一下文档发现原来<code>containsString:</code>是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替<code>containsString:</code>方法：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> isContained = [aString rangeOfString:bString].location != <span class="built_in">NSNotFound</span></div></pre></td></tr></table></figure>
-<p>不过，我觉得要在每一个需要调用<code>containsString:</code>方法写一遍有点麻烦，把适配的代码抽离出来写入一个方法倒是可以，但我还是觉得有点麻烦，毕竟懒癌患者。于是，我想到了用runtime运行时机制动态添加<code>containsString:</code>方法就可以一劳永逸了。<br>实现的原理也很简单，在iOS 7下判断<code>NSString</code>中是否存在<code>containsString:</code>实例方法，若不存在，则动态添加该方法。这样就不用再需要调用<code>containsString:</code>实例方法去判断了。原理很简单，代码也很简单，还是很符合我这个懒癌患者的口味的嘛。<br><a id="more"></a></p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// NSString+containsStringCategory.h</span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#if __IPHONE_OS_VERSION_MIN_REQUIRED <span class="meta-string">&lt; 80000</span></span></div><div class="line"></div><div class="line">@interface NSString (containsStringCategory)</div><div class="line"></div><div class="line">- (BOOL)containsString:(NSString *)str;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">#endif</div></pre></td></tr></table></figure>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// NSString+containsStringCategory.m</span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">"NSString+containsStringCategory.h"</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#if __IPHONE_OS_VERSION_MIN_REQUIRED <span class="meta-string">&lt; 80000</span></span></div><div class="line"></div><div class="line">@implementation NSString (containsStringCategory)</div><div class="line"></div><div class="line">+ (void)load&#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line">        [self zs_modernizeSelector:@selector(containsString:) withSelector:@selector(zs_containsString:)];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)zs_modernizeSelector:(SEL)originSelector withSelector:(SEL)newSelector&#123;</div><div class="line">    if (![NSString instancesRespondToSelector:originSelector]) &#123;</div><div class="line">        Method newMethod = 	class_getInstanceMethod(self, newSelector);</div><div class="line">        class_addMethod(self, originSelector, method_getImplementation(newMethod), method_getTypeEncoding(newMethod));</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (BOOL)zs_containsString:(NSString *)str&#123;</div><div class="line">    return [self rangeOfString:str].location != NSNotFound;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">#endif</div></pre></td></tr></table></figure>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近在研究iOS逆向工程，需要用到iOSDev工具，心想那就安装呗，多大点事儿。谁知道自己有点too young too simple，原以为下载完安装包再按步骤点点点就完了，谁知道到了最后一步，它给我来个安装失败。真是没有一点点防备啊，于是各种找办法解决安装问题，最终解决了，于是，决定把解决的过程写下来，方便以后回顾。<br><a id="more"></a><br><img src="/images/openDev/1.png" alt=""></p>
+<h3 id="安装必要的软件包和工具"><a href="#安装必要的软件包和工具" class="headerlink" title="安装必要的软件包和工具"></a>安装必要的软件包和工具</h3><p>1.安装MacPort。在<a href="https://www.macports.org/install.php" target="_blank" rel="external">官网</a>根据当前电脑系统下载对应的pkg安装包，然后进行安装。安装过程会很慢，建议全程开启VPN会好一些。</p>
+<p>2.更新MacPort。在命令行中输入命令进行更新：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo port -v selfupdate</div></pre></td></tr></table></figure></p>
+<p>3.安装dpkg工具。在命令行中输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo port <span class="_">-f</span> install dpkg</div></pre></td></tr></table></figure></p>
+<p>4.安装theos工具。首先，打开环境变量配置文件，并添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">export</span> THEOS=/opt/theos</div></pre></td></tr></table></figure>
+<p>然后，下载兼容iOSOpenDev版本的theos，在命令行中输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> -b stableversion https://github.com/haorenqq/theos/ <span class="variable">$THEOS</span></div></pre></td></tr></table></figure></p>
+<h3 id="修改Xcode目录文件"><a href="#修改Xcode目录文件" class="headerlink" title="修改Xcode目录文件"></a>修改Xcode目录文件</h3><p>由于Xcode更新后的文件位置移动，自Xcode 7开始不支持dylib，我们需要把缺失的文件放到指定目录下。我们可以从<a href="https://github.com/heardrwt/RHObjectiveBeagle/tree/master/libBeagle/Xcode%20iOS%20dylib%20Support" target="_blank" rel="external">这里</a>下载所需要的四个文件。然后，在”/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/“路径下创建名为”Specifications”文件夹，并将名为”iPhoneOSPackageTypes.xcspec”和”iPhoneOSProductTypes.xcspec”的文件复制到该文件夹下。同样的操作发生在”/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode”路径下，只不过是将名为”iPhone Simulator PackageTypes.xcspec”和”iPhone Simulator ProductTypes.xcspec”的文件放到”Specifications”文件夹下。之后，在”/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer”路径下创建名为”usr”的文件夹，并且在该文件夹内创建名为”bin”的文件夹。</p>
+<h3 id="安装iOSOpenDev，运行脚本"><a href="#安装iOSOpenDev，运行脚本" class="headerlink" title="安装iOSOpenDev，运行脚本"></a>安装iOSOpenDev，运行脚本</h3><p>打开iOSOpenDev安装包进行安装，结果肯定又是安装失败。别急，继续按照步骤走。进入/opt目录下，我们会发现有名为iosopendevsetup的文件夹，并且在该文件夹下的bin目录下有一个叫iod-setup的脚本，在命令行中输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo ./iod-setup base</div><div class="line">sudo ./iod-setup sdk -sdk iphoneos</div></pre></td></tr></table></figure></p>
+<p>之后，一切就OK了。重启Xcode，新建项目，就可以看到iOSOpenDev了。</p>
+<p><img src="/images/openDev/2.png" alt=""></p>
 
       
     </div>
@@ -376,17 +382,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/01/20/UIImage加载图片方式的研究/" rel="next" title="UIImage加载图片方式的研究">
-                <i class="fa fa-chevron-left"></i> UIImage加载图片方式的研究
+              <a href="/2016/09/18/iOS APP砸壳小记/" rel="next" title="iOS APP砸壳小记">
+                <i class="fa fa-chevron-left"></i> iOS APP砸壳小记
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/03/06/YYCache源码学习/" rel="prev" title="YYCache源码学习">
-                YYCache源码学习 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -401,10 +403,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/02/20/runtime对containsString方法的小改进/"
-     data-title="runtime对containsString方法的小改进"
+        <div class="ds-share flat" data-thread-key="2016/09/20/iOS OpenDev踩坑记录/"
+     data-title="iOS OpenDev踩坑记录"
      data-content=""
-     data-url="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/">
+     data-url="http://yoursite.com/2016/09/20/iOS OpenDev踩坑记录/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -431,8 +433,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/02/20/runtime对containsString方法的小改进/"
-           data-title="runtime对containsString方法的小改进" data-url="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/">
+      <div class="ds-thread" data-thread-key="2016/09/20/iOS OpenDev踩坑记录/"
+           data-title="iOS OpenDev踩坑记录" data-url="http://yoursite.com/2016/09/20/iOS OpenDev踩坑记录/">
       </div>
     
   </div>
@@ -534,7 +536,7 @@
               
             
             
-              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装必要的软件包和工具"><span class="nav-number">2.</span> <span class="nav-text">安装必要的软件包和工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改Xcode目录文件"><span class="nav-number">3.</span> <span class="nav-text">修改Xcode目录文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装iOSOpenDev，运行脚本"><span class="nav-number">4.</span> <span class="nav-text">安装iOSOpenDev，运行脚本</span></a></li></ol></div>
             
           </div>
         </section>
