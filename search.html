@@ -4,6 +4,47 @@
   
     
     <entry>
+      <title><![CDATA[iOS APP砸壳小记]]></title>
+      <url>http://yoursite.com/2016/09/18/iOS%20APP%E7%A0%B8%E5%A3%B3%E5%B0%8F%E8%AE%B0/</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在逆向工程中，砸壳是很必要并且不可缺少的一个步骤。所谓“壳”，其实就是苹果给应用加密的一层保护，我们只要是从APP Store上下载的APP都是带壳的。带壳的APP是无法进行class-dump以及hook等操作，因此，需要对APP进行砸壳。接下来，我以微信为例来进行砸壳。<br><a id="more"></a></p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>要能顺利完成砸壳需要四样东西：</p>
+<blockquote>
+<ul>
+<li>电脑</li>
+<li>越狱后的iOS设备</li>
+<li>AppStore下载的待砸壳的app</li>
+<li>Clutch砸壳工具</li>
+</ul>
+</blockquote>
+<p>我用的是MacBookPro+iPad（iOS 9.3.1）组合，微信直接从AppStore上下载即可。Clutch则是到其<a href="https://github.com/KJCracks/Clutch/releases" target="_blank" rel="external">github地址</a>下载最新的release版本。</p>
+<h3 id="iOS设备上导入Clutch"><a href="#iOS设备上导入Clutch" class="headerlink" title="iOS设备上导入Clutch"></a>iOS设备上导入Clutch</h3><p>要能对微信进行砸壳，就要把砸壳工具Clutch导入到iPad的指定目录下。熟悉Linux的人肯定对ssh不陌生，我这里采用的也是通过ssh将clutch工具传输到iPad上。默认情况下，iOS设备是不支持ssh，所以，我们要在Cydia商店中下载名叫“OpenSSH”的插件。</p>
+<p><img src="/images/clutchApp/1.png" alt=""></p>
+<p>安装好后，要能让电脑和iPad进行ssh连接，就要保证两者在同一个无线网络下。然后，查看iPad在wifi下的IP地址。</p>
+<p><img src="/images/clutchApp/2.png" alt=""></p>
+<p>在电脑的命令行中输入：scp “Clutch路径” root@”iOS设备IP地址”:/usr/bin。回车后会提示输入密码，iOS设备默认的密码是“alpine”。</p>
+<p><img src="/images/clutchApp/3.png" alt=""></p>
+<h3 id="砸壳"><a href="#砸壳" class="headerlink" title="砸壳"></a>砸壳</h3><p>成功将Clutch工具包导入到/usr/bin目录下后，在命令行中ssh连接iPad，密码与之前的一致。连接成功后切换到/usr/bin目录下。</p>
+<p><img src="/images/clutchApp/4.png" alt=""></p>
+<p>输入命令：Clutch -i。Clutch是工具包的名字，如果你的包名是Clutch-2.0.4，则输入Clutch-2.0.4 -i。该命令获取的是所有已安装的APP。</p>
+<p><img src="/images/clutchApp/5.png" alt=""></p>
+<p>根据获取的结果，输入命令：Clutch -d(或者b) 33。该命令是对指定的app进行砸壳，d代表输出ipa包，b代表输出二进制文件，33是微信在安装列表中的编号。砸壳成功后，它会将砸壳后的ipa包的路径显示出来，比如我这里砸壳后的ipa包路径是：/private/var/mobile/Documents/Dumped/com.tencent.xin-iOS7.0-(Clutch-2.0.4).ipa。</p>
+<p><img src="/images/clutchApp/6.png" alt=""></p>
+<p>最后通过ssh将砸壳后的ipa传到电脑上。</p>
+<p><img src="/images/clutchApp/7.png" alt=""></p>
+<h3 id="class-dump导出头文件"><a href="#class-dump导出头文件" class="headerlink" title="class-dump导出头文件"></a>class-dump导出头文件</h3><p>class-dump可以从Mach-O的section中还原出OC代码的头文件。我们可以从这个<a href="http://stevenygard.com/projects/class-dump/" target="_blank" rel="external">地址</a>获取下载地址。我下载的是<a href="http://stevenygard.com/download/class-dump-3.5.dmg" target="_blank" rel="external">class-dump-3.5.dmg</a>，双击安装，将可执行文件移动到/usr/bin目录下，这样就可以在命令行下直接调用”class-dump”命令了。在移动的过程中遇到一点小问题，操作被拒绝，研究了一下才知道自OS X 10.11 EI Capitan开始，系统启用了SIP(System Integrity Protection)，导致root用户也没有权限修改/usr/bin目录。解决方案是重启电脑按住command+R进入recovery模式，在命令行中输入”csrutil disable”并重启。</p>
+<p>移动文件成功后，打开命令行，输入：class-dump，命令行会显示class-dump用法。</p>
+<p><img src="/images/clutchApp/8.png" alt=""></p>
+<p>将先前砸完壳的微信ipa包解压，在Pyload文件夹下操作WeChat.app显示包内容，得到如下目录：</p>
+<p><img src="/images/clutchApp/9.png" alt=""></p>
+<p>在命令行中输入：class-dump -H “Mach-O文件路径” -O “输出头文件的路径”。若不加-O，则会在当前目录下输出头文件。</p>
+<p><img src="/images/clutchApp/10.png" alt=""></p>
+<p>输完命令回车后，在输出目录下就可以看到一大堆头文件。</p>
+<p><img src="/images/clutchApp/11.png" alt=""></p>
+<p>砸壳过程到此就全部完成了。</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[iOS APP中调用私有方法]]></title>
       <url>http://yoursite.com/2016/09/04/iOS%20APP%E4%B8%AD%E8%B0%83%E7%94%A8%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>得益于苹果封闭的生态系统，iOS平台才能如此优秀和健壮。然而，对于开发者而言，开源永远是最受欢迎的，闭源只会让开发者束手束脚。我们在开发的过程中可能会遇到有需求需要依赖于iOS私有API，但由于iOS的封闭，我们无法直接调用私有方法，这让人很是头疼。那有没有方法能让我们在不越狱的情况下去调用私有API呢？<br><a id="more"></a><br>答案是有的，并且就我目前了解而言有两种方案。为了更好地解释这两种方案，我写了个小Demo。在Demo中只有一个类<code>TestClass</code>。</p>
