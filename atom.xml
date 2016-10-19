@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2016-10-15T14:53:23.000Z</updated>
+  <updated>2016-10-19T13:07:14.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,68 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>dumpdecrypted砸壳记录</title>
+    <link href="http://yoursite.com/2016/10/03/dumpdecrypted%E7%A0%B8%E5%A3%B3%E8%AE%B0%E5%BD%95/"/>
+    <id>http://yoursite.com/2016/10/03/dumpdecrypted砸壳记录/</id>
+    <published>2016-10-03T02:14:41.000Z</published>
+    <updated>2016-10-19T13:07:14.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前一直采用Clutch对ipa包进行砸壳，后来发现Clutch在某些iOS版本下砸壳会失效，故而放弃了Clutch而采用dumpdecrypted。本篇文章就是记录用dumpdecrypted砸壳的过程以及其中的注意点。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>砸壳需要的东西：</p>
+<blockquote>
+<ul>
+<li><a href="https://github.com/stefanesser/dumpdecrypted" target="_blank" rel="external">dumpdecrypted</a></li>
+<li>越狱的iOS设备</li>
+<li>OpenSSH（Cydia）</li>
+<li>iFile（Cydia）</li>
+<li>Cycript（Cydia）</li>
+<li>XCode</li>
+<li>Command Line Tools</li>
+</ul>
+</blockquote>
+<a id="more"></a>
+<h3 id="编译dumpdecrypted"><a href="#编译dumpdecrypted" class="headerlink" title="编译dumpdecrypted"></a>编译dumpdecrypted</h3><p>从Github上下载最新的dumpdecrypted源码，在命令行中进入进入源码的目录下，输入make进行编译生成dumpdecrypted.dylib。这里有一点需要注意，编译时依赖的XCode的SDK版本需要兼容iOS越狱设备的系统版本。比如，我当前XCode的SDK版本是iOS10.0，而我的越狱设备的系统版本是iOS 9.3.1，按照当前配置编译出来的dumpdecrypted.dylib在设备上进行砸壳是会失败的。那如何知道Xcode当前的SDK版本呢？我们可以在命令行中输入命令：xcrun –sdk iphoneos –show-sdk-path。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk</div></pre></td></tr></table></figure></p>
+<p>若SDK版本不兼容怎么办？可以在<a href="https://developer.apple.com/download/more/" target="_blank" rel="external">这里</a>下载过往版本的SDK。把下载的SDK替换当前SDK的位置，当然别忘了把当前SDK备份，或者用xcode-select命令指定一个活动的XCode。最后再make，成功，输出如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ make</div><div class="line">`xcrun --sdk iphoneos --find gcc` -Os  -Wimplicit -isysroot `xcrun --sdk iphoneos --show-sdk-path` -F`xcrun --sdk iphoneos --show-sdk-path`/System/Library/Frameworks -F`xcrun --sdk iphoneos --show-sdk-path`/System/Library/PrivateFrameworks -arch armv7 -arch armv7s -arch arm64 -c -o dumpdecrypted.o dumpdecrypted.c</div><div class="line">`xcrun --sdk iphoneos --find gcc` -Os  -Wimplicit -isysroot `xcrun --sdk iphoneos --show-sdk-path` -F`xcrun --sdk iphoneos --show-sdk-path`/System/Library/Frameworks -F`xcrun --sdk iphoneos --show-sdk-path`/System/Library/PrivateFrameworks -arch armv7 -arch armv7s -arch arm64 -dynamiclib -o dumpdecrypted.dylib dumpdecrypted.o</div><div class="line"></div><div class="line">$ ls</div><div class="line">Makefile          dumpdecrypted.c          dumpdecrypted.o</div><div class="line">README               dumpdecrypted.dylib</div></pre></td></tr></table></figure></p>
+<p>再看目录下多出了两个文件：<code>dumpdecrypted.o</code>和<code>dumpdecrypted.dylib</code>，其中<code>dumpdecrypted.dylib</code>是我们用来砸壳的锤子。</p>
+<h3 id="配置iOS越狱设备"><a href="#配置iOS越狱设备" class="headerlink" title="配置iOS越狱设备"></a>配置iOS越狱设备</h3><p>进入越狱设备的Cydia中下载安装<strong><em>OpenSSH</em></strong>、<strong><em>Cycript</em></strong>、<strong><em>iFile</em></strong>。在越狱设备上安装上需要砸壳的APP。</p>
+<p>在Mac命令行中通过SSH连接iOS设备，这里必须确保iOS设备与mac电脑处于同一无线网络下，OpenSSH的默认密码是alpine。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// 192.168.xx.xx为iOS设备在wifi下的IP地址</div><div class="line">ssh root@192.168.xx.xx</div></pre></td></tr></table></figure>
+<p>连接成功后，需要找到砸壳APP的bundle id了，我们可以把除砸壳APP的所有其他APP关掉，在命令行中输入：ps -e命令。以微信为例，我们可以看到微信的bundle id为WeChat。</p>
+<p><img src="/images/dumpdecrypted/1.png" alt=""></p>
+<p>知道了bundle id，我们就可以通过Cycript找到微信Documents路径，在命令行中输入：cycript -p WeChat，再输入：NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES)[0]。</p>
+<p><img src="/images/dumpdecrypted/2.png" alt=""></p>
+<p>记下bundle id和Documents的路径，后面会用到。</p>
+<h3 id="砸壳"><a href="#砸壳" class="headerlink" title="砸壳"></a>砸壳</h3><p>将dumpdecrypted.dylib拷贝到iOS越狱设备上，这里可以用像iTools、iFunBox工具，我用的是scp命令将其传到iOS设备。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ scp dumpdecrypted.dylib root@192.168.xxx.xxx:/usr/lib</div><div class="line">root@192.168.xxx.xxx<span class="string">'s password:</span></div><div class="line">dumpdecrypted.dylib                           100%   81KB  81.0KB/</div></pre></td></tr></table></figure></p>
+<p>注意，若你的设备是iOS 9.3以上，可能会在后面的砸壳中出现错误，所以，推荐将<code>dumpdecrypted.dylib</code>传到/usr/lib目录下。</p>
+<p>在命令行中切换到/usr/lib目录下，输入砸壳命令：DYLD_INSERT_LIBRARIES=”dumpdecrypted.dylib的路径” “app的Bundle id的路径”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">root<span class="comment"># DYLD_INSERT_LIBRARIES=dumpdecrypted.dylib /var/mobile/Applications/EBBD26E9-DDBA-481E-9403-84D159436889/HBGC.app/HBGC</span></div><div class="line">mach-o decryption dumper</div><div class="line"></div><div class="line">DISCLAIMER: This tool is only meant <span class="keyword">for</span> security research purposes, not <span class="keyword">for</span> application crackers.</div><div class="line"></div><div class="line">[+] detected 32bit ARM binary <span class="keyword">in</span> memory.</div><div class="line">[+] offset to cryptid found: @0xd5a90(from 0xd5000) = a90</div><div class="line">[+] Found encrypted data at address 00004000 of length 3047424 bytes - <span class="built_in">type</span> 1.</div><div class="line">[+] Opening /private/var/mobile/Applications/EBBD26E9-DDBA-481E-9403-84D159436889/HBGC.app/HBGC <span class="keyword">for</span> reading.</div><div class="line">[+] Reading header</div><div class="line">[+] Detecting header <span class="built_in">type</span></div><div class="line">[+] Executable is a FAT image - searching <span class="keyword">for</span> right architecture</div><div class="line">[+] Correct arch is at offset 16384 <span class="keyword">in</span> the file</div><div class="line">[+] Opening HBGC.decrypted <span class="keyword">for</span> writing.</div><div class="line">[+] Copying the not encrypted start of the file</div><div class="line">[+] Dumping the decrypted data into the file</div><div class="line">[+] Copying the not encrypted remainder of the file</div><div class="line">[+] Setting the LC_ENCRYPTION_INFO-&gt;cryptid to 0 at offset 4a90</div><div class="line">[+] Closing original file</div><div class="line">[+] Closing dump file</div></pre></td></tr></table></figure>
+<p>到此，砸壳工作就完成了。这里还有一点说明，StoreApp对沙盒以外的其他大多数目录没有写权限。除了/usr/lib外，你还可以把dumpdecrypted.dylib拷贝到Documents目录下操作。如果不放在Documents目录下，可能会出现下面的问题：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">FunMaker-5: /var/mobile/Containers/Data/Application/D41C4343-63AA-4BFF-904B-2146128611EE/Documents root<span class="comment"># mv dumpdecrypted.dylib /var/tmp/</span></div><div class="line">FunMaker-5: /var/mobile/Containers/Data/Application/D41C4343-63AA-4BFF-904B-2146128611EE/Documents root<span class="comment"># cd /var/tmp</span></div><div class="line">FunMaker-5:/var/tmp root<span class="comment"># DYLD_INSERT_LIBRARIES=dumpdecrypted.dylib /private/var/mobile/Containers/Bundle/Application/03B61840-2349-4559-B28E-0E2C6541F879/TargetApp.app/TargetApp</span></div><div class="line">dyld: could not load inserted library <span class="string">'dumpdecrypted.dylib'</span> because no suitable image found.  Did find:</div><div class="line">        dumpdecrypted.dylib: <span class="built_in">stat</span>() failed with errno=1</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h3&gt;&lt;p&gt;之前一直采用Clutch对ipa包进行砸壳，后来发现Clutch在某些iOS版本下砸壳会失效，故而放弃了Clutch而采用dumpdecrypted。本篇文章就是记录用dumpdecrypted砸壳的过程以及其中的注意点。&lt;/p&gt;
+&lt;h3 id=&quot;准备工作&quot;&gt;&lt;a href=&quot;#准备工作&quot; class=&quot;headerlink&quot; title=&quot;准备工作&quot;&gt;&lt;/a&gt;准备工作&lt;/h3&gt;&lt;p&gt;砸壳需要的东西：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/stefanesser/dumpdecrypted&quot;&gt;dumpdecrypted&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;越狱的iOS设备&lt;/li&gt;
+&lt;li&gt;OpenSSH（Cydia）&lt;/li&gt;
+&lt;li&gt;iFile（Cydia）&lt;/li&gt;
+&lt;li&gt;Cycript（Cydia）&lt;/li&gt;
+&lt;li&gt;XCode&lt;/li&gt;
+&lt;li&gt;Command Line Tools&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>iOS OpenDev踩坑记录</title>
@@ -1165,50 +1227,6 @@
     <summary type="html">
     
       &lt;p&gt;&lt;code&gt;UIButton&lt;/code&gt;是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变&lt;code&gt;UIButton&lt;/code&gt;中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用&lt;code&gt;imageEdgeInsets&lt;/code&gt;、&lt;code&gt;titleEdgeInsets&lt;/code&gt;组合的方案以及&lt;code&gt;imageRectContentRet&lt;/code&gt;、&lt;code&gt;titleRectContentRect&lt;/code&gt;组合的方案。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>UICollectionView Layout学习笔记</title>
-    <link href="http://yoursite.com/2015/12/17/UICollectionView%20Layout%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
-    <id>http://yoursite.com/2015/12/17/UICollectionView Layout学习笔记/</id>
-    <published>2015-12-17T03:25:04.000Z</published>
-    <updated>2016-09-21T12:12:07.000Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p><code>UITableView</code>是<code>UIKit</code>视图类中极其重要的一个，我们与之打交道的频率也是极高的。在UIKit视图类中有一个类与<code>UITableview</code>共享一套API设计，但相比<code>UITableview</code>，该类的视图布局更加灵活复杂。这就是<code>UICollectionView</code>。本篇的着重点也放在<code>UICollectionView</code>灵活强大的视图布局上面。<br><a id="more"></a></p>
-<h3 id="UICollectionView结构"><a href="#UICollectionView结构" class="headerlink" title="UICollectionView结构"></a>UICollectionView结构</h3><p>UICollectionView的结构可以分为两部分来看：</p>
-<blockquote>
-<p>从数据和驱动角度能看到两部分：</p>
-<ul>
-<li>dataSource：数据源，遵循UICollectionViewDataSource协议，负责向collectionView提供数据以及视图。同时，还负责处理cells、supplementary views的创建和配置工作。</li>
-<li>delegate：代理，遵循UICollectionViewDelegate协议，负责管理item视图的选中高亮状态以及item的点击事件。</li>
-</ul>
-<p>从视图角度能看到三部分：</p>
-<ul>
-<li>Cells：在collection view的可视范围内负责展示数据的内容</li>
-<li>Supplementary views：也是负责展示数据，但与cells不同，它无法被用户选中，类似于UITableview的header和footer</li>
-<li>Decoration views：属于装饰性view，不与collectionView的数据产生联系，更像是另一类的Supplementary views。<br>注：Supplementary views、Decoration views必须是UICollectionReusableView的子类。</li>
-</ul>
-</blockquote>
-<p>这些组成结构与<code>UITableview</code>比较，并没有太大的区别，真正的区别在于<code>UICollectionLayout</code>，这不仅是本篇笔记的着重点，也是UICollectionView的精髓。</p>
-<h3 id="UICollectionViewLayout"><a href="#UICollectionViewLayout" class="headerlink" title="UICollectionViewLayout"></a>UICollectionViewLayout</h3><p><code>UICollectionViewLayout</code>是一个抽象类，因此我们必须要继承并实现相关方法才能使用它。Layout的工作是确定Cells、supplementary views、decoration views在collectionView的bounds中的位置并且当collectionView需要时传递相关信息。collectionView根据传递过来的相关layout信息对views进行相应和处理以便能让他们在屏幕上能够显示出来。</p>
-<p><code>UICollectionViewFlowLayout</code>是苹果提供的继承于<code>UICollectionViewLayout</code>的子类。当你对layout的需求不是很复杂的时候，<code>UICollectionViewFlowLayout</code>往往可以满足需求，并且实现也比较简单，这里就不再讨论，感兴趣的可以查阅相关文档<a href="https://developer.apple.com/reference/uikit/uicollectionviewflowlayout" target="_blank" rel="external">UICollectionviewFlowLayout</a>。</p>
-<p>自定义继承<code>UICollectionViewLayout</code>的子类必须重写以下方法：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)prepareLayout</div><div class="line"><span class="comment">// collectionView会在第一次布局向layout对象发送第一条消息时调用一次该方法，或者在invalidaed方法调用后在访问布局信息之前会再次调用该方法，重写该方法做些初始化的工作以确保layout实例的正确，子类重写必须调用super方法。</span></div><div class="line"></div><div class="line">- (<span class="built_in">CGSize</span>)collectionViewContentSize</div><div class="line"><span class="comment">// 返回collectionView的内容的尺寸。collectionView对它的content并不知情，因此需要提供滚动区域大小才能正确滚动。滚动区域大小必须包含内容的总大小，包括supplementary views 和 decoration views。</span></div><div class="line"></div><div class="line">- (<span class="built_in">NSArray</span> *)layoutAttributesForElementsInRect:(<span class="built_in">CGRect</span>)rect</div><div class="line"> <span class="comment">// 返回rect中的所有的元素的布局属性，其是包含UICollectionViewLayoutAttributes的数组。该方法传递一个自身坐标系的矩形进来，这个矩形也就是collectionView的bounds。这个方法涉及到所有类型的视图，即包括cells、supplementary views和decoration views。</span></div><div class="line"></div><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span>  *)layoutAttributesForItemAtIndexPath:(<span class="built_in">NSIndexPath</span> )indexPath</div><div class="line"><span class="comment">// 返回对应于indexPath的位置的cell的布局属性。有时候collectionView会为某个特殊的视图向layout对象请求布局属性。你可以通过调用 +[UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:]这个方法，然后根据 index path 修改属性。为了得到需要显示在这个 index path 内的数据，你可能需要访问 collection view 的数据源。到目前为止，至少确保设置了 frame 属性，除非你所有的 cell 都位于彼此上方。</span></div><div class="line"></div><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span>  *)layoutAttributesForSupplementaryViewOfKind:(<span class="built_in">NSString</span> )kind atIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</div><div class="line"><span class="comment">// （可选）返回对应于indexPath的位置的追加视图的布局属性，如果没有追加视图可不重载</span></div><div class="line"></div><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span> * )layoutAttributesForDecorationViewOfKind:(<span class="built_in">NSString</span>)decorationViewKind atIndexPath:(<span class="built_in">NSIndexPath</span> )indexPath</div><div class="line"><span class="comment">// （可选）返回对应于indexPath的位置的装饰视图的布局属性，如果没有装饰视图可不重载</span></div><div class="line"></div><div class="line">- (<span class="built_in">BOOL</span>)shouldInvalidateLayoutForBoundsChange:(<span class="built_in">CGRect</span>)newBounds</div><div class="line"><span class="comment">// 当collectionView的bounds发生改变时，是否应该重新布局。如果YES则在边界变化（一般是scroll到其他地方）时，将重新计算需要的布局信息。</span></div></pre></td></tr></table></figure></p>
-<p>这些方法提供了collectionView在屏幕上展示内容所需要的基本布局信息。当collectionView中的数据发生改变并且items需要执行增删操作，collectionView会要求layout对象去更新layout布局信息。任何item被添加、移除、移动都必须更新它的布局信息来对应它正确的位置信息。当item被移动时，collectionView调用上面的方法来重新获取item更新后的布局属性，而item被插入或删除时，collectionView会调用不同的方法，也就是你需要重写的方法：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span> *)initialLayoutAttributesForAppearingItemAtIndexPath:(<span class="built_in">NSIndexPath</span> *)itemIndexPath;</div><div class="line"></div><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span> *)initialLayoutAttributesForAppearingDecorationElementOfKind:(<span class="built_in">NSString</span> *)elementKind atIndexPath:(<span class="built_in">NSIndexPath</span> *)decorationIndexPath;</div><div class="line"></div><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span> *)initialLayoutAttributesForAppearingSupplementaryElementOfKind:(<span class="built_in">NSString</span> *)elementKind atIndexPath:(<span class="built_in">NSIndexPath</span> *)elementIndexPath;</div><div class="line"></div><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span> *)finalLayoutAttributesForDisappearingItemAtIndexPath:(<span class="built_in">NSIndexPath</span> *)itemIndexPath;</div><div class="line"></div><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span> *)finalLayoutAttributesForDisappearingDecorationElementOfKind:(<span class="built_in">NSString</span> *)elementKind atIndexPath:(<span class="built_in">NSIndexPath</span> *)decorationIndexPath;</div><div class="line"></div><div class="line">- (<span class="built_in">UICollectionViewLayoutAttributes</span> *)finalLayoutAttributesForDisappearingSupplementaryElementOfKind:(<span class="built_in">NSString</span> *)elementKind atIndexPath:(<span class="built_in">NSIndexPath</span> *)elementIndexPath;</div></pre></td></tr></table></figure></p>
-<p>此外，你也可以重写<code>prepareForCollectionViewUpdates:</code>方法来处理任何与布局相关的预处理操作，重写<code>finalizeCollectionViewUpdates</code>方法来添加动画或者实现布局相关的任务。</p>
-<h3 id="UICollectionViewLayoutAttributes"><a href="#UICollectionViewLayoutAttributes" class="headerlink" title="UICollectionViewLayoutAttributes"></a>UICollectionViewLayoutAttributes</h3><p>重写的方法中涉及到一个类<code>UICollectionViewLayoutAttributes</code>。该类负责管理collectionView中给定item的布局相关的属性。当collectionView需要时，便会要求layout对象创建该类的实例对象。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">UICollectionViewLayoutAttributes</span> : <span class="title">NSObject</span> &lt;<span class="title">NSCopying</span>, <span class="title">UIDynamicItem</span>&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGRect</span> frame;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGPoint</span> center;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGSize</span> size;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CATransform3D</span> transform3D;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGRect</span> bounds <span class="built_in">NS_AVAILABLE_IOS</span>(<span class="number">7</span>_0);</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGAffineTransform</span> transform <span class="built_in">NS_AVAILABLE_IOS</span>(<span class="number">7</span>_0);</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGFloat</span> alpha;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">NSInteger</span> zIndex; <span class="comment">// default is 0</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">getter</span>=isHidden) <span class="built_in">BOOL</span> hidden; <span class="comment">// As an optimization, UICollectionView might not create a view for items whose hidden attribute is YES</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSIndexPath</span> *indexPath;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">readonly</span>) <span class="built_in">UICollectionElementCategory</span> representedElementCategory;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">readonly</span>, <span class="keyword">nullable</span>) <span class="built_in">NSString</span> *representedElementKind; <span class="comment">// nil when representedElementCategory is UICollectionElementCategoryCell</span></div><div class="line"></div><div class="line">+ (<span class="keyword">instancetype</span>)layoutAttributesForCellWithIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath;</div><div class="line">+ (<span class="keyword">instancetype</span>)layoutAttributesForSupplementaryViewOfKind:(<span class="built_in">NSString</span> *)elementKind withIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath;</div><div class="line">+ (<span class="keyword">instancetype</span>)layoutAttributesForDecorationViewOfKind:(<span class="built_in">NSString</span> *)decorationViewKind withIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure></p>
-<p>可以看出，<code>UICollectionViewLayoutAttributes</code>包含了Cell的frame、center、bounds等布局信息。</p>
-<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>相比于<code>UITableview</code>，<code>UICollectionview</code>布局的复杂程度要更复杂得多，能很好的写出一个很不容易。正是由于<code>UICollectionview</code>布局的复杂性，我们更需要多去使用，在使用的过程中才能更好的理解<code>UICollectionview</code>本身这套API，也更好地学习苹果设计类的灵活性。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;概览&quot;&gt;&lt;a href=&quot;#概览&quot; class=&quot;headerlink&quot; title=&quot;概览&quot;&gt;&lt;/a&gt;概览&lt;/h3&gt;&lt;p&gt;&lt;code&gt;UITableView&lt;/code&gt;是&lt;code&gt;UIKit&lt;/code&gt;视图类中极其重要的一个，我们与之打交道的频率也是极高的。在UIKit视图类中有一个类与&lt;code&gt;UITableview&lt;/code&gt;共享一套API设计，但相比&lt;code&gt;UITableview&lt;/code&gt;，该类的视图布局更加灵活复杂。这就是&lt;code&gt;UICollectionView&lt;/code&gt;。本篇的着重点也放在&lt;code&gt;UICollectionView&lt;/code&gt;灵活强大的视图布局上面。&lt;br&gt;
     
     </summary>
     
