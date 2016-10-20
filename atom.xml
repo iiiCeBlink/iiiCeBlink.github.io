@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2016-10-19T13:07:14.000Z</updated>
+  <updated>2016-10-20T12:29:53.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,108 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CFNetwork学习笔记（一）</title>
+    <link href="http://yoursite.com/2016/10/05/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>http://yoursite.com/2016/10/05/CFNetwork学习笔记（一）/</id>
+    <published>2016-10-05T04:36:19.000Z</published>
+    <updated>2016-10-20T12:29:53.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。<br><a id="more"></a><br>CFNetwork是CoreServices框架中的框架，它提供了网络协议的抽象接口。这些抽象接口让直行各种网络任务变得简单起来，比如：支持与BSDScoket，HTTP，FTP服务工作，使用SSL或TLS建立加密连接，支持DNS主机解析等。</p>
+<p>CFNetwork是底层且高性能的框架，它能够让我们在协议栈上进行精细地控制。它是对BSDSocket的扩展，BSDSocket是提供对象简化任务如与FTP或者HTTP服务器通信或者解析DNS主机的标准socket抽象API。</p>
+<p>由于CFNetwork依赖于BSDsocket，如NSURL等的一些Cocoa类是依赖于CFNetwork实现的。此外，在视图中展示web内容的WebKit也同样依赖于CFNetwork。CFNetwork和其他一些框架的层级结构如下图所示。</p>
+<p><img src="/images/CFNetwork/1.png" alt=""></p>
+<h3 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h3><p>CFNetwork继承了BSDSocket的一些优势。它集成了run-loop，如果你的应用是基于run-loop，你可以在不实现线程的情况下使用网络协议。CFNetwork也包含很多对象来帮助你不需要自己实现细节就可以使用网络协议。例如，你可以不用实现CFFTP的API而使用FTP协议。如果你理解网络协议，需要底层控制但又不想自己实现它们，这时候CFNetwork可能是很好的选择。</p>
+<p>使用CFNetwork相比于Foundation级别的网络API有很多优势。CFNetwork更侧重于网络协议，而Foundation级别的网络API更侧重于数据的访问，如通过HTTP或FTP协议传输数据。Foundation级别的网络API确实提供了一些配置项，但CFNetwork提供的更多。</p>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>在学习CFNetwork的API之前，我们必须首先理解其API的整体结构。CFNetwork依赖于两大框架：CoreFoundation，CFSocket和CFStream。理解这两个框架对于使用CFNetwork非常有必要。</p>
+<h5 id="CFSocket-API"><a href="#CFSocket-API" class="headerlink" title="CFSocket API"></a>CFSocket API</h5><p>Socket是网络通信的最基础层。Socket的作用于电话插口有些类似，它允许你与另一个Socket进行连接（不管是本地的还是网络的）并且向另一个Socket发送数据。</p>
+<p>最常见的socket是BSDsocket，CFSocket是对BSDsocket的抽象。CFSocket提供了几乎所有BSDsocket服务并且它将socket集成到run-loop中。CFSocket不仅仅局限于基于流服务的socket（如TCP），它可以处理任何类型的socket。</p>
+<p>你可以用<code>CFSocketCreate</code>或<code>CFSocketCreateWithNative</code>函数创建CFSocket对象。然后，你可以用<code>CFSocketCreateRunLoopSource</code>函数创建run-loop源，并通过<code>CFRunLoopAddSource</code>函数添加到runloop中。之后，你可以用<code>CFSocketSendData</code>函数发送消息。当CFSocket对象接收到消息时，CFSocket函数回调会触发。</p>
+<h5 id="CFStream-API"><a href="#CFStream-API" class="headerlink" title="CFStream API"></a>CFStream API</h5><p>读写流提供了在各种媒介之间交换数据的简单方式。你可以为内存，文件或网络上的数据创建流，并且可以在不一次性将所有数据加载进内存的情况下使用流。</p>
+<p>流实际上是在通信路径上的连续的字节传输序列。流是单向通道，因此要进行双向通信就需要输入流和输出流。除了文件流以外，你不能在流中搜索查找，一旦流数据被接收或发送，那么就无法再从流中重新获取。</p>
+<p>CFStream API提供两个新的CFType类型的对象：CFReadStream和CFWriteStream。CFStream构建在CFSocket的上层同时也是CFHTTP和CFFTP的底层。它们的层级关系见下图。</p>
+<p><img src="/images/CFNetwork/2.png" alt=""></p>
+<p>你可以像操作UNIX文件描述子的形式来使用读写流。首先，你需要指定流的类型（内存，文件或Socket）并设置可选项来实例化流对象。接着，你打开流进行读和写操作。当流对象已经存在，你可以通过访问它的属性来获取流对象的相关信息。当你不再需要它时，关闭并释放它。</p>
+<p>CFStream的读写方法会一直处于挂起或者阻塞状态直到有数据可读或可写的时候才会结束挂起或阻塞状态。为了避免读写过程中流可能处于阻塞状态，使用异步方法并将其编排进runloop中。当读写操作不会被阻塞时回调方法会触发。</p>
+<p>另外，CFStream本身还支持SSL（Secure Sockets Layer）协议。你可以将流的SSL信息存储进一个字典对象中，然后将字典对象传给stream对象的kCFStreamPropertySSLSettings属性。</p>
+<h3 id="CFNetwork-API概览"><a href="#CFNetwork-API概览" class="headerlink" title="CFNetwork API概览"></a>CFNetwork API概览</h3><p>为了理解CFNetwork框架，你需要熟悉构成该框架的各个组成块。CFNetwork框架可以被拆解成几个独立的API，每个独立的API覆盖了不同的网络协议。这些API可以组合使用也可以单独使用，这取决于你自己的需求。</p>
+<h5 id="CFFTP-API"><a href="#CFFTP-API" class="headerlink" title="CFFTP API"></a>CFFTP API</h5><p>CFFTP可以帮我们与FTP服务器进行通信。使用CFFTP API可以创建读流负责下载，创建写流负责上传。使用读写流可以实现如下功能：</p>
+<blockquote>
+<ul>
+<li>从FTP服务器上下载文件</li>
+<li>向FTP服务器上传文件</li>
+<li>从FTP服务器下载目录列表</li>
+<li>在FTP服务器上创建目录</li>
+</ul>
+</blockquote>
+<p>FTP流对象工作原理与其他的CFNetwork流一样。例如，你可以通过调用<code>CFReadStreamCreateWithFTPURL</code>方法创建FTP读流，然后，调用<code>CFReadStreamGetError</code>在任何时候检查流的状态。</p>
+<p>通过设定FTP流的属性，你可以自定义流来满足你的需求。例如，如果流连接的服务器要求用户名和密码，你需要设置正确的属性这样流对象才能正确地进行工作。</p>
+<p>CFFTP流可以使用同步或异步。创建完读流对象后，为了打开指定的FTP服务器的连接需要调用<code>CFReadStreamOpen</code>方法。为了从流中读取数据，可以调用<code>CFReadStreamRead</code>方法。<code>CFReadStreamRead</code>方法将FTP服务器的输出填充到缓冲区中。</p>
+<h6 id="CFHTTP-API"><a href="#CFHTTP-API" class="headerlink" title="CFHTTP API"></a>CFHTTP API</h6><p>为了能收发HTTP消息，我们使用CFHTTP API。正如CFFTP是对FTP协议的抽象，CFHTTP是对HTTP协议的抽象。</p>
+<p>HTTP协议是在客户端和服务端之间的请求/响应协议。客户端创建请求消息，进程会将消息转换成的原始字节流，这是序列化的过程。这一步是非常必要的，否则消息无法被发送出去。然后，消息会被发送到服务器上。服务器响应会发送带有字符串的消息给客户端。如果有必要这一步操作会重复多次。</p>
+<p>要创建HTTP请求消息，你需要指定下面的属性：</p>
+<blockquote>
+<ul>
+<li>请求方法，如OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT</li>
+<li>URL</li>
+<li>HTTP版本，如1.0或1.1</li>
+<li>消息头，通过指定头部名字和它的值，如User-Agent ： MyUserAgent</li>
+<li>消息体</li>
+</ul>
+</blockquote>
+<p>消息构建完后再对其进行序列化。序列化完成后，请求会像下面的形式：</p>
+<blockquote>
+<p>GET / HTTP/1.0\r\nUser-Agent: UserAgent\r\nContent-Length: 0\r\n\r\n</p>
+</blockquote>
+<p>反序列化是对序列化的逆操作。从服务端或客户端接收到的原始字节流通过反序列化会重新存储成它原始的表现形式。CFNetwork提供了所有关于获取接收到的序列化的消息的消息类型，HTTP版本，URL，消息头，消息体信息的方法。</p>
+<h6 id="CFHTTPAuthentication-API"><a href="#CFHTTPAuthentication-API" class="headerlink" title="CFHTTPAuthentication API"></a>CFHTTPAuthentication API</h6><p>如果你给认证服务器发送HTTP请求却没有证书或者是错误的证书，服务器会返回认证错误，通常错误码是401或407。CFHTTPAuthentication API支持认证证书设置，其支持以下的认证模式：</p>
+<blockquote>
+<ul>
+<li>Basic</li>
+<li>Digest</li>
+<li>NT LAN Manager</li>
+<li>Simple and Protected GSS-API Negotiation Mechanism（SPNEGO）</li>
+</ul>
+</blockquote>
+<p>现在，你可以将每个服务器对应的CFHTTPAuthentication对象保存到集合中。当你接收到401货407响应时，你需要找到服务器对应的正确的对象和证书并且应用它们。CFNetwork使用存储在认证对象中的信息来提高请求的效率。</p>
+<h5 id="CFHost-API"><a href="#CFHost-API" class="headerlink" title="CFHost API"></a>CFHost API</h5><p>通过调用CFHost API请求主机信息，包括名字，地址和可访问的信息。请求主机信息的进程叫做resolution。</p>
+<p>CFHost使用方法与CFStream相似：</p>
+<blockquote>
+<ul>
+<li>创建CFHost对象</li>
+<li>开始解析CFHost对象</li>
+<li>重新获取地址，主机名或者是否可访问的信息</li>
+<li>销毁CFHost对象</li>
+</ul>
+</blockquote>
+<p>跟所有的CFNetwork类一样，CFHost兼容IPv4和IPv6。使用CFHost，你可以写代码去处理IPv4和IPv6的情况。CFHost被集成到其他的CFNetwork的类中。例如，有一个CFStream的方法叫<code>CFStreamCreatePairWithSocketToCFHost</code>，它会直接从一个CFHost对象中创建CFStream对象。</p>
+<h5 id="CFNetServices-API"><a href="#CFNetServices-API" class="headerlink" title="CFNetServices API"></a>CFNetServices API</h5><p>如果你想要你的app使用Bonjour服务来注册服务或者发现服务，那就使用CFNetServices API。Bonjour是苹果的零配置网络的实现，它允许你创建，发现，解析网络服务。</p>
+<p>想要实现Bonjour，CFNetServices API定义了三种类型： CFNetService, CFNetServiceBrowser, CFNetServiceMonitor。CFNetService对象代表单独的网络服务，如打印机或者文件服务器。它包含另外的电脑解析服务所需要的所有信息，如名字，类型，域名和端口号。CFNetServiceBrowser对象用来发现域名和域名指向的网络服务。CFNetServiceMonitor对象用来管理CFNetService对象内容的更改，如iChat中的状态消息。</p>
+<h5 id="CFNetDiagnostics-API"><a href="#CFNetDiagnostics-API" class="headerlink" title="CFNetDiagnostics API"></a>CFNetDiagnostics API</h5><p>app连接网络服务依赖于稳定的连接。如果网络断开，便会引起问题。使用CFNetDiagnostics API，用户可以自己诊断网络问题，例如：</p>
+<blockquote>
+<ul>
+<li>物理连接失败，如网口没插好</li>
+<li>网络失败，如DNS或DHCP服务器无法响应</li>
+<li>配置失败，如代理配置不正确</li>
+</ul>
+</blockquote>
+<p>一旦网络失败被诊断，CFNetDiagnostics会指导用户去修复问题。在Safari连接网络失败后你可能已经看到过CFNetDiagnostics做出的反应。CFNetDiagnostics助手如下图所示：</p>
+<p><img src="/images/CFNetwork/3.png" alt=""></p>
+<p>向CFNetDiagnostics提供网络错误的上下文，你可以告诉<code>CFNetDiagnosticDiagnoseProblemInteractively</code>方法来引导用户尝试去找到解决方案。另外，你可以用CFNetDiagnostics去查询连接状态并且向用户传递错误消息。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>以上只是对CFNetwork框架的概览，至于更详细的使用会在后面的文章中罗列出来。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h3&gt;&lt;p&gt;提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="MacOS" scheme="http://yoursite.com/categories/MacOS/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>dumpdecrypted砸壳记录</title>
@@ -1171,62 +1273,6 @@
       &lt;h2 id=&quot;第一部分-准备阶段&quot;&gt;&lt;a href=&quot;#第一部分-准备阶段&quot; class=&quot;headerlink&quot; title=&quot;第一部分 准备阶段&quot;&gt;&lt;/a&gt;第一部分 准备阶段&lt;/h2&gt;&lt;p&gt;1）硬件要求：&lt;br&gt;iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。&lt;/p&gt;
 &lt;p&gt;2）系统要求：&lt;br&gt;iPhone或iPad至少要升到iOS 9.2版，手表至少watch OS 2.1。&lt;/p&gt;
 &lt;p&gt;3）配置支付环境&lt;br&gt;1.进入苹果开发者中心，注册App ID。&lt;br&gt;App ID必须是explicit类型，否则无法使用ApplePay服务。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>UIButton之titleLabel、imageView解析</title>
-    <link href="http://yoursite.com/2015/12/28/UIButton%E4%B9%8BtitleLabel%E3%80%81imageView%E8%A7%A3%E6%9E%90/"/>
-    <id>http://yoursite.com/2015/12/28/UIButton之titleLabel、imageView解析/</id>
-    <published>2015-12-28T02:28:19.000Z</published>
-    <updated>2016-09-19T14:36:19.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><code>UIButton</code>是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变<code>UIButton</code>中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用<code>imageEdgeInsets</code>、<code>titleEdgeInsets</code>组合的方案以及<code>imageRectContentRet</code>、<code>titleRectContentRect</code>组合的方案。<br><a id="more"></a></p>
-<h2 id="titleEdgeInsets、imageEdgeInsets组合"><a href="#titleEdgeInsets、imageEdgeInsets组合" class="headerlink" title="titleEdgeInsets、imageEdgeInsets组合"></a>titleEdgeInsets、imageEdgeInsets组合</h2><p>这个方案是使用的比较多的解决方案，它主要依赖的是两个方法：</p>
-<blockquote>
-<ul>
-<li><code>titleEdgeInsets</code></li>
-<li><code>imageEdgeInsets</code></li>
-</ul>
-</blockquote>
-<p>这个方案比较麻烦的地方在于很多人对这两个方法的理解不到位，导致使用的时候设置和显示的效果不一致。<code>UIButton</code>继承自<code>UIControl</code>，它因此也继承了两个属性<code>contentVerticalAlignment</code>和<code>contentHorizontalAlignment</code>。这两个属性是用来排列内部元素的,默认值都是Center，先看下它们的定义：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSInteger</span>, <span class="built_in">UIControlContentVerticalAlignment</span>) &#123;</div><div class="line">    <span class="built_in">UIControlContentVerticalAlignmentCenter</span>  = <span class="number">0</span>,</div><div class="line">    <span class="built_in">UIControlContentVerticalAlignmentTop</span>     = <span class="number">1</span>,</div><div class="line">    <span class="built_in">UIControlContentVerticalAlignmentBottom</span>  = <span class="number">2</span>,</div><div class="line">    <span class="built_in">UIControlContentVerticalAlignmentFill</span>    = <span class="number">3</span>,</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSInteger</span>, <span class="built_in">UIControlContentHorizontalAlignment</span>) &#123;</div><div class="line">    <span class="built_in">UIControlContentHorizontalAlignmentCenter</span> = <span class="number">0</span>,</div><div class="line">    <span class="built_in">UIControlContentHorizontalAlignmentLeft</span>   = <span class="number">1</span>,</div><div class="line">    <span class="built_in">UIControlContentHorizontalAlignmentRight</span>  = <span class="number">2</span>,</div><div class="line">    <span class="built_in">UIControlContentHorizontalAlignmentFill</span>   = <span class="number">3</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>按照4*4的组合分为16种选择结果。为了在计算过程中更方便点，我通常选择<code>UIControlContentVerticalAlignmentTop</code>、<code>UIControlContentHorizontalAlignmentLeft</code>的组合，这样符合我们以左上角作为坐标原点布局的思维。这里要纠正几个误区：第一，<code>edgeinsets</code>只是相对于当前位置的偏移量，并不是指距离UIButton边界的距离；第二，在同时存在图片还有文字的时候，只有UIButton的<code>contentRect</code>的宽度大于image和title的宽度才能正确显示，否则，文字由于无法进行拉伸收缩的原因只能显示…或者图片被压缩；第三、imageView的宽高都能被压缩，titleLabel的宽只能压缩不能拉伸，titleLabel的高只能拉伸不能压缩。</p>
-<p>采用left-top方案初始情况下，image和title的位置如下图所示：<br><img src="/images/Btnimages/originRect.png" alt=""></p>
-<p>在初始状态下，<code>imageEdgeInsets</code>和<code>titleEdgeInsets</code>均为0，因此在计算偏移量的时候，image的top、left、right、bottom以及title的top、bottom、right均能以button的边界作为参考，而title的left是以image的left为参考的。搞清楚了之后，来做一下image在上，title在下的button：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CGFloat</span> imageTop = (button.height-image.height-title.height) / <span class="number">2</span>;</div><div class="line"><span class="built_in">CGFloat</span> titleTop = imageTop+image.height;</div><div class="line"></div><div class="line"><span class="built_in">CGFloat</span> imageLeft = (button.width-image.width) / <span class="number">2</span>;</div><div class="line"><span class="comment">// 这里减了image.width，因为title的left是以image的left为参考</span></div><div class="line"><span class="built_in">CGFloat</span> titleLeft = (button.width-title.widht) / <span class="number">2</span> - image.width;</div><div class="line"></div><div class="line">button.imageEdgeInsets = <span class="built_in">UIEdgeInsetsMake</span>(imageTop, imageLeft, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">button.titleEdgeInsets = <span class="built_in">UIEdgeInsetsMake</span>(titleTop, titleLeft, <span class="number">0</span>, <span class="number">0</span>);</div></pre></td></tr></table></figure></p>
-<p>这里还牵扯到一个问题，有人可能会觉得既然有left和top，那就不需要right和bottom了，实际不然。这实际上是涉及到约束的优先级。其定义如下：</p>
-<blockquote>
-<ul>
-<li>top-left-bottom-right取负值 &gt; 不能超出button边界 &gt; imageView不能被压缩</li>
-<li>top-left-bottom-right取负值 &gt; 不能超出button边界 &gt; titleLabel水平方向不能被压缩</li>
-<li>titleLabel垂直方向不能被压缩 &gt; 不能超出button边界</li>
-</ul>
-</blockquote>
-<p>若有人运用发现image超出button边界，只需要同时调整<code>contentEdgeInsets</code>即可。</p>
-<h2 id="imageRectForContentRect、titleRectForContentRect组合"><a href="#imageRectForContentRect、titleRectForContentRect组合" class="headerlink" title="imageRectForContentRect、titleRectForContentRect组合"></a>imageRectForContentRect、titleRectForContentRect组合</h2><p>第一个方案理解之后确实可以解决问题，不过，我觉得有些麻烦，就想着能不能有更方便的方案。于是，我翻阅文档和资料后，找到了更简单的方案，也就是这第二个方案。</p>
-<p>第二个方案涉及到两个方法：</p>
-<blockquote>
-<ul>
-<li>(CGRect)titleRectForContentRect:(CGRect)contentRect</li>
-<li>(CGRect)imageRectForContentRect:(CGRect)contentRect</li>
-</ul>
-</blockquote>
-<p>根据文档的解释，这两个方法返回值是矩形区域，区域内则是用来绘制image和title，返回值的参照系都是UIButton。要想自定义image和title在UIButton的位置和大小，只需要继承UIButton，重写这两个方法即可。</p>
-<p>相比第一个方案，第二个方案确实方便不少，但是又有一个问题。要是想改变一个UIButton都得继承UIButton重写方法显得太麻烦，实际上并没有达到简便的目的。于是，我想能不能用runtime运行时机制，给UIButton添加两个变量，直接设置就可以修改image和title在UIButton中的rect，这样会方便很多。</p>
-<p>先贴上实现代码：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//  UIButton+RectOfImageAndTitle.h</span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">UIButton</span> (<span class="title">RectOfImageAndTitle</span>)</span></div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">CGRect</span> btn_contentRect;</div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">CGRect</span> btn_imageRect;</div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">CGRect</span> btn_titleRect;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//  UIButton+RectOfImageAndTitle.m</span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">"UIButton+RectOfImageAndTitle.h"</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *btn_contentKey = <span class="string">"btn_contentKey"</span>;</div><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *btn_imageKey = <span class="string">"btn_imageKey"</span>;</div><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *btn_titleKey = <span class="string">"btn_titleKey"</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIButton</span> (<span class="title">RectOfImageAndTitle</span>)</span></div><div class="line"></div><div class="line">+ (<span class="keyword">void</span>)load&#123;</div><div class="line">    <span class="keyword">@autoreleasepool</span> &#123;</div><div class="line">        [<span class="keyword">self</span> exchangeIMPWithOriginSelector:<span class="keyword">@selector</span>(contentRectForBounds:) newSelector:<span class="keyword">@selector</span>(zs_contentRectForBounds:)];</div><div class="line">        [<span class="keyword">self</span> exchangeIMPWithOriginSelector:<span class="keyword">@selector</span>(imageRectForContentRect:) newSelector:<span class="keyword">@selector</span>(zs_imageRectForContentRect:)];</div><div class="line">        [<span class="keyword">self</span> exchangeIMPWithOriginSelector:<span class="keyword">@selector</span>(titleRectForContentRect:) newSelector:<span class="keyword">@selector</span>(zs_titleRectForContentRect:)];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (<span class="keyword">void</span>)exchangeIMPWithOriginSelector:(SEL)originSeletor newSelector:(SEL)newSelector&#123;</div><div class="line">    <span class="keyword">if</span> ([<span class="built_in">UIButton</span> instancesRespondToSelector:originSeletor]) &#123;</div><div class="line">        Method oriMethod = class_getInstanceMethod(<span class="keyword">self</span>, originSeletor);</div><div class="line">        Method newMethod = class_getInstanceMethod(<span class="keyword">self</span>, newSelector);</div><div class="line">        method_exchangeImplementations(oriMethod, newMethod);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="meta">#pragma mark - getter &amp; setter</span></div><div class="line">- (<span class="keyword">void</span>)setBtn_contentRect:(<span class="built_in">CGRect</span>)btn_contentRect&#123;</div><div class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, &amp;btn_contentKey, [<span class="built_in">NSValue</span> valueWithCGRect:btn_contentRect], OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">CGRect</span>)btn_contentRect&#123;</div><div class="line">    <span class="keyword">if</span> (!objc_getAssociatedObject(<span class="keyword">self</span>, &amp;btn_contentKey)) &#123;</div><div class="line">        objc_setAssociatedObject(<span class="keyword">self</span>, &amp;btn_contentKey, [<span class="built_in">NSValue</span> valueWithCGRect:<span class="built_in">CGRectZero</span>], OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> [objc_getAssociatedObject(<span class="keyword">self</span>, &amp;btn_contentKey) <span class="built_in">CGRectValue</span>];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)setBtn_imageRect:(<span class="built_in">CGRect</span>)btn_imageRect&#123;</div><div class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, &amp;btn_imageKey, [<span class="built_in">NSValue</span> valueWithCGRect:btn_imageRect], OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">CGRect</span>)btn_imageRect&#123;</div><div class="line">    <span class="keyword">if</span> (!objc_getAssociatedObject(<span class="keyword">self</span>, &amp;btn_imageKey)) &#123;</div><div class="line">        objc_setAssociatedObject(<span class="keyword">self</span>, &amp;btn_imageKey, [<span class="built_in">NSValue</span> valueWithCGRect:<span class="built_in">CGRectZero</span>], OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> [objc_getAssociatedObject(<span class="keyword">self</span>, &amp;btn_imageKey) <span class="built_in">CGRectValue</span>];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)setBtn_titleRect:(<span class="built_in">CGRect</span>)btn_titleRect&#123;</div><div class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, btn_titleKey, [<span class="built_in">NSValue</span> valueWithCGRect:btn_titleRect], OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">CGRect</span>)btn_titleRect&#123;</div><div class="line">    <span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, btn_titleKey) == <span class="literal">nil</span> ? <span class="built_in">CGRectZero</span> : [objc_getAssociatedObject(<span class="keyword">self</span>, btn_titleKey) <span class="built_in">CGRectValue</span>];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">#pragma mark - private method</span></div><div class="line">- (<span class="built_in">CGRect</span>)zs_contentRectForBounds:(<span class="built_in">CGRect</span>)contentRect&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="built_in">CGRectEqualToRect</span>(<span class="keyword">self</span>.btn_contentRect, <span class="built_in">CGRectZero</span>)) &#123;</div><div class="line">        <span class="keyword">return</span> [<span class="keyword">self</span> zs_contentRectForBounds:<span class="keyword">self</span>.bounds];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">self</span>.btn_contentRect;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">CGRect</span>)zs_imageRectForContentRect:(<span class="built_in">CGRect</span>)contentRect&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="built_in">CGRectEqualToRect</span>(<span class="keyword">self</span>.btn_imageRect, <span class="built_in">CGRectZero</span>)) &#123;</div><div class="line">        <span class="keyword">return</span> [<span class="keyword">self</span> zs_imageRectForContentRect:<span class="keyword">self</span>.bounds];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">self</span>.btn_imageRect;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">CGRect</span>)zs_titleRectForContentRect:(<span class="built_in">CGRect</span>)contentRect&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="built_in">CGRectEqualToRect</span>(<span class="keyword">self</span>.btn_titleRect, <span class="built_in">CGRectZero</span>)) &#123;</div><div class="line">        <span class="keyword">return</span> [<span class="keyword">self</span> zs_titleRectForContentRect:<span class="keyword">self</span>.bounds];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">self</span>.btn_titleRect;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
-<p>简要说下实现的思路：由于在category中重写<code>imageRectForContentRect</code>、<code>titleRectForContentRect</code>会覆盖原来的方法实现，并且无法使用super关键字，因此重写方法行不通。转而我采用自己实现两个方法并分别与这两个方法的实现进行交换，这样就不会破坏原有方法的实现。此外，动态添加三个实例变量可以直接在实例对象中直接设置来调用<code>imageRectForContentRect</code>、<code>titleRectForContentRect</code>两个方法。</p>
-<p>使用的时候导入头文件，再相应的设置一下实例变量就可以达到效果，有没有很方便。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;code&gt;UIButton&lt;/code&gt;是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变&lt;code&gt;UIButton&lt;/code&gt;中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用&lt;code&gt;imageEdgeInsets&lt;/code&gt;、&lt;code&gt;titleEdgeInsets&lt;/code&gt;组合的方案以及&lt;code&gt;imageRectContentRet&lt;/code&gt;、&lt;code&gt;titleRectContentRect&lt;/code&gt;组合的方案。&lt;br&gt;
     
     </summary>
     

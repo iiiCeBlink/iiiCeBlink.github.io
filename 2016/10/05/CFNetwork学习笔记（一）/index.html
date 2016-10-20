@@ -86,33 +86,20 @@
 
 
 
-<meta name="description" content="在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。
-Homebrew
-Home">
+<meta name="description" content="简介提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Mac workflow小记">
-<meta property="og:url" content="http://yoursite.com/2016/03/12/Mac workflow小记/index.html">
+<meta property="og:title" content="CFNetwork学习笔记（一）">
+<meta property="og:url" content="http://yoursite.com/2016/10/05/CFNetwork学习笔记（一）/index.html">
 <meta property="og:site_name" content="zakariyyaSv's Blog">
-<meta property="og:description" content="在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。
-Homebrew
-Home">
-<meta property="og:image" content="http://yoursite.com/images/workflow/homebrew.png">
-<meta property="og:image" content="http://yoursite.com/images/workflow/iterm2.png">
-<meta property="og:image" content="http://yoursite.com/images/workflow/alfred.png">
-<meta property="og:image" content="http://yoursite.com/images/workflow/dash.png">
-<meta property="og:image" content="http://yoursite.com/images/workflow/cheatsheet.png">
-<meta property="og:image" content="http://yoursite.com/images/workflow/sequelpro.png">
-<meta property="og:image" content="http://yoursite.com/images/workflow/sublime.png">
-<meta property="og:image" content="http://yoursite.com/images/workflow/lantern.jpeg">
-<meta property="og:image" content="http://yoursite.com/images/workflow/istatmenus.png">
-<meta property="og:image" content="https://www.zybuluo.com/static/img/logo.png">
-<meta property="og:updated_time" content="2016-08-31T12:36:47.000Z">
+<meta property="og:description" content="简介提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。">
+<meta property="og:image" content="http://yoursite.com/images/CFNetwork/1.png">
+<meta property="og:image" content="http://yoursite.com/images/CFNetwork/2.png">
+<meta property="og:image" content="http://yoursite.com/images/CFNetwork/3.png">
+<meta property="og:updated_time" content="2016-10-20T12:29:53.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Mac workflow小记">
-<meta name="twitter:description" content="在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。
-Homebrew
-Home">
-<meta name="twitter:image" content="http://yoursite.com/images/workflow/homebrew.png">
+<meta name="twitter:title" content="CFNetwork学习笔记（一）">
+<meta name="twitter:description" content="简介提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。">
+<meta name="twitter:image" content="http://yoursite.com/images/CFNetwork/1.png">
 
 
 
@@ -133,9 +120,9 @@ Home">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/03/12/Mac workflow小记/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/10/05/CFNetwork学习笔记（一）/"/>
 
-  <title> Mac workflow小记 | zakariyyaSv's Blog </title>
+  <title> CFNetwork学习笔记（一） | zakariyyaSv's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -278,7 +265,7 @@ Home">
             
             
               
-                Mac workflow小记
+                CFNetwork学习笔记（一）
               
             
           </h1>
@@ -290,8 +277,8 @@ Home">
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-03-12T20:11:39+08:00" content="2016-03-12">
-              2016-03-12
+            <time itemprop="dateCreated" datetime="2016-10-05T12:36:19+08:00" content="2016-10-05">
+              2016-10-05
             </time>
           </span>
 
@@ -304,8 +291,8 @@ Home">
               <span class="post-meta-item-text">In</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Mac相关/" itemprop="url" rel="index">
-                    <span itemprop="name">Mac相关</span>
+                  <a href="/categories/MacOS/" itemprop="url" rel="index">
+                    <span itemprop="name">MacOS</span>
                   </a>
                 </span>
 
@@ -320,8 +307,8 @@ Home">
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/03/12/Mac workflow小记/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/12/Mac workflow小记/" itemprop="commentsCount"></span>
+                <a href="/2016/10/05/CFNetwork学习笔记（一）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/05/CFNetwork学习笔记（一）/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -344,66 +331,88 @@ Home">
       
 
       
-        <p>在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。</p>
-<h3 id="Homebrew"><a href="#Homebrew" class="headerlink" title="Homebrew"></a><a href="http://brew.sh/index_zh-cn.html" target="_blank" rel="external">Homebrew</a></h3><p><img src="/images/workflow/homebrew.png" alt=""></p>
-<p>Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际上是Mac下的套件管理器。比如你想安装MySQL、git等等工具软件，都可以使用homebrew来下载和管理。<br>homebrew的安装也非常方便，你可以去到它的官网，根据提示进行安装。安装成功后就使用homebrew的命令去下载和管理你需要的工具软件了。<br><a id="more"></a><br><strong>注</strong>：homebrew的安装程序需要用到Xcode的command line tools。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">brew install mysql  // 安装MySQL</div><div class="line">brew uninstall mysql     // 卸载MySQL</div><div class="line">brew search mysql   // 搜索MySQL</div><div class="line">brew upgrade mysql  // 更新MySQL</div><div class="line">brew list   // 显示已经安装的软件列表</div><div class="line">brew update     // 更新homebrew</div><div class="line">brew deps mysql     // 显示MySQL的包依赖</div></pre></td></tr></table></figure>
-<h3 id="iTerm2"><a href="#iTerm2" class="headerlink" title="iTerm2"></a><a href="http://www.iterm2.com/" target="_blank" rel="external">iTerm2</a></h3><p><img src="/images/workflow/iterm2.png" alt=""></p>
-<p>iTerm2是mac下的替代Terminal的终端工具，可以说iTerm2是Mac下最好的终端工具。它有一些特色功能如下：</p>
-<p><strong>标签变色</strong><br>iTerm2 的标签的颜色会变化，以指示该 tab 当前的状态。当该标签有新输出的时候，标签会变成洋红色；新的输出长时间没有查看，标签会变成红色。可在设置中关掉该功能。</p>
-<p><strong>智能选中</strong><br>在 iTerm2 中，双击选中，三击选中整行，四击智能选中（智能规则可配置），可以识别网址，引号引起的字符串，邮箱地址等。（很多时候双击的选中就已经很智能了）<br>在 iTerm2 中，选中即复制。即任何选中状态的字符串都被放到了系统剪切板中。</p>
-<p><strong>巧用 Command 键</strong><br>按住⌘键:<br>可以拖拽选中的字符串；<br>点击 url：调用默认浏览器访问该网址；<br>点击文件：调用默认程序打开文件；<br>如果文件名是filename:42，且默认文本编辑器是 Macvim、Textmate或BBEdit，将会直接打开到这一行；<br>点击文件夹：在 finder 中打开该文件夹；<br>同时按住option键，可以以矩形选中，类似于vim中的ctrl v操作。</p>
-<p>iTerm2的可定制化也是一大特色，详细的定制化步骤可以参见我的另一篇博客。</p>
-<h3 id="Alfred3"><a href="#Alfred3" class="headerlink" title="Alfred3"></a><a href="https://www.alfredapp.com/" target="_blank" rel="external">Alfred3</a></h3><p><img src="/images/workflow/alfred.png" alt=""></p>
-<p>我对Alfred3的评价是Mac下最逆天的工具。如果你是个键盘党，Alfred绝对可以让你基本摆脱鼠标。丰富的workflow可以让你的操作变得得心应手而且高效。你可以去<a href="http://www.alfredworkflow.com/" target="_blank" rel="external">alfredworkflow</a>上下载安装适合你的workflow。当然，你要是想自己制作workflow也很容易，简单易上手，这也是Alfred workflow资源丰富的原因所在。如果兜里不差钱还是建议去买个终身会员，绝对值得。如果囊中羞涩，这里提供一个破解版本供大家尝鲜。（<a href="http://bbs.feng.com/read-htm-tid-10516652.html" target="_blank" rel="external">下载链接</a>）</p>
-<h3 id="Dash"><a href="#Dash" class="headerlink" title="Dash"></a><a href="https://kapeli.com/dash" target="_blank" rel="external">Dash</a></h3><p><img src="/images/workflow/dash.png" alt=""></p>
-<p>Dash是Mac下的API文档查阅器，其储存了超过150种API离线文档。这可以说是程序员必备利器，不管是从操作体验以及资源的丰富程度都是Mac平台下最好用的。同时，配合Alfred使用，效率会更高。Dash提供免费版也带有付费插件，如果不差钱，支持一下也是无可厚非的。</p>
-<h3 id="CheatSheet"><a href="#CheatSheet" class="headerlink" title="CheatSheet"></a><a href="https://www.mediaatelier.com/CheatSheet/" target="_blank" rel="external">CheatSheet</a></h3><p><img src="/images/workflow/cheatsheet.png" alt=""></p>
-<p>CheatSheet是一款Mac上非常实用的快捷键快速提醒工具，只需要按住Command键，就会弹出当前应用所有的快捷键列表。所以，即使你记不住一些快捷键也没有关系，有CheatSheet就够了。</p>
-<h3 id="Sequel-Pro"><a href="#Sequel-Pro" class="headerlink" title="Sequel Pro"></a><a href="http://www.sequelpro.com/" target="_blank" rel="external">Sequel Pro</a></h3><p><img src="/images/workflow/sequelpro.png" alt=""></p>
-<p>Sequel Pro（原CocoaMySQL）是众多Mac程序员使用的MySQL管理软件，提供了比phpmyadmin更强大的管理能力，帮助用户轻松编辑数据库，表（字段和索引）和列，执行个性化查找以及导出/入数据，快速查询数据。</p>
-<p>Sequel Pro它最大的优点是简单、易用。因为这款工具是苹果公司为了吸引Web开发者进入Mac平台而投资的项目。所以它处处体现了苹果公司简洁的设计哲学。说它是全世界最好用的MySQL数据库管理工具是一点也不夸张。</p>
-<p>功能特点：</p>
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。<br><a id="more"></a><br>CFNetwork是CoreServices框架中的框架，它提供了网络协议的抽象接口。这些抽象接口让直行各种网络任务变得简单起来，比如：支持与BSDScoket，HTTP，FTP服务工作，使用SSL或TLS建立加密连接，支持DNS主机解析等。</p>
+<p>CFNetwork是底层且高性能的框架，它能够让我们在协议栈上进行精细地控制。它是对BSDSocket的扩展，BSDSocket是提供对象简化任务如与FTP或者HTTP服务器通信或者解析DNS主机的标准socket抽象API。</p>
+<p>由于CFNetwork依赖于BSDsocket，如NSURL等的一些Cocoa类是依赖于CFNetwork实现的。此外，在视图中展示web内容的WebKit也同样依赖于CFNetwork。CFNetwork和其他一些框架的层级结构如下图所示。</p>
+<p><img src="/images/CFNetwork/1.png" alt=""></p>
+<h3 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h3><p>CFNetwork继承了BSDSocket的一些优势。它集成了run-loop，如果你的应用是基于run-loop，你可以在不实现线程的情况下使用网络协议。CFNetwork也包含很多对象来帮助你不需要自己实现细节就可以使用网络协议。例如，你可以不用实现CFFTP的API而使用FTP协议。如果你理解网络协议，需要底层控制但又不想自己实现它们，这时候CFNetwork可能是很好的选择。</p>
+<p>使用CFNetwork相比于Foundation级别的网络API有很多优势。CFNetwork更侧重于网络协议，而Foundation级别的网络API更侧重于数据的访问，如通过HTTP或FTP协议传输数据。Foundation级别的网络API确实提供了一些配置项，但CFNetwork提供的更多。</p>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>在学习CFNetwork的API之前，我们必须首先理解其API的整体结构。CFNetwork依赖于两大框架：CoreFoundation，CFSocket和CFStream。理解这两个框架对于使用CFNetwork非常有必要。</p>
+<h5 id="CFSocket-API"><a href="#CFSocket-API" class="headerlink" title="CFSocket API"></a>CFSocket API</h5><p>Socket是网络通信的最基础层。Socket的作用于电话插口有些类似，它允许你与另一个Socket进行连接（不管是本地的还是网络的）并且向另一个Socket发送数据。</p>
+<p>最常见的socket是BSDsocket，CFSocket是对BSDsocket的抽象。CFSocket提供了几乎所有BSDsocket服务并且它将socket集成到run-loop中。CFSocket不仅仅局限于基于流服务的socket（如TCP），它可以处理任何类型的socket。</p>
+<p>你可以用<code>CFSocketCreate</code>或<code>CFSocketCreateWithNative</code>函数创建CFSocket对象。然后，你可以用<code>CFSocketCreateRunLoopSource</code>函数创建run-loop源，并通过<code>CFRunLoopAddSource</code>函数添加到runloop中。之后，你可以用<code>CFSocketSendData</code>函数发送消息。当CFSocket对象接收到消息时，CFSocket函数回调会触发。</p>
+<h5 id="CFStream-API"><a href="#CFStream-API" class="headerlink" title="CFStream API"></a>CFStream API</h5><p>读写流提供了在各种媒介之间交换数据的简单方式。你可以为内存，文件或网络上的数据创建流，并且可以在不一次性将所有数据加载进内存的情况下使用流。</p>
+<p>流实际上是在通信路径上的连续的字节传输序列。流是单向通道，因此要进行双向通信就需要输入流和输出流。除了文件流以外，你不能在流中搜索查找，一旦流数据被接收或发送，那么就无法再从流中重新获取。</p>
+<p>CFStream API提供两个新的CFType类型的对象：CFReadStream和CFWriteStream。CFStream构建在CFSocket的上层同时也是CFHTTP和CFFTP的底层。它们的层级关系见下图。</p>
+<p><img src="/images/CFNetwork/2.png" alt=""></p>
+<p>你可以像操作UNIX文件描述子的形式来使用读写流。首先，你需要指定流的类型（内存，文件或Socket）并设置可选项来实例化流对象。接着，你打开流进行读和写操作。当流对象已经存在，你可以通过访问它的属性来获取流对象的相关信息。当你不再需要它时，关闭并释放它。</p>
+<p>CFStream的读写方法会一直处于挂起或者阻塞状态直到有数据可读或可写的时候才会结束挂起或阻塞状态。为了避免读写过程中流可能处于阻塞状态，使用异步方法并将其编排进runloop中。当读写操作不会被阻塞时回调方法会触发。</p>
+<p>另外，CFStream本身还支持SSL（Secure Sockets Layer）协议。你可以将流的SSL信息存储进一个字典对象中，然后将字典对象传给stream对象的kCFStreamPropertySSLSettings属性。</p>
+<h3 id="CFNetwork-API概览"><a href="#CFNetwork-API概览" class="headerlink" title="CFNetwork API概览"></a>CFNetwork API概览</h3><p>为了理解CFNetwork框架，你需要熟悉构成该框架的各个组成块。CFNetwork框架可以被拆解成几个独立的API，每个独立的API覆盖了不同的网络协议。这些API可以组合使用也可以单独使用，这取决于你自己的需求。</p>
+<h5 id="CFFTP-API"><a href="#CFFTP-API" class="headerlink" title="CFFTP API"></a>CFFTP API</h5><p>CFFTP可以帮我们与FTP服务器进行通信。使用CFFTP API可以创建读流负责下载，创建写流负责上传。使用读写流可以实现如下功能：</p>
 <blockquote>
 <ul>
-<li>支持多达30种编码方式</li>
-<li>快速导出/导入、备份/还原数据库的SQL/CSV文件</li>
-<li>最高版本支持MySQL 5.6</li>
-<li>内置强大的数据库查询编辑器，有自定义查询中的自动语句高亮功能，可自定义字体，自定义查询占位符.</li>
-<li>允许你编辑数据库，表格（字段和索引）和列，执行个性化查找和导入导出数据</li>
-<li>自动补全关键词，表名，域名</li>
-<li>自动段落化查询命令</li>
-<li>IP直连数据库</li>
-<li>表触发机制</li>
-<li>服务器运行监控Query Favourites for SQL reuse</li>
-<li>包括检索功能在内的全表管理设计</li>
-<li>快速在Mac上架设本地MySQL数据库</li>
-<li>在MAMP/XAMP架构上连接数据库</li>
-<li>SSH连接模式</li>
+<li>从FTP服务器上下载文件</li>
+<li>向FTP服务器上传文件</li>
+<li>从FTP服务器下载目录列表</li>
+<li>在FTP服务器上创建目录</li>
 </ul>
 </blockquote>
-<h3 id="Sublime-Text-3"><a href="#Sublime-Text-3" class="headerlink" title="Sublime Text 3"></a><a href="http://www.sublimetext.com/3" target="_blank" rel="external">Sublime Text 3</a></h3><p><img src="/images/workflow/sublime.png" alt=""></p>
-<p>Sublime Text可以说是一款优雅高效地编辑器，越来越受到开发人员的欢迎。这款编辑器区别于其他编辑器的特性主要有以下几点：</p>
+<p>FTP流对象工作原理与其他的CFNetwork流一样。例如，你可以通过调用<code>CFReadStreamCreateWithFTPURL</code>方法创建FTP读流，然后，调用<code>CFReadStreamGetError</code>在任何时候检查流的状态。</p>
+<p>通过设定FTP流的属性，你可以自定义流来满足你的需求。例如，如果流连接的服务器要求用户名和密码，你需要设置正确的属性这样流对象才能正确地进行工作。</p>
+<p>CFFTP流可以使用同步或异步。创建完读流对象后，为了打开指定的FTP服务器的连接需要调用<code>CFReadStreamOpen</code>方法。为了从流中读取数据，可以调用<code>CFReadStreamRead</code>方法。<code>CFReadStreamRead</code>方法将FTP服务器的输出填充到缓冲区中。</p>
+<h6 id="CFHTTP-API"><a href="#CFHTTP-API" class="headerlink" title="CFHTTP API"></a>CFHTTP API</h6><p>为了能收发HTTP消息，我们使用CFHTTP API。正如CFFTP是对FTP协议的抽象，CFHTTP是对HTTP协议的抽象。</p>
+<p>HTTP协议是在客户端和服务端之间的请求/响应协议。客户端创建请求消息，进程会将消息转换成的原始字节流，这是序列化的过程。这一步是非常必要的，否则消息无法被发送出去。然后，消息会被发送到服务器上。服务器响应会发送带有字符串的消息给客户端。如果有必要这一步操作会重复多次。</p>
+<p>要创建HTTP请求消息，你需要指定下面的属性：</p>
 <blockquote>
 <ul>
-<li>随时保留文件的修改</li>
-<li>多重选择，同时修改</li>
-<li>智能选择</li>
-<li>智能感知，一键注释</li>
-<li>Goto Anything，智能搜索</li>
-<li>自动完成，无处不在</li>
-<li>HTML标签输入</li>
-<li>标签输入，再简化</li>
-<li>简单全面的插件体系</li>
+<li>请求方法，如OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT</li>
+<li>URL</li>
+<li>HTTP版本，如1.0或1.1</li>
+<li>消息头，通过指定头部名字和它的值，如User-Agent ： MyUserAgent</li>
+<li>消息体</li>
 </ul>
 </blockquote>
-<h3 id="Lantern"><a href="#Lantern" class="headerlink" title="Lantern"></a><a href="https://www.getlantern.org/" target="_blank" rel="external">Lantern</a></h3><p><img src="/images/workflow/lantern.jpeg" alt=""></p>
-<p>Lantern是一款免费开源的科学上网的软件，安装和使用极其简单。Lantern让用户能流畅地访问被封锁的互联网站点。Lantern自动检测一个网站是否被封锁。对那些被封锁的网站，Lantern通过自有的服务器或者未封锁地区的用户运行的Lantern来提供访问。如果网站没有被封锁，Lantern选择靠边站。这样浏览器就会直接访问网站，而速度不受影响。</p>
-<h3 id="iStat-Menus"><a href="#iStat-Menus" class="headerlink" title="iStat Menus"></a><a href="https://bjango.com/mac/istatmenus/" target="_blank" rel="external">iStat Menus</a></h3><p><img src="/images/workflow/istatmenus.png" alt=""></p>
-<p>iStat Menus 5 是一款由软件开发商 Bjango 制作的 System Monitor（工具，也是笔者电脑里的必装应用之一，它能让用户最快速、最直观地了解到几乎各硬件所有的运行状态，其中包括：CPU 中央处理器、GPU 图形处理器、Memory 虚拟内存、Network 网络、Battery 电池、Disks 硬盘等。</p>
-<h3 id="Cmd-Markdown编辑器"><a href="#Cmd-Markdown编辑器" class="headerlink" title="Cmd Markdown编辑器"></a><a href="https://www.zybuluo.com/mdeditor" target="_blank" rel="external">Cmd Markdown编辑器</a></h3><p><img src="https://www.zybuluo.com/static/img/logo.png" alt=""></p>
-<p>Cmd Markdown是一款markdown编辑器，相比于同类markdown编辑器，Cmd Markdown编辑器的优势在于对中文支持比较好，实时的云端文稿，实时同步预览等等。</p>
-<p>目前，也就只有这些了，后续如果发现好用的软件会继续更新的。</p>
+<p>消息构建完后再对其进行序列化。序列化完成后，请求会像下面的形式：</p>
+<blockquote>
+<p>GET / HTTP/1.0\r\nUser-Agent: UserAgent\r\nContent-Length: 0\r\n\r\n</p>
+</blockquote>
+<p>反序列化是对序列化的逆操作。从服务端或客户端接收到的原始字节流通过反序列化会重新存储成它原始的表现形式。CFNetwork提供了所有关于获取接收到的序列化的消息的消息类型，HTTP版本，URL，消息头，消息体信息的方法。</p>
+<h6 id="CFHTTPAuthentication-API"><a href="#CFHTTPAuthentication-API" class="headerlink" title="CFHTTPAuthentication API"></a>CFHTTPAuthentication API</h6><p>如果你给认证服务器发送HTTP请求却没有证书或者是错误的证书，服务器会返回认证错误，通常错误码是401或407。CFHTTPAuthentication API支持认证证书设置，其支持以下的认证模式：</p>
+<blockquote>
+<ul>
+<li>Basic</li>
+<li>Digest</li>
+<li>NT LAN Manager</li>
+<li>Simple and Protected GSS-API Negotiation Mechanism（SPNEGO）</li>
+</ul>
+</blockquote>
+<p>现在，你可以将每个服务器对应的CFHTTPAuthentication对象保存到集合中。当你接收到401货407响应时，你需要找到服务器对应的正确的对象和证书并且应用它们。CFNetwork使用存储在认证对象中的信息来提高请求的效率。</p>
+<h5 id="CFHost-API"><a href="#CFHost-API" class="headerlink" title="CFHost API"></a>CFHost API</h5><p>通过调用CFHost API请求主机信息，包括名字，地址和可访问的信息。请求主机信息的进程叫做resolution。</p>
+<p>CFHost使用方法与CFStream相似：</p>
+<blockquote>
+<ul>
+<li>创建CFHost对象</li>
+<li>开始解析CFHost对象</li>
+<li>重新获取地址，主机名或者是否可访问的信息</li>
+<li>销毁CFHost对象</li>
+</ul>
+</blockquote>
+<p>跟所有的CFNetwork类一样，CFHost兼容IPv4和IPv6。使用CFHost，你可以写代码去处理IPv4和IPv6的情况。CFHost被集成到其他的CFNetwork的类中。例如，有一个CFStream的方法叫<code>CFStreamCreatePairWithSocketToCFHost</code>，它会直接从一个CFHost对象中创建CFStream对象。</p>
+<h5 id="CFNetServices-API"><a href="#CFNetServices-API" class="headerlink" title="CFNetServices API"></a>CFNetServices API</h5><p>如果你想要你的app使用Bonjour服务来注册服务或者发现服务，那就使用CFNetServices API。Bonjour是苹果的零配置网络的实现，它允许你创建，发现，解析网络服务。</p>
+<p>想要实现Bonjour，CFNetServices API定义了三种类型： CFNetService, CFNetServiceBrowser, CFNetServiceMonitor。CFNetService对象代表单独的网络服务，如打印机或者文件服务器。它包含另外的电脑解析服务所需要的所有信息，如名字，类型，域名和端口号。CFNetServiceBrowser对象用来发现域名和域名指向的网络服务。CFNetServiceMonitor对象用来管理CFNetService对象内容的更改，如iChat中的状态消息。</p>
+<h5 id="CFNetDiagnostics-API"><a href="#CFNetDiagnostics-API" class="headerlink" title="CFNetDiagnostics API"></a>CFNetDiagnostics API</h5><p>app连接网络服务依赖于稳定的连接。如果网络断开，便会引起问题。使用CFNetDiagnostics API，用户可以自己诊断网络问题，例如：</p>
+<blockquote>
+<ul>
+<li>物理连接失败，如网口没插好</li>
+<li>网络失败，如DNS或DHCP服务器无法响应</li>
+<li>配置失败，如代理配置不正确</li>
+</ul>
+</blockquote>
+<p>一旦网络失败被诊断，CFNetDiagnostics会指导用户去修复问题。在Safari连接网络失败后你可能已经看到过CFNetDiagnostics做出的反应。CFNetDiagnostics助手如下图所示：</p>
+<p><img src="/images/CFNetwork/3.png" alt=""></p>
+<p>向CFNetDiagnostics提供网络错误的上下文，你可以告诉<code>CFNetDiagnosticDiagnoseProblemInteractively</code>方法来引导用户尝试去找到解决方案。另外，你可以用CFNetDiagnostics去查询连接状态并且向用户传递错误消息。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>以上只是对CFNetwork框架的概览，至于更详细的使用会在后面的文章中罗列出来。</p>
 
       
     </div>
@@ -445,17 +454,13 @@ Home">
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/" rel="next" title="深入理解NSMapTable、NSHashTable、NSPointerArray">
-                <i class="fa fa-chevron-left"></i> 深入理解NSMapTable、NSHashTable、NSPointerArray
+              <a href="/2016/10/03/dumpdecrypted砸壳记录/" rel="next" title="dumpdecrypted砸壳记录">
+                <i class="fa fa-chevron-left"></i> dumpdecrypted砸壳记录
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" rel="prev" title="庖丁解牛KVO（一）——KVO概览和使用">
-                庖丁解牛KVO（一）——KVO概览和使用 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -470,10 +475,10 @@ Home">
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/03/12/Mac workflow小记/"
-     data-title="Mac workflow小记"
+        <div class="ds-share flat" data-thread-key="2016/10/05/CFNetwork学习笔记（一）/"
+     data-title="CFNetwork学习笔记（一）"
      data-content=""
-     data-url="http://yoursite.com/2016/03/12/Mac workflow小记/">
+     data-url="http://yoursite.com/2016/10/05/CFNetwork学习笔记（一）/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -500,8 +505,8 @@ Home">
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/03/12/Mac workflow小记/"
-           data-title="Mac workflow小记" data-url="http://yoursite.com/2016/03/12/Mac workflow小记/">
+      <div class="ds-thread" data-thread-key="2016/10/05/CFNetwork学习笔记（一）/"
+           data-title="CFNetwork学习笔记（一）" data-url="http://yoursite.com/2016/10/05/CFNetwork学习笔记（一）/">
       </div>
     
   </div>
@@ -603,7 +608,7 @@ Home">
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Homebrew"><span class="nav-number">1.</span> <span class="nav-text">Homebrew</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iTerm2"><span class="nav-number">2.</span> <span class="nav-text">iTerm2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Alfred3"><span class="nav-number">3.</span> <span class="nav-text">Alfred3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dash"><span class="nav-number">4.</span> <span class="nav-text">Dash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CheatSheet"><span class="nav-number">5.</span> <span class="nav-text">CheatSheet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sequel-Pro"><span class="nav-number">6.</span> <span class="nav-text">Sequel Pro</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sublime-Text-3"><span class="nav-number">7.</span> <span class="nav-text">Sublime Text 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lantern"><span class="nav-number">8.</span> <span class="nav-text">Lantern</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iStat-Menus"><span class="nav-number">9.</span> <span class="nav-text">iStat Menus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cmd-Markdown编辑器"><span class="nav-number">10.</span> <span class="nav-text">Cmd Markdown编辑器</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优势"><span class="nav-number">2.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结构"><span class="nav-number">3.</span> <span class="nav-text">结构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CFSocket-API"><span class="nav-number">3.0.1.</span> <span class="nav-text">CFSocket API</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CFStream-API"><span class="nav-number">3.0.2.</span> <span class="nav-text">CFStream API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CFNetwork-API概览"><span class="nav-number">4.</span> <span class="nav-text">CFNetwork API概览</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CFFTP-API"><span class="nav-number">4.0.1.</span> <span class="nav-text">CFFTP API</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#CFHTTP-API"><span class="nav-number">4.0.1.1.</span> <span class="nav-text">CFHTTP API</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#CFHTTPAuthentication-API"><span class="nav-number">4.0.1.2.</span> <span class="nav-text">CFHTTPAuthentication API</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CFHost-API"><span class="nav-number">4.0.2.</span> <span class="nav-text">CFHost API</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CFNetServices-API"><span class="nav-number">4.0.3.</span> <span class="nav-text">CFNetServices API</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CFNetDiagnostics-API"><span class="nav-number">4.0.4.</span> <span class="nav-text">CFNetDiagnostics API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
             
           </div>
         </section>

@@ -4,6 +4,94 @@
   
     
     <entry>
+      <title><![CDATA[CFNetwork学习笔记（一）]]></title>
+      <url>http://yoursite.com/2016/10/05/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+      <content type="html"><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。<br><a id="more"></a><br>CFNetwork是CoreServices框架中的框架，它提供了网络协议的抽象接口。这些抽象接口让直行各种网络任务变得简单起来，比如：支持与BSDScoket，HTTP，FTP服务工作，使用SSL或TLS建立加密连接，支持DNS主机解析等。</p>
+<p>CFNetwork是底层且高性能的框架，它能够让我们在协议栈上进行精细地控制。它是对BSDSocket的扩展，BSDSocket是提供对象简化任务如与FTP或者HTTP服务器通信或者解析DNS主机的标准socket抽象API。</p>
+<p>由于CFNetwork依赖于BSDsocket，如NSURL等的一些Cocoa类是依赖于CFNetwork实现的。此外，在视图中展示web内容的WebKit也同样依赖于CFNetwork。CFNetwork和其他一些框架的层级结构如下图所示。</p>
+<p><img src="/images/CFNetwork/1.png" alt=""></p>
+<h3 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h3><p>CFNetwork继承了BSDSocket的一些优势。它集成了run-loop，如果你的应用是基于run-loop，你可以在不实现线程的情况下使用网络协议。CFNetwork也包含很多对象来帮助你不需要自己实现细节就可以使用网络协议。例如，你可以不用实现CFFTP的API而使用FTP协议。如果你理解网络协议，需要底层控制但又不想自己实现它们，这时候CFNetwork可能是很好的选择。</p>
+<p>使用CFNetwork相比于Foundation级别的网络API有很多优势。CFNetwork更侧重于网络协议，而Foundation级别的网络API更侧重于数据的访问，如通过HTTP或FTP协议传输数据。Foundation级别的网络API确实提供了一些配置项，但CFNetwork提供的更多。</p>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>在学习CFNetwork的API之前，我们必须首先理解其API的整体结构。CFNetwork依赖于两大框架：CoreFoundation，CFSocket和CFStream。理解这两个框架对于使用CFNetwork非常有必要。</p>
+<h5 id="CFSocket-API"><a href="#CFSocket-API" class="headerlink" title="CFSocket API"></a>CFSocket API</h5><p>Socket是网络通信的最基础层。Socket的作用于电话插口有些类似，它允许你与另一个Socket进行连接（不管是本地的还是网络的）并且向另一个Socket发送数据。</p>
+<p>最常见的socket是BSDsocket，CFSocket是对BSDsocket的抽象。CFSocket提供了几乎所有BSDsocket服务并且它将socket集成到run-loop中。CFSocket不仅仅局限于基于流服务的socket（如TCP），它可以处理任何类型的socket。</p>
+<p>你可以用<code>CFSocketCreate</code>或<code>CFSocketCreateWithNative</code>函数创建CFSocket对象。然后，你可以用<code>CFSocketCreateRunLoopSource</code>函数创建run-loop源，并通过<code>CFRunLoopAddSource</code>函数添加到runloop中。之后，你可以用<code>CFSocketSendData</code>函数发送消息。当CFSocket对象接收到消息时，CFSocket函数回调会触发。</p>
+<h5 id="CFStream-API"><a href="#CFStream-API" class="headerlink" title="CFStream API"></a>CFStream API</h5><p>读写流提供了在各种媒介之间交换数据的简单方式。你可以为内存，文件或网络上的数据创建流，并且可以在不一次性将所有数据加载进内存的情况下使用流。</p>
+<p>流实际上是在通信路径上的连续的字节传输序列。流是单向通道，因此要进行双向通信就需要输入流和输出流。除了文件流以外，你不能在流中搜索查找，一旦流数据被接收或发送，那么就无法再从流中重新获取。</p>
+<p>CFStream API提供两个新的CFType类型的对象：CFReadStream和CFWriteStream。CFStream构建在CFSocket的上层同时也是CFHTTP和CFFTP的底层。它们的层级关系见下图。</p>
+<p><img src="/images/CFNetwork/2.png" alt=""></p>
+<p>你可以像操作UNIX文件描述子的形式来使用读写流。首先，你需要指定流的类型（内存，文件或Socket）并设置可选项来实例化流对象。接着，你打开流进行读和写操作。当流对象已经存在，你可以通过访问它的属性来获取流对象的相关信息。当你不再需要它时，关闭并释放它。</p>
+<p>CFStream的读写方法会一直处于挂起或者阻塞状态直到有数据可读或可写的时候才会结束挂起或阻塞状态。为了避免读写过程中流可能处于阻塞状态，使用异步方法并将其编排进runloop中。当读写操作不会被阻塞时回调方法会触发。</p>
+<p>另外，CFStream本身还支持SSL（Secure Sockets Layer）协议。你可以将流的SSL信息存储进一个字典对象中，然后将字典对象传给stream对象的kCFStreamPropertySSLSettings属性。</p>
+<h3 id="CFNetwork-API概览"><a href="#CFNetwork-API概览" class="headerlink" title="CFNetwork API概览"></a>CFNetwork API概览</h3><p>为了理解CFNetwork框架，你需要熟悉构成该框架的各个组成块。CFNetwork框架可以被拆解成几个独立的API，每个独立的API覆盖了不同的网络协议。这些API可以组合使用也可以单独使用，这取决于你自己的需求。</p>
+<h5 id="CFFTP-API"><a href="#CFFTP-API" class="headerlink" title="CFFTP API"></a>CFFTP API</h5><p>CFFTP可以帮我们与FTP服务器进行通信。使用CFFTP API可以创建读流负责下载，创建写流负责上传。使用读写流可以实现如下功能：</p>
+<blockquote>
+<ul>
+<li>从FTP服务器上下载文件</li>
+<li>向FTP服务器上传文件</li>
+<li>从FTP服务器下载目录列表</li>
+<li>在FTP服务器上创建目录</li>
+</ul>
+</blockquote>
+<p>FTP流对象工作原理与其他的CFNetwork流一样。例如，你可以通过调用<code>CFReadStreamCreateWithFTPURL</code>方法创建FTP读流，然后，调用<code>CFReadStreamGetError</code>在任何时候检查流的状态。</p>
+<p>通过设定FTP流的属性，你可以自定义流来满足你的需求。例如，如果流连接的服务器要求用户名和密码，你需要设置正确的属性这样流对象才能正确地进行工作。</p>
+<p>CFFTP流可以使用同步或异步。创建完读流对象后，为了打开指定的FTP服务器的连接需要调用<code>CFReadStreamOpen</code>方法。为了从流中读取数据，可以调用<code>CFReadStreamRead</code>方法。<code>CFReadStreamRead</code>方法将FTP服务器的输出填充到缓冲区中。</p>
+<h6 id="CFHTTP-API"><a href="#CFHTTP-API" class="headerlink" title="CFHTTP API"></a>CFHTTP API</h6><p>为了能收发HTTP消息，我们使用CFHTTP API。正如CFFTP是对FTP协议的抽象，CFHTTP是对HTTP协议的抽象。</p>
+<p>HTTP协议是在客户端和服务端之间的请求/响应协议。客户端创建请求消息，进程会将消息转换成的原始字节流，这是序列化的过程。这一步是非常必要的，否则消息无法被发送出去。然后，消息会被发送到服务器上。服务器响应会发送带有字符串的消息给客户端。如果有必要这一步操作会重复多次。</p>
+<p>要创建HTTP请求消息，你需要指定下面的属性：</p>
+<blockquote>
+<ul>
+<li>请求方法，如OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT</li>
+<li>URL</li>
+<li>HTTP版本，如1.0或1.1</li>
+<li>消息头，通过指定头部名字和它的值，如User-Agent ： MyUserAgent</li>
+<li>消息体</li>
+</ul>
+</blockquote>
+<p>消息构建完后再对其进行序列化。序列化完成后，请求会像下面的形式：</p>
+<blockquote>
+<p>GET / HTTP/1.0\r\nUser-Agent: UserAgent\r\nContent-Length: 0\r\n\r\n</p>
+</blockquote>
+<p>反序列化是对序列化的逆操作。从服务端或客户端接收到的原始字节流通过反序列化会重新存储成它原始的表现形式。CFNetwork提供了所有关于获取接收到的序列化的消息的消息类型，HTTP版本，URL，消息头，消息体信息的方法。</p>
+<h6 id="CFHTTPAuthentication-API"><a href="#CFHTTPAuthentication-API" class="headerlink" title="CFHTTPAuthentication API"></a>CFHTTPAuthentication API</h6><p>如果你给认证服务器发送HTTP请求却没有证书或者是错误的证书，服务器会返回认证错误，通常错误码是401或407。CFHTTPAuthentication API支持认证证书设置，其支持以下的认证模式：</p>
+<blockquote>
+<ul>
+<li>Basic</li>
+<li>Digest</li>
+<li>NT LAN Manager</li>
+<li>Simple and Protected GSS-API Negotiation Mechanism（SPNEGO）</li>
+</ul>
+</blockquote>
+<p>现在，你可以将每个服务器对应的CFHTTPAuthentication对象保存到集合中。当你接收到401货407响应时，你需要找到服务器对应的正确的对象和证书并且应用它们。CFNetwork使用存储在认证对象中的信息来提高请求的效率。</p>
+<h5 id="CFHost-API"><a href="#CFHost-API" class="headerlink" title="CFHost API"></a>CFHost API</h5><p>通过调用CFHost API请求主机信息，包括名字，地址和可访问的信息。请求主机信息的进程叫做resolution。</p>
+<p>CFHost使用方法与CFStream相似：</p>
+<blockquote>
+<ul>
+<li>创建CFHost对象</li>
+<li>开始解析CFHost对象</li>
+<li>重新获取地址，主机名或者是否可访问的信息</li>
+<li>销毁CFHost对象</li>
+</ul>
+</blockquote>
+<p>跟所有的CFNetwork类一样，CFHost兼容IPv4和IPv6。使用CFHost，你可以写代码去处理IPv4和IPv6的情况。CFHost被集成到其他的CFNetwork的类中。例如，有一个CFStream的方法叫<code>CFStreamCreatePairWithSocketToCFHost</code>，它会直接从一个CFHost对象中创建CFStream对象。</p>
+<h5 id="CFNetServices-API"><a href="#CFNetServices-API" class="headerlink" title="CFNetServices API"></a>CFNetServices API</h5><p>如果你想要你的app使用Bonjour服务来注册服务或者发现服务，那就使用CFNetServices API。Bonjour是苹果的零配置网络的实现，它允许你创建，发现，解析网络服务。</p>
+<p>想要实现Bonjour，CFNetServices API定义了三种类型： CFNetService, CFNetServiceBrowser, CFNetServiceMonitor。CFNetService对象代表单独的网络服务，如打印机或者文件服务器。它包含另外的电脑解析服务所需要的所有信息，如名字，类型，域名和端口号。CFNetServiceBrowser对象用来发现域名和域名指向的网络服务。CFNetServiceMonitor对象用来管理CFNetService对象内容的更改，如iChat中的状态消息。</p>
+<h5 id="CFNetDiagnostics-API"><a href="#CFNetDiagnostics-API" class="headerlink" title="CFNetDiagnostics API"></a>CFNetDiagnostics API</h5><p>app连接网络服务依赖于稳定的连接。如果网络断开，便会引起问题。使用CFNetDiagnostics API，用户可以自己诊断网络问题，例如：</p>
+<blockquote>
+<ul>
+<li>物理连接失败，如网口没插好</li>
+<li>网络失败，如DNS或DHCP服务器无法响应</li>
+<li>配置失败，如代理配置不正确</li>
+</ul>
+</blockquote>
+<p>一旦网络失败被诊断，CFNetDiagnostics会指导用户去修复问题。在Safari连接网络失败后你可能已经看到过CFNetDiagnostics做出的反应。CFNetDiagnostics助手如下图所示：</p>
+<p><img src="/images/CFNetwork/3.png" alt=""></p>
+<p>向CFNetDiagnostics提供网络错误的上下文，你可以告诉<code>CFNetDiagnosticDiagnoseProblemInteractively</code>方法来引导用户尝试去找到解决方案。另外，你可以用CFNetDiagnostics去查询连接状态并且向用户传递错误消息。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>以上只是对CFNetwork框架的概览，至于更详细的使用会在后面的文章中罗列出来。</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[dumpdecrypted砸壳记录]]></title>
       <url>http://yoursite.com/2016/10/03/dumpdecrypted%E7%A0%B8%E5%A3%B3%E8%AE%B0%E5%BD%95/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前一直采用Clutch对ipa包进行砸壳，后来发现Clutch在某些iOS版本下砸壳会失效，故而放弃了Clutch而采用dumpdecrypted。本篇文章就是记录用dumpdecrypted砸壳的过程以及其中的注意点。</p>
