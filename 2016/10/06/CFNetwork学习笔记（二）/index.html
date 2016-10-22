@@ -1,0 +1,871 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前言本篇文章主要讨论如何创建、开启读写流并检查读写流上的错误。此外，还会介绍如何从读流中读出数据，如何向写流中写入数据，如何在读写的过程中防止发生阻塞，如何通过代理服务器来引导流。
+CFStream可以用来读写文件或者与socket一起工作。除了创建流的过程之外，它们其他的行为都很相似。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CFNetwork学习笔记（二）">
+<meta property="og:url" content="http://yoursite.com/2016/10/06/CFNetwork学习笔记（二）/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="前言本篇文章主要讨论如何创建、开启读写流并检查读写流上的错误。此外，还会介绍如何从读流中读出数据，如何向写流中写入数据，如何在读写的过程中防止发生阻塞，如何通过代理服务器来引导流。
+CFStream可以用来读写文件或者与socket一起工作。除了创建流的过程之外，它们其他的行为都很相似。">
+<meta property="og:updated_time" content="2016-10-22T05:00:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CFNetwork学习笔记（二）">
+<meta name="twitter:description" content="前言本篇文章主要讨论如何创建、开启读写流并检查读写流上的错误。此外，还会介绍如何从读流中读出数据，如何向写流中写入数据，如何在读写的过程中防止发生阻塞，如何通过代理服务器来引导流。
+CFStream可以用来读写文件或者与socket一起工作。除了创建流的过程之外，它们其他的行为都很相似。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: '楼主大大'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/10/06/CFNetwork学习笔记（二）/"/>
+
+  <title> CFNetwork学习笔记（二） | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                CFNetwork学习笔记（二）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-10-06T20:50:01+08:00" content="2016-10-06">
+              2016-10-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/MacOS/" itemprop="url" rel="index">
+                    <span itemprop="name">MacOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/06/CFNetwork学习笔记（二）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/06/CFNetwork学习笔记（二）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讨论如何创建、开启读写流并检查读写流上的错误。此外，还会介绍如何从读流中读出数据，如何向写流中写入数据，如何在读写的过程中防止发生阻塞，如何通过代理服务器来引导流。</p>
+<p>CFStream可以用来读写文件或者与socket一起工作。除了创建流的过程之外，它们其他的行为都很相似。<br><a id="more"></a></p>
+<h3 id="ReadStream"><a href="#ReadStream" class="headerlink" title="ReadStream"></a>ReadStream</h3><p>要使用读流，首先需要创建读流对象，代码如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFReadStreamRef</span> myReadStream = <span class="built_in">CFReadStreamCreateWithFile</span>(kCFAllocatorDefault, fileURL);</div></pre></td></tr></table></figure></p>
+<p>在这段代码中，<code>kCFAllocatorDefault</code>参数指定了当前为流分配内存的默认系统分配器，<code>fileURL</code>参数指明了读入文件的文件名，例如file:///Users/joeuser/Downloads/MyApp.sit。</p>
+<p>创建成功后就可以打开它。打开流会导致流持有任何它需要的系统资源，如文件描述子用来打开文件。打开流的代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!<span class="built_in">CFReadStreamOpen</span>(myReadStream)) &#123;</div><div class="line">    <span class="built_in">CFStreamError</span> myErr = <span class="built_in">CFReadStreamGetError</span>(myReadStream);</div><div class="line">    <span class="comment">// An error has occurred.</span></div><div class="line">        <span class="keyword">if</span> (myErr.domain == kCFStreamErrorDomainPOSIX) &#123;</div><div class="line">        <span class="comment">// Interpret myErr.error as a UNIX errno.</span></div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (myErr.domain == kCFStreamErrorDomainMacOSStatus) &#123;</div><div class="line">        <span class="comment">// Interpret myErr.error as a MacOS error code.</span></div><div class="line">            OSStatus macError = (OSStatus)myErr.error;</div><div class="line">        <span class="comment">// Check other error domains.</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>CFReadStreamOpen</code>方法如果返回true则代表成功，返回false则表示由于某些原因而打开失败。如果<code>CFReadStreamOpen</code>返回false，上面代码中会调用<code>CFReadStreamGetError</code>方法，该方法会返回CFStreamError类型的结构，其包含两个值：域代码和错误代码。域代码指定如何翻译错误代码。例如，如果域代码是<code>kCFStreamErrorDomainPOSIX</code>，那错误代码就是UNIX errno值。另外的错误域则是<code>kCFStreamErrorDomainMacOSStatus</code>，它指定的错误代码是定义在MacErrors.h中的<code>OSStatus</code>类型的值；还有错误域<code>kCFStreamErrorDomainHTTP</code>，它指定的错误代码是<code>CFStreamErrorHTTP</code>类型的枚举值。</p>
+<p>打开流可能是很长的过程，因此为了避免阻塞，<code>CFReadStreamOpen</code>和<code>CFWriteStreamOpen</code>方法通过返回true说明打开流的进程已经开始。我们可以通过调用<code>CFReadStreamGetStatus</code>和<code>CFWriteStreamGetStatus</code>方法检查开启的状态，如果开启还在进行中，则返回<code>kCFStreamStatusOpening</code>，如果开启完成，则返回<code>kCFStreamStatusOpen</code>，如果开启完成但发生了错误，则返回<code>kCFStreamStatusErrorOccurred</code>。在大多数情况下，无论打开动作是否完成都无关紧要，因为CFStream的读写方法在流未打开时是一直处于阻塞状态的。</p>
+<p>打开操作完成后，就需要从读流中读取数据，这就需要调用<code>CFReadStreamRead</code>方法，这与UNIX的系统调用read()相似。这两个方法都有缓冲区和缓冲区长度的参数，都返回读取字节的状态码，如果读取到流或文件的最后则返回0，如果发生错误则返回-1，都会在字节流可以读取之前处于阻塞状态，都会在不阻塞的情况下继续读取直到最后。以下为读取代码：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFIndex</span> numBytesRead;</div><div class="line"><span class="keyword">do</span> &#123;</div><div class="line">    <span class="built_in">UInt8</span> buf[myReadBufferSize]; <span class="comment">// define myReadBufferSize as desired</span></div><div class="line">    numBytesRead = <span class="built_in">CFReadStreamRead</span>(myReadStream, buf, <span class="keyword">sizeof</span>(buf));</div><div class="line">    <span class="keyword">if</span>( numBytesRead &gt; <span class="number">0</span> ) &#123;</div><div class="line">        handleBytes(buf, numBytesRead);</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>( numBytesRead &lt; <span class="number">0</span> ) &#123;</div><div class="line">        <span class="built_in">CFStreamError</span> error = <span class="built_in">CFReadStreamGetError</span>(myReadStream);</div><div class="line">        reportError(error);</div><div class="line">    &#125;</div><div class="line">&#125; <span class="keyword">while</span>( numBytesRead &gt; <span class="number">0</span> );</div></pre></td></tr></table></figure>
+<p>当所有的数据读取完毕后，你应该调用<code>CFReadStreamClose</code>方法来关闭流，并且释放预置相关联的系统资源。然后，通过调用<code>CFRelease</code>方法释放stream对象的引用。你还可以通过将其设置为NULL来使其引用失效。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFReadStreamClose</span>(myReadStream);</div><div class="line"><span class="built_in">CFRelease</span>(myReadStream);</div><div class="line">myReadStream = <span class="literal">NULL</span>;</div></pre></td></tr></table></figure>
+<h3 id="WriteStream"><a href="#WriteStream" class="headerlink" title="WriteStream"></a>WriteStream</h3><p>写入流与读出流原理很相似。主要的区别在于<code>CFWriteStreamWrite</code>不保证会接收你传入的所有字节，而是会返回它接收的字节数目。注意看下面的代码，如果写入的字节数与需要写入的总字节数不一致，缓冲区会自动调节去容纳它。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFWriteStreamRef</span> myWriteStream =</div><div class="line">        <span class="built_in">CFWriteStreamCreateWithFile</span>(kCFAllocatorDefault, fileURL);</div><div class="line"><span class="keyword">if</span> (!<span class="built_in">CFWriteStreamOpen</span>(myWriteStream)) &#123;</div><div class="line">    <span class="built_in">CFStreamError</span> myErr = <span class="built_in">CFWriteStreamGetError</span>(myWriteStream);</div><div class="line">    <span class="comment">// An error has occurred.</span></div><div class="line">    <span class="keyword">if</span> (myErr.domain == kCFStreamErrorDomainPOSIX) &#123;</div><div class="line">    <span class="comment">// Interpret myErr.error as a UNIX errno.</span></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (myErr.domain == kCFStreamErrorDomainMacOSStatus) &#123;</div><div class="line">        <span class="comment">// Interpret myErr.error as a MacOS error code.</span></div><div class="line">        OSStatus macError = (OSStatus)myErr.error;</div><div class="line">        <span class="comment">// Check other error domains.</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="built_in">UInt8</span> buf[] = “Hello, world”;</div><div class="line"><span class="built_in">CFIndex</span> bufLen = (<span class="built_in">CFIndex</span>)strlen(buf);</div><div class="line"> </div><div class="line"><span class="keyword">while</span> (!done) &#123;</div><div class="line">    <span class="built_in">CFIndex</span> bytesWritten = <span class="built_in">CFWriteStreamWrite</span>(myWriteStream, buf, (<span class="built_in">CFIndex</span>)bufLen);</div><div class="line">    <span class="keyword">if</span> (bytesWritten &lt; <span class="number">0</span>) &#123;</div><div class="line">        <span class="built_in">CFStreamError</span> error = <span class="built_in">CFWriteStreamGetError</span>(myWriteStream);</div><div class="line">        reportError(error);</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bytesWritten == <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (<span class="built_in">CFWriteStreamGetStatus</span>(myWriteStream) == kCFStreamStatusAtEnd) &#123;</div><div class="line">            done = <span class="literal">TRUE</span>;</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bytesWritten != bufLen) &#123;</div><div class="line">        <span class="comment">// Determine how much has been written and adjust the buffer</span></div><div class="line">        bufLen = bufLen - bytesWritten;</div><div class="line">        memmove(buf, buf + bytesWritten, bufLen);</div><div class="line"> </div><div class="line">        <span class="comment">// Figure out what went wrong with the write stream</span></div><div class="line">        <span class="built_in">CFStreamError</span> error = <span class="built_in">CFWriteStreamGetError</span>(myWriteStream);</div><div class="line">        reportError(error);</div><div class="line"> </div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="built_in">CFWriteStreamClose</span>(myWriteStream);</div><div class="line"><span class="built_in">CFRelease</span>(myWriteStream);</div><div class="line">myWriteStream = <span class="literal">NULL</span>;</div></pre></td></tr></table></figure>
+<h3 id="防止阻塞"><a href="#防止阻塞" class="headerlink" title="防止阻塞"></a>防止阻塞</h3><p>当使用流进行通信，特别是基于socket的流时，数据传输可能会耗费很长时间。如果你同步实现了流服务那整个app将会在数据传输上强制等待。因此，异常推荐使用替代方法来阻止阻塞。</p>
+<p>当对CFStream对象进行读写操作时有两种方式来防止阻塞：</p>
+<blockquote>
+<ul>
+<li>runloop——注册接收流相关事件并将stream加入到runloop中。当流相关事件发生时，回调函数会被调用。</li>
+<li>调查——对于读流，在从流中读取之前检查是否有字节可读，对于写流，在写入流之前检查流是否可被写入。</li>
+</ul>
+</blockquote>
+<h5 id="runloop"><a href="#runloop" class="headerlink" title="runloop"></a>runloop</h5><p>使用runloop是比较推荐的方式。runloop在主线程中运行，它会一直等待事件的发生，然后会调用与事件关联的方法。在网络传输过程中，当注册的事件发生时，回调函数会被runloop调用执行。这意味着我们不需要去检查套接字流，也就不会拖慢线程的运行效率。</p>
+<p>我们以代码来进一步说明，首先创建套接字读流：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFStreamCreatePairWithSocketToCFHost</span>(kCFAllocatorDefault, host, port, &amp;myReadStream, <span class="literal">NULL</span>);</div></pre></td></tr></table></figure></p>
+<p>其中host参数代表读流指向的主机，port参数代表主机使用的端口号，<code>CFStreamCreatePairWithSocketToCFHost</code>方法返回新的读流对象的引用并将其存储在myReadStream地址中。最后一个参数NULL代表调用者不想创建写流。如果你想创建写流，就传入对象的地址如&amp;myWriteStream。</p>
+<p>在打开套接字读流之前，需要创建上下文，这在注册接收流相关事件的时候会用到：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFStreamClientContext</span> myContext = &#123;<span class="number">0</span>, myPtr, myRetain, myRelease, myCopyDesc&#125;;</div></pre></td></tr></table></figure></p>
+<p>第一个参数0代表版本号，info参数即myPtr是指向你想要传给回调函数的数据的指针，通常，myPrt指向的结构体中包含的都是与流相关的信息。retain参数是指向持有info参数的方法的指针，如果你像上面代码中一样设置了它，CFStream会调用<code>myRetain(myPtr)</code>方法持有info指针。类似地，release参数是指向释放info参数方法的指针，当流与上下文断开连接，CFStream会调用<code>myRelease(myPtr)</code>方法。最后一个参数copyDescription是关于流描述信息的方法。例如，如果你用流上下文调用<code>CFCopyDesc(myReadStream)</code>方法，CFStream回你调用<code>myCopyDesc(myPtr)</code>。此外，上下文也允许将retain、release和copyDescription参数置为NULL。如果你将retain、release参数置为NULL，系统会在流对象被销毁前一直让info参数指向的内存存活。如果你将copyDescription参数置为NULL，系统会在必要的时候给出info指针指向的内存中的内容的基本描述。</p>
+<p>创建完上下文后，调用<code>CFReadStreamSetClient</code>方法来注册接收流相关事件。<code>CFReadStreamSetClient</code>方法要求你指定回调方法和你想要接收的事件。下面的代码中，回调方法想要接收kCFStreamEventHasBytesAvailable, kCFStreamEventErrorOccurred和 kCFStreamEventEndEncountered事件。最后调用<code>CFReadStreamScheduleWithRunLoop</code>方法将stream添加到runloop中去。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFOptionFlags</span> registeredEvents = kCFStreamEventHasBytesAvailable | kCFStreamEventErrorOccurred | kCFStreamEventEndEncountered;</div><div class="line"><span class="keyword">if</span> (<span class="built_in">CFReadStreamSetClient</span>(myReadStream, registeredEvents, myCallBack, &amp;myContext))&#123;</div><div class="line">    <span class="built_in">CFReadStreamScheduleWithRunLoop</span>(myReadStream, <span class="built_in">CFRunLoopGetCurrent</span>(), kCFRunLoopCommonModes);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>成功将stream添加到runloop中后，就可以打开stream了：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!<span class="built_in">CFReadStreamOpen</span>(myReadStream)) &#123;</div><div class="line">    <span class="built_in">CFStreamError</span> myErr = <span class="built_in">CFReadStreamGetError</span>(myReadStream);</div><div class="line">    <span class="keyword">if</span> (myErr.error != <span class="number">0</span>) &#123;</div><div class="line">    <span class="comment">// An error has occurred.</span></div><div class="line">        <span class="keyword">if</span> (myErr.domain == kCFStreamErrorDomainPOSIX) &#123;</div><div class="line">        <span class="comment">// Interpret myErr.error as a UNIX errno.</span></div><div class="line">            strerror(myErr.error);</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (myErr.domain == kCFStreamErrorDomainMacOSStatus) &#123;</div><div class="line">            OSStatus macError = (OSStatus)myErr.error;</div><div class="line">            &#125;</div><div class="line">        <span class="comment">// Check other domains.</span></div><div class="line">    &#125; <span class="keyword">else</span></div><div class="line">        <span class="comment">// start the run loop</span></div><div class="line">        <span class="built_in">CFRunLoopRun</span>();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>现在，等待你的回调方法被执行。在回调方法中，检查事件码并做相应的处理：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> myCallBack (<span class="built_in">CFReadStreamRef</span> stream, <span class="built_in">CFStreamEventType</span> event, <span class="keyword">void</span> *myPtr) &#123;</div><div class="line">    <span class="keyword">switch</span>(event) &#123;</div><div class="line">        <span class="keyword">case</span> kCFStreamEventHasBytesAvailable:</div><div class="line">            <span class="comment">// It is safe to call CFReadStreamRead; it won’t block because bytes</span></div><div class="line">            <span class="comment">// are available.</span></div><div class="line">            <span class="built_in">UInt8</span> buf[BUFSIZE];</div><div class="line">            <span class="built_in">CFIndex</span> bytesRead = <span class="built_in">CFReadStreamRead</span>(stream, buf, BUFSIZE);</div><div class="line">            <span class="keyword">if</span> (bytesRead &gt; <span class="number">0</span>) &#123;</div><div class="line">                handleBytes(buf, bytesRead);</div><div class="line">            &#125;</div><div class="line">            <span class="comment">// It is safe to ignore a value of bytesRead that is less than or</span></div><div class="line">            <span class="comment">// equal to zero because these cases will generate other events.</span></div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> kCFStreamEventErrorOccurred:</div><div class="line">            <span class="built_in">CFStreamError</span> error = <span class="built_in">CFReadStreamGetError</span>(stream);</div><div class="line">            reportError(error);</div><div class="line">            <span class="built_in">CFReadStreamUnscheduleFromRunLoop</span>(stream, <span class="built_in">CFRunLoopGetCurrent</span>(),</div><div class="line">                                              kCFRunLoopCommonModes);</div><div class="line">            <span class="built_in">CFReadStreamClose</span>(stream);</div><div class="line">            <span class="built_in">CFRelease</span>(stream);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> kCFStreamEventEndEncountered:</div><div class="line">            reportCompletion();</div><div class="line">            <span class="built_in">CFReadStreamUnscheduleFromRunLoop</span>(stream, <span class="built_in">CFRunLoopGetCurrent</span>(),</div><div class="line">                                              kCFRunLoopCommonModes);</div><div class="line">            <span class="built_in">CFReadStreamClose</span>(stream);</div><div class="line">            <span class="built_in">CFRelease</span>(stream);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当回调方法接收到<code>kCFStreamEventHasBytesAvailable</code>时，会调用<code>CFReadStreamRead</code>方法读取数据。当回调方法接收到<code>kCFStreamEventErrorOccurred</code>时，会调用<code>CFReadStreamGetError</code>方法获取错误对象并调用<code>reportError</code>方法处理错误。当回调方法接收到<code>kCFStreamEventEndEncountered</code>时，会调用<code>reportCompletion</code>方法处理最后的数据，然后调用<code>CFReadStreamUnscheduleFromRunLoop</code>方法将stream对象从指定的runloop中移除。最后，调用<code>CFReadStreamClose</code>方法关闭流，调用<code>CFRelease</code>释放流对象的引用。</p>
+<h5 id="调查"><a href="#调查" class="headerlink" title="调查"></a>调查</h5><p>总的来说，调查网络流是不推荐的。然而，在某些特殊的环境下，这种方式会比较有效。首先你要检查流是否准备好进行读写操作，然后在流上执行读写操作。当向写流中写入时，你可以<br>调用<code>CFWriteStreamCanAcceptBytes</code>方法来决定流是否开始接收数据。如果返回true，就可以确保在之后的<code>CFWriteStreamWrite</code>方法调用在不阻塞的情况下可以立即发送数据。类似地，对于读流，在调用<code>CFReadStreamRead</code>方法之前，先调用<code>CFReadStreamHasBytesAvailable</code>方法。具体的代码示例如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Polling in a read stream</span></div><div class="line"><span class="keyword">while</span> (!done) &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="built_in">CFReadStreamHasBytesAvailable</span>(myReadStream)) &#123;</div><div class="line">        <span class="built_in">UInt8</span> buf[BUFSIZE];</div><div class="line">        <span class="built_in">CFIndex</span> bytesRead = <span class="built_in">CFReadStreamRead</span>(myReadStream, buf, BUFSIZE);</div><div class="line">        <span class="keyword">if</span> (bytesRead &lt; <span class="number">0</span>) &#123;</div><div class="line">            <span class="built_in">CFStreamError</span> error = <span class="built_in">CFReadStreamGetError</span>(myReadStream);</div><div class="line">            reportError(error);</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bytesRead == <span class="number">0</span>) &#123;</div><div class="line">            <span class="keyword">if</span> (<span class="built_in">CFReadStreamGetStatus</span>(myReadStream) == kCFStreamStatusAtEnd) &#123;</div><div class="line">                done = <span class="literal">TRUE</span>;</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            handleBytes(buf, bytesRead);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">// ...do something else while you wait...</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Polling in a write stream</span></div><div class="line"><span class="built_in">UInt8</span> buf[] = “Hello, world”;</div><div class="line"><span class="built_in">UInt32</span> bufLen = strlen(buf);</div><div class="line"> </div><div class="line"><span class="keyword">while</span> (!done) &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="built_in">CFWriteStreamCanAcceptBytes</span>(myWriteStream)) &#123;</div><div class="line">        <span class="keyword">int</span> bytesWritten = <span class="built_in">CFWriteStreamWrite</span>(myWriteStream, buf, strlen(buf));</div><div class="line">        <span class="keyword">if</span> (bytesWritten &lt; <span class="number">0</span>) &#123;</div><div class="line">            <span class="built_in">CFStreamError</span> error = <span class="built_in">CFWriteStreamGetError</span>(myWriteStream);</div><div class="line">            reportError(error);</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bytesWritten == <span class="number">0</span>) &#123;</div><div class="line">            <span class="keyword">if</span> (<span class="built_in">CFWriteStreamGetStatus</span>(myWriteStream) == kCFStreamStatusAtEnd)</div><div class="line">            &#123;</div><div class="line">                done = <span class="literal">TRUE</span>;</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bytesWritten != strlen(buf)) &#123;</div><div class="line">            <span class="comment">// Determine how much has been written and adjust the buffer</span></div><div class="line">            bufLen = bufLen - bytesWritten;</div><div class="line">            memmove(buf, buf + bytesWritten, bufLen);</div><div class="line"> </div><div class="line">            <span class="comment">// Figure out what went wrong with the write stream</span></div><div class="line">            <span class="built_in">CFStreamError</span> error = <span class="built_in">CFWriteStreamGetError</span>(myWriteStream);</div><div class="line">            reportError(error);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">// ...do something else while you wait...</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h3><p>在stream中应用防火墙的方式有两种。对于大多数流而言，你可以调用<code>SCDynamicStoreCopyProxies</code>方法获取代理设置，然后通过设置<code>kCFStreamHTTPProxy</code>（或<code>kCFStreamFTPProxy</code>）属性将设置应用到stream中。<code>SCDynamicStoreCopyProxies</code>方法是SystemConfiguration.framework中的一部分，因此在使用该方法的时候你需要在项目中导入<code>&lt;SystemConfiguration/SystemConfiguration.h&gt;</code>。然后在你使用完之后去释放代理字典的引用，整个过程的代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFDictionaryRef</span> proxyDict = SCDynamicStoreCopyProxies(<span class="literal">NULL</span>);</div><div class="line"><span class="built_in">CFReadStreamSetProperty</span>(readStream, kCFStreamPropertyHTTPProxy, proxyDict);</div></pre></td></tr></table></figure>
+<p>然而，如果你需要在多个流中使用代理设置，这就会变得复杂起来。在这种情况下获得用户机器的防火墙设置需要五个步骤：</p>
+<blockquote>
+<p>1.创建单一持久化的指向动态存储会话<code>SCDynamicStoreRef</code>的句柄。<br>2.将句柄添加到runloop中来接收代理变化的通知。<br>3.用<code>SCDynamicStoreCopyProxies</code>方法获取最新的代理设置。<br>4.当代理设置发生改变时更新代理拷贝中的内容。<br>5.使用结束后清空<code>SCDynamicStoreRef</code>。</p>
+</blockquote>
+<p>我们接着以代码来详细说明。首先，调用<code>SCDynamicStoreCreate</code>方法并传入分配子、描述行为的名字、回调方法和动态存储上下文等参数来创建创建动态存储会话的句柄。这会在初始化应用程序时执行。</p>
+<p>接着，我们需要将其添加到runloop中。我们要调用<code>SCDynamicStoreKeyCreateProxies</code>和<code>SCDynamicStoreSetNotificationKeys</code>方法将设置句柄来管理代理的变化，然后，再调用<code>SCDynamicStoreCreateRunLoopSource</code>和<code>CFRunLoopAddSource</code>方法将句柄添加到runloop中去。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 1.Create a handle to a dynamic store session</span></div><div class="line">SCDynamicStoreContext context = &#123;<span class="number">0</span>, <span class="keyword">self</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>&#125;;</div><div class="line">systemDynamicStore = SCDynamicStoreCreate(<span class="literal">NULL</span>, <span class="built_in">CFSTR</span>(<span class="string">"SampleApp"</span>), proxyHasChanged, &amp;context);</div><div class="line"></div><div class="line"><span class="comment">// 2.Set up the store to monitor any changes to the proxies</span></div><div class="line"><span class="built_in">CFStringRef</span> proxiesKey = SCDynamicStoreKeyCreateProxies(<span class="literal">NULL</span>);</div><div class="line"><span class="built_in">CFArrayRef</span> keyArray = <span class="built_in">CFArrayCreate</span>(<span class="literal">NULL</span>, (<span class="keyword">const</span> <span class="keyword">void</span> **)(&amp;proxiesKey), <span class="number">1</span>, &amp;kCFTypeArrayCallBacks);</div><div class="line">SCDynamicStoreSetNotificationKeys(systemDynamicStore, keyArray, <span class="literal">NULL</span>);</div><div class="line"><span class="built_in">CFRelease</span>(keyArray);</div><div class="line"><span class="built_in">CFRelease</span>(proxiesKey);</div><div class="line"> </div><div class="line"><span class="comment">// 3.Add the dynamic store to the run loop</span></div><div class="line"><span class="built_in">CFRunLoopSourceRef</span> storeRLSource =</div><div class="line">    SCDynamicStoreCreateRunLoopSource(<span class="literal">NULL</span>, systemDynamicStore, <span class="number">0</span>);</div><div class="line"><span class="built_in">CFRunLoopAddSource</span>(<span class="built_in">CFRunLoopGetCurrent</span>(), storeRLSource, kCFRunLoopCommonModes);</div><div class="line"><span class="built_in">CFRelease</span>(storeRLSource);</div></pre></td></tr></table></figure>
+<p>一旦句柄被添加到runloop中，就可以通过调用<code>SCDynamicStoreCopyProxies</code>方法来预加载当前代理设置和代理字典。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gProxyDict = SCDynamicStoreCopyProxies(systemDynamicStore);</div></pre></td></tr></table></figure>
+<p>由于将句柄添加到runloop中，因而每次代理改变时回调方法会被调用。释放当前的代理字典并用新的代理设置来重新加载它。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> proxyHasChanged() &#123;</div><div class="line">    <span class="built_in">CFRelease</span>(gProxyDict);</div><div class="line">    gProxyDict = SCDynamicStoreCopyProxies(systemDynamicStore);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当所有的代理信息都是最新的时，应用这些代理信息。当创建了读写流后，通过调用<code>CFReadStreamSetProperty</code>和<code>CFWriteStreamSetProperty</code>方法可以设置<code>kCFStreamPropertyHTTPProxy</code>代理。以下以读流为例：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFReadStreamSetProperty</span>(readStream, kCFStreamPropertyHTTPProxy, gProxyDict);</div></pre></td></tr></table></figure>
+<p>当我们使用完代理设置后，确保释放字典和句柄，并将句柄从runloop中移除。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (gProxyDict) &#123;</div><div class="line">    <span class="built_in">CFRelease</span>(gProxyDict);</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="comment">// Invalidate the dynamic store's run loop source</span></div><div class="line"><span class="comment">// to get the store out of the run loop</span></div><div class="line"><span class="built_in">CFRunLoopSourceRef</span> rls = SCDynamicStoreCreateRunLoopSource(<span class="literal">NULL</span>, systemDynamicStore, <span class="number">0</span>);</div><div class="line"><span class="built_in">CFRunLoopSourceInvalidate</span>(rls);</div><div class="line"><span class="built_in">CFRelease</span>(rls);</div><div class="line"><span class="built_in">CFRelease</span>(systemDynamicStore);</div></pre></td></tr></table></figure></p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>以上就是对读写流的操作的详细解释，如果发现文中有问题或错误，欢迎指出。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一下吧~</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/alipay.png" alt="zakariyyaSv Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/05/CFNetwork学习笔记（一）/" rel="next" title="CFNetwork学习笔记（一）">
+                <i class="fa fa-chevron-left"></i> CFNetwork学习笔记（一）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/07/CFNetwork学习笔记（三）/" rel="prev" title="CFNetwork学习笔记（三）">
+                CFNetwork学习笔记（三） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/10/06/CFNetwork学习笔记（二）/"
+     data-title="CFNetwork学习笔记（二）"
+     data-content=""
+     data-url="http://yoursite.com/2016/10/06/CFNetwork学习笔记（二）/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/06/CFNetwork学习笔记（二）/"
+           data-title="CFNetwork学习笔记（二）" data-url="http://yoursite.com/2016/10/06/CFNetwork学习笔记（二）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">25</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReadStream"><span class="nav-number">2.</span> <span class="nav-text">ReadStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WriteStream"><span class="nav-number">3.</span> <span class="nav-text">WriteStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防止阻塞"><span class="nav-number">4.</span> <span class="nav-text">防止阻塞</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#runloop"><span class="nav-number">4.0.1.</span> <span class="nav-text">runloop</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#调查"><span class="nav-number">4.0.2.</span> <span class="nav-text">调查</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙"><span class="nav-number">5.</span> <span class="nav-text">防火墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">6.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>

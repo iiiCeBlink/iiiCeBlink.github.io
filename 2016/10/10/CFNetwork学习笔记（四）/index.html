@@ -1,0 +1,860 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前言本篇文章主要讲述用CFHTTPAuthentication API如何与HTTP认证服务器交互，如何找到合适的认证对象和证书并填入到HTTP请求中。一般而言，如果HTTP服务器给你的HTTP请求返回401或407，就意味着服务器是认证服务器并且要求证书。在CFHTTPAuthentication API中，每个证书集合都被存储在CFHTTPAuthentication对象中。因此，每个不同的认">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CFNetwork学习笔记（四）">
+<meta property="og:url" content="http://yoursite.com/2016/10/10/CFNetwork学习笔记（四）/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="前言本篇文章主要讲述用CFHTTPAuthentication API如何与HTTP认证服务器交互，如何找到合适的认证对象和证书并填入到HTTP请求中。一般而言，如果HTTP服务器给你的HTTP请求返回401或407，就意味着服务器是认证服务器并且要求证书。在CFHTTPAuthentication API中，每个证书集合都被存储在CFHTTPAuthentication对象中。因此，每个不同的认">
+<meta property="og:image" content="http://yoursite.com/images/CFNetwork/4.png">
+<meta property="og:image" content="http://yoursite.com/images/CFNetwork/5.png">
+<meta property="og:updated_time" content="2016-10-22T04:59:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CFNetwork学习笔记（四）">
+<meta name="twitter:description" content="前言本篇文章主要讲述用CFHTTPAuthentication API如何与HTTP认证服务器交互，如何找到合适的认证对象和证书并填入到HTTP请求中。一般而言，如果HTTP服务器给你的HTTP请求返回401或407，就意味着服务器是认证服务器并且要求证书。在CFHTTPAuthentication API中，每个证书集合都被存储在CFHTTPAuthentication对象中。因此，每个不同的认">
+<meta name="twitter:image" content="http://yoursite.com/images/CFNetwork/4.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: '楼主大大'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/10/10/CFNetwork学习笔记（四）/"/>
+
+  <title> CFNetwork学习笔记（四） | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                CFNetwork学习笔记（四）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-10-10T16:46:53+08:00" content="2016-10-10">
+              2016-10-10
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/MacOS/" itemprop="url" rel="index">
+                    <span itemprop="name">MacOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/10/CFNetwork学习笔记（四）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/10/CFNetwork学习笔记（四）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讲述用CFHTTPAuthentication API如何与HTTP认证服务器交互，如何找到合适的认证对象和证书并填入到HTTP请求中。一般而言，如果HTTP服务器给你的HTTP请求返回401或407，就意味着服务器是认证服务器并且要求证书。在CFHTTPAuthentication API中，每个证书集合都被存储在CFHTTPAuthentication对象中。因此，每个不同的认证服务器和连接到服务器的不同用户都需要存储在独立的CFHTTPAuthentication对象中。为了能与服务器进行通信，你需要将CFHTTPAuthentication存储到HTTP请求当中。后面会对这些步骤进行详细解释。<br><a id="more"></a></p>
+<h3 id="认证"><a href="#认证" class="headerlink" title="认证"></a>认证</h3><p>添加对认证的支持能让你的app与HTTP认证服务器进行会话，即使即使HTTP认证不是复杂的概念，但要去实现它却是比较复杂的过程。整个的过程如下：</p>
+<blockquote>
+<p>1.客户端向服务器发送HTTP请求。<br>2.服务端要求客户端进行认证。<br>3.客户端将原始的请求和证书一起打包重新发给服务器。<br>4.客户端和服务器进行通信。<br>5.当服务器对客户端认证完成后，它会将请求的响应返回给客户端。</p>
+</blockquote>
+<p><img src="/images/CFNetwork/4.png" alt=""></p>
+<p><img src="/images/CFNetwork/5.png" alt=""></p>
+<p>当HTTP请求返回401或407时，客户端第一步要做的是找到可靠的CFHTTPAuthentication对象。认证对象中包含证书和其他向服务器认证需要的信息。如果你已经跟服务器认证过了，你就会有有效的认证对象。然而，在大多数情况下，你需要调用<code>CFHTTPAuthenticationCreateFromResponse</code>方法创建认证对象。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!authentication) &#123;</div><div class="line">    <span class="built_in">CFHTTPMessageRef</span> responseHeader =</div><div class="line">        (<span class="built_in">CFHTTPMessageRef</span>) <span class="built_in">CFReadStreamCopyProperty</span>(</div><div class="line">            readStream,</div><div class="line">            kCFStreamPropertyHTTPResponseHeader</div><div class="line">        );</div><div class="line"> </div><div class="line">    <span class="comment">// Get the authentication information from the response.</span></div><div class="line">    authentication = <span class="built_in">CFHTTPAuthenticationCreateFromResponse</span>(<span class="literal">NULL</span>, responseHeader);</div><div class="line">    <span class="built_in">CFRelease</span>(responseHeader);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果创建的认证对象是有效的，那就可以继续下一步了。如果认证对象是无效的，就检查看证书是否已经损坏。更多关于证书的信息，可以阅读<a href="https://developer.apple.com/library/content/qa/qa1277/_index.html" target="_blank" rel="external">Security Credentials</a>中的内容。损坏的证书意味着服务器不接受登录信息并且继续监听新的证书。然而，如果证书是完好的而服务器拒绝了app发出的请求，那就是说服务器拒绝与app进行通信，这时候就必须放弃。在证书损坏的情况下，重新创建认证对象并重复认证的步骤直到得到有效的认证对象。以下为代码示例：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 查找有效的认证对象 Code 4-1</span></div><div class="line"><span class="built_in">CFStreamError</span> err;</div><div class="line"><span class="keyword">if</span> (!authentication) &#123;</div><div class="line">    <span class="comment">// the newly created authentication object is bad, must return</span></div><div class="line">    <span class="keyword">return</span>;</div><div class="line"> </div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!<span class="built_in">CFHTTPAuthenticationIsValid</span>(authentication, &amp;err)) &#123;</div><div class="line"> </div><div class="line">    <span class="comment">// destroy authentication and credentials</span></div><div class="line">    <span class="keyword">if</span> (credentials) &#123;</div><div class="line">        <span class="built_in">CFRelease</span>(credentials);</div><div class="line">        credentials = <span class="literal">NULL</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">CFRelease</span>(authentication);</div><div class="line">    authentication = <span class="literal">NULL</span>;</div><div class="line"> </div><div class="line">    <span class="comment">// check for bad credentials (to be treated separately)</span></div><div class="line">    <span class="keyword">if</span> (err.domain == kCFStreamErrorDomainHTTP &amp;&amp;</div><div class="line">        (err.error == kCFStreamErrorHTTPAuthenticationBadUserName</div><div class="line">        || err.error == kCFStreamErrorHTTPAuthenticationBadPassword))&#123;</div><div class="line">        retryAuthorizationFailure(&amp;authentication);</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        errorOccurredLoadingImage(err);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>现在，你已经有了有效的认证对象，继续上面流程图下面的步骤。第一步，向服务器请求是否需要证书。如果不需要，直接将认证对象添加到HTTP请求当中。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> resumeWithCredentials() &#123;</div><div class="line">    <span class="comment">// Apply whatever credentials we've built up to the old request</span></div><div class="line">    <span class="keyword">if</span> (!<span class="built_in">CFHTTPMessageApplyCredentialDictionary</span>(request, authentication,</div><div class="line">                                                credentials, <span class="literal">NULL</span>)) &#123;</div><div class="line">        errorOccurredLoadingImage();</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">// Now that we've updated our request, retry the load</span></div><div class="line">        loadRequest();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果内存和磁盘中没有存储证书，获取有效证书的唯一方式是向用户请求。大部分情况下，证书都需要用户名和密码。将认证对象传入<code>CFHTTPAuthenticationRequiresUserNameAndPassword</code>方法中就可以知道用户名和密码是否是必须的。如果证书需要用户名和密码，想用户请求并将它们存储在证书的字典中。对于NTLM服务器而言，证书还需要提供域名。在你有了新的证书后，你可以调用<code>resumeWithCredentials</code>方法将认证对象添加到HTTP请求当中。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// ...continued from Code 4-1</span></div><div class="line"><span class="keyword">else</span> &#123;</div><div class="line">    cancelLoad();</div><div class="line">    <span class="keyword">if</span> (credentials) &#123;</div><div class="line">        resumeWithCredentials();</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// are a user name &amp; password needed?</span></div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">CFHTTPAuthenticationRequiresUserNameAndPassword</span>(authentication))</div><div class="line">        &#123;</div><div class="line">        <span class="built_in">CFStringRef</span> realm = <span class="literal">NULL</span>;</div><div class="line">        <span class="built_in">CFURLRef</span> url = <span class="built_in">CFHTTPMessageCopyRequestURL</span>(request);</div><div class="line"> </div><div class="line">         <span class="comment">// check if you need an account domain so you can display it if necessary</span></div><div class="line">        <span class="keyword">if</span> (!<span class="built_in">CFHTTPAuthenticationRequiresAccountDomain</span>(authentication)) &#123;</div><div class="line">            realm = <span class="built_in">CFHTTPAuthenticationCopyRealm</span>(authentication);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// ...prompt user for user name (user), password (pass)</span></div><div class="line">        <span class="comment">// and if necessary domain (domain) to give to the server...</span></div><div class="line"> </div><div class="line">        <span class="comment">// Guarantee values</span></div><div class="line">        <span class="keyword">if</span> (!user) user = <span class="built_in">CFSTR</span>(<span class="string">""</span>);</div><div class="line">        <span class="keyword">if</span> (!pass) pass = <span class="built_in">CFSTR</span>(<span class="string">""</span>);</div><div class="line"> </div><div class="line">        <span class="built_in">CFDictionarySetValue</span>(credentials, kCFHTTPAuthenticationUsername, user);</div><div class="line">        <span class="built_in">CFDictionarySetValue</span>(credentials, kCFHTTPAuthenticationPassword, pass);</div><div class="line"> </div><div class="line">        <span class="comment">// Is an account domain needed? (used currently for NTLM only)</span></div><div class="line">        <span class="keyword">if</span> (<span class="built_in">CFHTTPAuthenticationRequiresAccountDomain</span>(authentication)) &#123;</div><div class="line">            <span class="keyword">if</span> (!domain) domain = <span class="built_in">CFSTR</span>(<span class="string">""</span>);</div><div class="line">            <span class="built_in">CFDictionarySetValue</span>(credentials,</div><div class="line">                                 kCFHTTPAuthenticationAccountDomain, domain);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (realm) <span class="built_in">CFRelease</span>(realm);</div><div class="line">        <span class="built_in">CFRelease</span>(url);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> &#123;</div><div class="line">        resumeWithCredentials();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="将证书保存在内存中"><a href="#将证书保存在内存中" class="headerlink" title="将证书保存在内存中"></a>将证书保存在内存中</h3><p>如果你需要频繁和认证服务器进行通信，那么重复利用证书可以避免多次向用户请求用户名和密码。为了重复利用证书，有三种数据结构需要在代码中做出修改。</p>
+<blockquote>
+<p>1.创建可变数组CFMutableArrayRef取代CFHTTPAuthenticationRef对象来存储所有的认证对象<br>CFHTTPAuthenticationRef authentication; -&gt; CFMutableArrayRef authArray;<br>2.使用字典创建认证对象到证书的映射<br>CFMutableDictionaryRef credentials; -&gt; CFMutableDictionaryRef credentialsDict;<br>3.在所有更新当前认证对象和当前证书的地方保存这些结构<br>CFRelease(credentials); -&gt; CFDictionaryRemoveValue(credentialsDict, authentication);</p>
+</blockquote>
+<p>在创建HTTP请求后，需要查找匹配的认证对象。以下代码是很简易的且未优化的查找合适对象的方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFHTTPAuthenticationRef</span> findAuthenticationForRequest &#123;</div><div class="line">    <span class="keyword">int</span> i, c = <span class="built_in">CFArrayGetCount</span>(authArray);</div><div class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; c; i ++) &#123;</div><div class="line">        <span class="built_in">CFHTTPAuthenticationRef</span> auth = (<span class="built_in">CFHTTPAuthenticationRef</span>)</div><div class="line">                <span class="built_in">CFArrayGetValueAtIndex</span>(authArray, i);</div><div class="line">        <span class="keyword">if</span> (<span class="built_in">CFHTTPAuthenticationAppliesToRequest</span>(auth, request)) &#123;</div><div class="line">            <span class="keyword">return</span> auth;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果认证数组中查找到匹配的认证对象，然后检查证书存储中是否可以获取。这样做防止你再次向用户请求用户名和密码。查找证书可以调用<code>CFDictionaryGetValue</code>方法。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">credentials = <span class="built_in">CFDictionaryGetValue</span>(credentialsDict, authentication);</div></pre></td></tr></table></figure>
+<p>然后将匹配的认证对象和证书添加到原始的HTTP请求中并重新发送。注意，在每一偶收到服务器认证消息之前不要将证书添加到HTTP请求中。服务器可能自从上一次认证过后改变了认证策略，你这样做可能会发生安全危险。</p>
+<p>通过以上三种结构的改变，你的app能够将认证对象和证书存储在内存当中。</p>
+<h3 id="将证书保存在持久化仓库中"><a href="#将证书保存在持久化仓库中" class="headerlink" title="将证书保存在持久化仓库中"></a>将证书保存在持久化仓库中</h3><p>将证书存储在内存中可以防止在指定app启动时用户重复输入用户名和密码。然而，当app退出时，这些证书会被释放。为了避免丢失证书，我们将每个服务器的证书存储在持久化仓库中并且只需要生成一次。钥匙串是存储证书非常推荐的位置。即使你有多个钥匙串，默认会将用户的默认钥匙串作为存储证书的位置。使用钥匙串意味着你存储的认证信息同样可以在其他的app中使用。</p>
+<p>在钥匙串中存储和获取证书依赖于两个方法：一个是用来查找认证的证书字典，另一个是用来存储请求中的证书。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFMutableDictionaryRef</span> findCredentialsForAuthentication(</div><div class="line">        <span class="built_in">CFHTTPAuthenticationRef</span> auth);</div><div class="line"> </div><div class="line"><span class="keyword">void</span> saveCredentialsForRequest(<span class="keyword">void</span>);</div></pre></td></tr></table></figure>
+<p><code>findCredentialsForAuthentication</code>方法首先会检查存储在内存中的证书字典是否在本地有缓存。如果证书在内存中没有缓存，之后就搜索钥匙串。调用<code>SecKeychainFindInternetPassword</code>方法搜索钥匙串。该方法要求很多参数：</p>
+<blockquote>
+<p>keychainOrArray：NULL指定用户默认的钥匙串列表。<br>serverNameLength：服务器名字长度，通常是strlen(serverName)。<br>serverName：解析HTTP请求的服务器名字。<br>securityDomainLength：安全域名的长度，如果没有域名传入0。<br>securityDomain：认证对象的范围，可从<code>CFHTTPAuthenticationCopyRealm</code>方法中获取。<br>accountNameLength：用户名的长度。如果用户名为空，则传入0。<br>accountName：用户名。<br>pathLength：路径的长度，如果没有路径则传入0。<br>path：认证对象的路径，可从<code>CFURLCopyPath</code>方法中获取。<br>port：端口号，可从<code>CFURLGetPortNumber</code>方法中获取。<br>protocol：协议，可从<code>CFURLCopyScheme</code>方法中获取。<br>authenticationType：认证类型，可从<code>CFHTTPAuthenticationCopyMethod</code>方法中获取。<br>passwordLength：密码长度。0，因为在获取钥匙串许可时没有密码是必须的。<br>passwordData：密码数据。NULL，因为在获取钥匙串许可时没有密码是必须的。<br>itemRef：钥匙串条目。</p>
+</blockquote>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">didFind =</div><div class="line">    SecKeychainFindInternetPassword(<span class="literal">NULL</span>,</div><div class="line">                                    strlen(host), host,</div><div class="line">                                    realm ? strlen(realm) : <span class="number">0</span>, realm,</div><div class="line">                                    <span class="number">0</span>, <span class="literal">NULL</span>,</div><div class="line">                                    path ? strlen(path) : <span class="number">0</span>, path,</div><div class="line">                                    port,</div><div class="line">                                    protocolType,</div><div class="line">                                    authenticationType,</div><div class="line">                                    <span class="number">0</span>, <span class="literal">NULL</span>,</div><div class="line">                                    &amp;itemRef);</div></pre></td></tr></table></figure>
+<p>当<code>SecKeychainFindInternetPassword</code>方返回成功时，创建钥匙串属性列表（SecKeychainAttributeList）存储钥匙串属性（SecKeychainAttribute）。钥匙串属性列表会存储用户名和密码。要加载钥匙串属性列表，调用<code>SecKeychainItemCopyContent</code>方法并将<code>SecKeychainFindInternetPassword</code>方法返回的钥匙串条目对象传入。该方法会用用户的用户名和密码填充钥匙串属性。以下代码示例表示从要是传中加载服务器证书：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (didFind == noErr) &#123;</div><div class="line"> </div><div class="line">    SecKeychainAttribute     attr;</div><div class="line">    SecKeychainAttributeList attrList;</div><div class="line">    <span class="built_in">UInt32</span>                   length;</div><div class="line">    <span class="keyword">void</span>                     *outData;</div><div class="line"> </div><div class="line">    <span class="comment">// To set the account name attribute</span></div><div class="line">    attr.tag = kSecAccountItemAttr;</div><div class="line">    attr.length = <span class="number">0</span>;</div><div class="line">    attr.data = <span class="literal">NULL</span>;</div><div class="line"> </div><div class="line">    attrList.count = <span class="number">1</span>;</div><div class="line">    attrList.attr = &amp;attr;</div><div class="line"> </div><div class="line">    <span class="keyword">if</span> (SecKeychainItemCopyContent(itemRef, <span class="literal">NULL</span>, &amp;attrList, &amp;length, &amp;outData)</div><div class="line">        == noErr) &#123;</div><div class="line"> </div><div class="line">        <span class="comment">// attr.data is the account (username) and outdata is the password</span></div><div class="line">        <span class="built_in">CFStringRef</span> username =</div><div class="line">            <span class="built_in">CFStringCreateWithBytes</span>(kCFAllocatorDefault, attr.data,</div><div class="line">                                    attr.length, kCFStringEncodingUTF8, <span class="literal">false</span>);</div><div class="line">        <span class="built_in">CFStringRef</span> password =</div><div class="line">            <span class="built_in">CFStringCreateWithBytes</span>(kCFAllocatorDefault, outData, length,</div><div class="line">                                    kCFStringEncodingUTF8, <span class="literal">false</span>);</div><div class="line">        SecKeychainItemFreeContent(&amp;attrList, outData);</div><div class="line"> </div><div class="line">        <span class="comment">// create credentials dictionary and fill it with the user name &amp; password</span></div><div class="line">        credentials =</div><div class="line">            <span class="built_in">CFDictionaryCreateMutable</span>(<span class="literal">NULL</span>, <span class="number">0</span>,</div><div class="line">                                      &amp;kCFTypeDictionaryKeyCallBacks,</div><div class="line">                                      &amp;kCFTypeDictionaryValueCallBacks);</div><div class="line">        <span class="built_in">CFDictionarySetValue</span>(credentials, kCFHTTPAuthenticationUsername,</div><div class="line">                             username);</div><div class="line">        <span class="built_in">CFDictionarySetValue</span>(credentials, kCFHTTPAuthenticationPassword,</div><div class="line">                             password);</div><div class="line"> </div><div class="line">        <span class="built_in">CFRelease</span>(username);</div><div class="line">        <span class="built_in">CFRelease</span>(password);</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">CFRelease</span>(itemRef);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果你可以在钥匙串中存储证书，那么从钥匙串中获取证书会起作用。这些步骤与加载证书非常类似。首先，查看证书是否存储在要是传中。调用<code>SecKeychainFindInternetPassword</code>方法并传入用户名和用户名长度。如果证书存在，修改它的密码。设置data存入用户名，这样就可以修改正确的属性。然后调用<code>SecKeychainItemModifyContent</code>方法传入item、钥匙串属性列表和新密码。修改钥匙串许可而不是复写它，钥匙串许可会正确地更新并且任何与之关联的元数据都会得到保存。代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Set the attribute to the account name</span></div><div class="line">attr.tag = kSecAccountItemAttr;</div><div class="line">attr.length = strlen(username);</div><div class="line">attr.data = (<span class="keyword">void</span>*)username;</div><div class="line"> </div><div class="line"><span class="comment">// Modify the keychain entry</span></div><div class="line">SecKeychainItemModifyContent(itemRef, &amp;attrList, strlen(password), (<span class="keyword">void</span> *)password);</div></pre></td></tr></table></figure>
+<p>如果许可不存在，你就需要创建它。<code>SecKeychainAddInternetPassword</code>方法可以完成这个工作，该方法的参数与<code>SecKeychainFindInternetPassword</code>方法一致，不一样的地方在于在<code>SecKeychainAddInternetPassword</code>方法中需要用户名和密码。成功调用后，若不需要再使用item则将其释放。</p>
+<h3 id="防火墙认证"><a href="#防火墙认证" class="headerlink" title="防火墙认证"></a>防火墙认证</h3><p>防火墙认证与服务器认证很相似，但防火墙认证在HTTP请求失败后需要同时进行代理认证和服务器认证。这意味着你需要对代理服务器和原始服务器分开进行存储。因而，返回失败的响应后所做的操作应该是：</p>
+<blockquote>
+<ul>
+<li>检查响应码是不是407.如果是，在内存代理存储和磁盘代理存储中找到匹配的认证对象和证书。如果都没有合适的对象和证书，则向用户请求证书，然后将认证对象添加到HTTP请求中并重试。</li>
+<li>检查响应码是不是401。如果是，重复407下的做法，只是查找的是原始服务器存储。</li>
+</ul>
+</blockquote>
+<p>除此之外，当使用代理服务器时还有些小差别。第一就是钥匙串调用方法的参数来自于代理主机和端口而不是原始服务器的URL。第二就是当向用户请求用户名和密码的时候，确保提示清楚地说明密码是什么。</p>
+<p>只要遵循这些操作，app就能成功与认证防火墙工作。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一下吧~</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/alipay.png" alt="zakariyyaSv Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/07/CFNetwork学习笔记（三）/" rel="next" title="CFNetwork学习笔记（三）">
+                <i class="fa fa-chevron-left"></i> CFNetwork学习笔记（三）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/10/10/CFNetwork学习笔记（四）/"
+     data-title="CFNetwork学习笔记（四）"
+     data-content=""
+     data-url="http://yoursite.com/2016/10/10/CFNetwork学习笔记（四）/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/10/CFNetwork学习笔记（四）/"
+           data-title="CFNetwork学习笔记（四）" data-url="http://yoursite.com/2016/10/10/CFNetwork学习笔记（四）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">25</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#认证"><span class="nav-number">2.</span> <span class="nav-text">认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将证书保存在内存中"><span class="nav-number">3.</span> <span class="nav-text">将证书保存在内存中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将证书保存在持久化仓库中"><span class="nav-number">4.</span> <span class="nav-text">将证书保存在持久化仓库中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙认证"><span class="nav-number">5.</span> <span class="nav-text">防火墙认证</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>

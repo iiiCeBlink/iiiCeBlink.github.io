@@ -263,6 +263,260 @@
             
               
                 
+                <a class="post-title-link" href="/2016/02/20/runtime对containsString方法的小改进/" itemprop="url">
+                  runtime对containsString方法的小改进
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-02-20T23:23:28+08:00" content="2016-02-20">
+              2016-02-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/02/20/runtime对containsString方法的小改进/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/20/runtime对containsString方法的小改进/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是<code>NSstring</code>的<code>containsString:</code>方法在从中作梗。看了一下文档发现原来<code>containsString:</code>是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替<code>containsString:</code>方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> isContained = [aString rangeOfString:bString].location != <span class="built_in">NSNotFound</span></div></pre></td></tr></table></figure>
+<p>不过，我觉得要在每一个需要调用<code>containsString:</code>方法写一遍有点麻烦，把适配的代码抽离出来写入一个方法倒是可以，但我还是觉得有点麻烦，毕竟懒癌患者。于是，我想到了用runtime运行时机制动态添加<code>containsString:</code>方法就可以一劳永逸了。<br>实现的原理也很简单，在iOS 7下判断<code>NSString</code>中是否存在<code>containsString:</code>实例方法，若不存在，则动态添加该方法。这样就不用再需要调用<code>containsString:</code>实例方法去判断了。原理很简单，代码也很简单，还是很符合我这个懒癌患者的口味的嘛。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/20/runtime对containsString方法的小改进/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/01/20/UIImage加载图片方式的研究/" itemprop="url">
+                  UIImage加载图片方式的研究
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-01-20T19:56:39+08:00" content="2016-01-20">
+              2016-01-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/20/UIImage加载图片方式的研究/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/20/UIImage加载图片方式的研究/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>常用的UIImage加载图片的方式有以下几种：</p>
+<ul>
+<li><code>[UIImage imageNamed:name]</code></li>
+<li><code>[UIImage imageWithContentsOfFile:name]</code></li>
+<li><code>[UIImage imageWithData:data]</code></li>
+<li><code>[UIImage imageWithCGImage:imageRef]</code></li>
+<li><code>[UIImage imageWithCIImage:obj]</code></li>
+</ul>
+<p>以上方法中<code>imageNamed:</code>和<code>imageWitData:</code>应用程序会对其自动缓存，不过，它们缓存的实现方式并不相同，后面会有详细说明。除去这两个方法以外剩下的三个方法默认情况下是不会产生缓存的，这三个方法的主要区别在于它们的数据源：<code>imageWithContentsOfFile:</code>从指定文件中创建对象，<code>imageWithCGImage:</code>以CGImageRef来创建对象，<code>imageWithCIImage:</code>以CIImage对象来创建对象。<br>最后两种方法平时用的相对会少一些，简要解释一下CGImage与CIImage的区别：CGImageRef只能代表位图，如果你需要与bitmap数据打交道，无疑CGImage是非常合适的选择。CGImageRef以CG开头就不难想到CGImageRef的相关操作都需要在Core Graphics中进行，比如混合、遮罩等等。CIImage以CI开头，即Core Image，不难理解CIImage是底层的数据对象，它通常包含了与它相关的图像数据，而不是一个图像。默认情况下，CIImage对象是不会被绘图系统渲染的，除非是得到明确的指令。这种机制（“lazy evaluation”）允许核心绘图系统尽可能高效地运行。CIImage通常被运用在GPU优化图像滤镜算法当中。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/01/20/UIImage加载图片方式的研究/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/01/14/ApplePay线上支付教程/" itemprop="url">
                   ApplePay线上支付教程
                 </a>
@@ -655,7 +909,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">23</span>
+              <span class="site-state-item-count">25</span>
               <span class="site-state-item-name">posts</span>
             </a>
           </div>
