@@ -1,0 +1,850 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前言本篇文章主要介绍如何创建、发送和接收HTTP请求和响应。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CFNetwork学习笔记（三）">
+<meta property="og:url" content="http://yoursite.com/2016/10/07/CFNetwork学习笔记（三）/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="前言本篇文章主要介绍如何创建、发送和接收HTTP请求和响应。">
+<meta property="og:updated_time" content="2016-10-22T04:57:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CFNetwork学习笔记（三）">
+<meta name="twitter:description" content="前言本篇文章主要介绍如何创建、发送和接收HTTP请求和响应。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6310897846597977000,
+      author: '楼主大大'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/10/07/CFNetwork学习笔记（三）/"/>
+
+  <title> CFNetwork学习笔记（三） | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                CFNetwork学习笔记（三）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-10-07T14:39:12+08:00" content="2016-10-07">
+              2016-10-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/MacOS/" itemprop="url" rel="index">
+                    <span itemprop="name">MacOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/07/CFNetwork学习笔记（三）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/07/CFNetwork学习笔记（三）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要介绍如何创建、发送和接收HTTP请求和响应。</p>
+<a id="more"></a>
+<h3 id="创建CFHTTP请求"><a href="#创建CFHTTP请求" class="headerlink" title="创建CFHTTP请求"></a>创建CFHTTP请求</h3><p>HTTP请求实际上是包含了请求方法、URL、消息头和消息体的消息。请求方法通常是GET, HEAD, PUT, POST, DELETE, TRACE, CONNECT 或 OPTIONS。用CFHTTP创建HTTP请求需要四个步骤：</p>
+<blockquote>
+<p>1.调用<code>CFHTTPMessageCreateRequest</code>方法生成CFHTTP消息对象。<br>2.调用<code>CFHTTPMessageSetBody</code>方法设置消息体。<br>3.调用<code>CFHTTPMessageSetHeaderFieldValue</code>方法设置消息头。<br>4.调用<code>CFHTTPMessageCopySerializedMessage</code>方法对消息进行序列化。</p>
+</blockquote>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建HTTP请求</span></div><div class="line"><span class="built_in">CFStringRef</span> bodyString = <span class="built_in">CFSTR</span>(<span class="string">""</span>); <span class="comment">// Usually used for POST data</span></div><div class="line"><span class="built_in">CFDataRef</span> bodyData = <span class="built_in">CFStringCreateExternalRepresentation</span>(kCFAllocatorDefault, bodyString, kCFStringEncodingUTF8, <span class="number">0</span>);</div><div class="line"> </div><div class="line"><span class="built_in">CFStringRef</span> headerFieldName = <span class="built_in">CFSTR</span>(<span class="string">"X-My-Favorite-Field"</span>);</div><div class="line"><span class="built_in">CFStringRef</span> headerFieldValue = <span class="built_in">CFSTR</span>(<span class="string">"Dreams"</span>);</div><div class="line"> </div><div class="line"><span class="built_in">CFStringRef</span> url = <span class="built_in">CFSTR</span>(<span class="string">"http://www.apple.com"</span>);</div><div class="line"><span class="built_in">CFURLRef</span> myURL = <span class="built_in">CFURLCreateWithString</span>(kCFAllocatorDefault, url, <span class="literal">NULL</span>);</div><div class="line"> </div><div class="line"><span class="built_in">CFStringRef</span> requestMethod = <span class="built_in">CFSTR</span>(<span class="string">"GET"</span>);</div><div class="line"><span class="built_in">CFHTTPMessageRef</span> myRequest = <span class="built_in">CFHTTPMessageCreateRequest</span>(kCFAllocatorDefault, requestMethod, myURL, kCFHTTPVersion1_1);</div><div class="line"> </div><div class="line"><span class="built_in">CFDataRef</span> bodyDataExt = <span class="built_in">CFStringCreateExternalRepresentation</span>(kCFAllocatorDefault, bodyData, kCFStringEncodingUTF8, <span class="number">0</span>);</div><div class="line"><span class="built_in">CFHTTPMessageSetBody</span>(myRequest, bodyDataExt);</div><div class="line"><span class="built_in">CFHTTPMessageSetHeaderFieldValue</span>(myRequest, headerFieldName, headerFieldValue);</div><div class="line"><span class="built_in">CFDataRef</span> mySerializedRequest = <span class="built_in">CFHTTPMessageCopySerializedMessage</span>(myRequest);</div></pre></td></tr></table></figure>
+<p>在上面这段代码中，url会被<code>CFURLCreateWithString</code>方法转换成CFURL对象。然后，调用<code>CFHTTPMessageCreateRequest</code>创建HTTP请求对象。之后，将创建的对象连同消息体（bodyData）传入<code>CFHTTPMessageSetBody</code>方法中，将请求对象连同消息头的名字（headerField）和值（value）传入<code>CFHTTPMessageSetHeaderFieldValue</code>方法中，headerField参数接受CFString类型的对象如Content-Length，value参数接受CFString类型的对象如1260。最后，调用<code>CFHTTPMessageCopySerializedMessage</code>方法对消息进行序列化并且通过写入流发送到接受者那里。</p>
+<p>当请求不再需要时，我们需要释放消息对象和序列化的消息。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFRelease</span>(myRequest);</div><div class="line"><span class="built_in">CFRelease</span>(myURL);</div><div class="line"><span class="built_in">CFRelease</span>(url);</div><div class="line"><span class="built_in">CFRelease</span>(mySerializedRequest);</div><div class="line">myRequest = <span class="literal">NULL</span>;</div><div class="line">mySerializedRequest = <span class="literal">NULL</span>;</div></pre></td></tr></table></figure>
+<h3 id="创建CFHTTP响应"><a href="#创建CFHTTP响应" class="headerlink" title="创建CFHTTP响应"></a>创建CFHTTP响应</h3><p>创建HTTP响应的步骤与创建HTTP请求的步骤是一致的。唯一的区别在于是调用<code>CFHTTPMessageCreateResponse</code>方法而不是<code>CFHTTPMessageCreateRequest</code>方法。</p>
+<h3 id="反序列化HTTP请求"><a href="#反序列化HTTP请求" class="headerlink" title="反序列化HTTP请求"></a>反序列化HTTP请求</h3><p>要对收到的HTTP请求进行反序列化操作，首先要调用<code>CFHTTPMessageCreateEmpty</code>方法创建空的消息对象，并在isRequest参数中传入true表示创建的是请求消息对象。然后，调用<code>CFHTTPMessageAppendBytes</code>方法将接收到的HTTP请求添加到消息对象中去。<code>CFHTTPMessageAppendBytes</code>方法会反序列化消息并且移除它保存的任何控制信息。一直不停地循环去调用该方法直到<code>CFHTTPMessageIsHeaderComplete</code>返回true。若<code>CFHTTPMessageIsHeaderComplete</code>没有返回true，说明消息是不完整的。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFHTTPMessageRef</span> myMessage = <span class="built_in">CFHTTPMessageCreateEmpty</span>(kCFAllocatorDefault, <span class="literal">TRUE</span>);</div><div class="line"><span class="keyword">if</span> (!<span class="built_in">CFHTTPMessageAppendBytes</span>(myMessage, &amp;data, numBytes)) &#123;</div><div class="line">    <span class="comment">//Handle parsing error</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在<code>CFHTTPMessageAppendBytes</code>方法中，data参数表示要被添加进消息对象中的数据，numBytes参数表示data的大小。你可以调用<code>CFHTTPMessageIsHeaderComplete</code>方法去验证添加消息是否完成。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (<span class="built_in">CFHTTPMessageIsHeaderComplete</span>(myMessage)) &#123;</div><div class="line">    <span class="comment">// Perform processing.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当消息反序列化完成后，你可以调用下面的方法从消息对象中截取信息：</p>
+<blockquote>
+<ul>
+<li><code>CFHTTPMessageCopyBody</code>：获取消息体的拷贝</li>
+<li><code>CFHTTPMessageCopyHeaderFieldValue</code>：获取指定头部区域的拷贝</li>
+<li><code>CFHTTPMessageCopyAllHeaderFields</code>：获取所有消息头的拷贝</li>
+<li><code>CFHTTPMessageCopyRequestURL</code>：获取消息的URL的拷贝</li>
+<li><code>CFHTTPMessageCopyRequestMethod</code>：获取消息请求方法的拷贝</li>
+</ul>
+</blockquote>
+<p>当你不在需要消息对象时，需要正确地对其进行释放和销毁操作。</p>
+<h3 id="反序列化HTTP响应"><a href="#反序列化HTTP响应" class="headerlink" title="反序列化HTTP响应"></a>反序列化HTTP响应</h3><p>正如创建HTTP请求和创建HTTP响应很相似，反序列化HTTP请求和反序列化HTTP响应也非常相似。唯一重要的区别在于当调用<code>CFHTTPMessageCreateEmpty</code>方法时，你必须给isRequest参数传入false表示创建的消息是响应消息。</p>
+<h3 id="使用读流序列化和发送HTTP请求"><a href="#使用读流序列化和发送HTTP请求" class="headerlink" title="使用读流序列化和发送HTTP请求"></a>使用读流序列化和发送HTTP请求</h3><p>你可以使用CFReadStream对象序列化和发送CFHTTP请求。当你使用CFReadStream对象发送CFHTTP请求时，打开流会让消息的序列化和发送在一步中完成。使用CFReadStream对象发送CFHTTP请求让获取响应变得容易因为响应会作为流的属性而被访问。</p>
+<h5 id="序列化和发送HTTP请求"><a href="#序列化和发送HTTP请求" class="headerlink" title="序列化和发送HTTP请求"></a>序列化和发送HTTP请求</h5><p>要使用CFReadStream对象序列化和发送HTTP请求，首先要创建CFHTTP请求并设置消息头和消息体。然后，调用<code>CFReadStreamCreateForHTTPRequest</code>方法创建CFReadStream对象并传入先前创建的请求。最后，调用<code>CFReadStreamOpen</code>打开读流。</p>
+<p>当<code>CFReadStreamCreateForHTTPRequest</code>方法被调用时，它会将传入的CFHTTP请求对象进行拷贝。因而，如果必要，你应该在调用完<code>CFReadStreamCreateForHTTPRequest</code>方法后立即释放CFHTTP请求对象。因为读流要与指定的服务器建立套接字连接，所以在流可以打开之前需要耗费一部分时间。打开读流同样会引起请求的序列化和发送操作。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFStringRef</span> url = <span class="built_in">CFSTR</span>(<span class="string">"http://www.apple.com"</span>);</div><div class="line"><span class="built_in">CFURLRef</span> myURL = <span class="built_in">CFURLCreateWithString</span>(kCFAllocatorDefault, url, <span class="literal">NULL</span>);</div><div class="line"><span class="built_in">CFStringRef</span> requestMethod = <span class="built_in">CFSTR</span>(<span class="string">"GET"</span>);</div><div class="line"> </div><div class="line"><span class="built_in">CFHTTPMessageRef</span> myRequest = <span class="built_in">CFHTTPMessageCreateRequest</span>(kCFAllocatorDefault, requestMethod, myUrl, kCFHTTPVersion1_1);</div><div class="line"><span class="built_in">CFHTTPMessageSetBody</span>(myRequest, bodyData);</div><div class="line"><span class="built_in">CFHTTPMessageSetHeaderFieldValue</span>(myRequest, headerField, value);</div><div class="line"> </div><div class="line"><span class="built_in">CFReadStreamRef</span> myReadStream = <span class="built_in">CFReadStreamCreateForHTTPRequest</span>(kCFAllocatorDefault, myRequest);</div><div class="line"> </div><div class="line"><span class="built_in">CFReadStreamOpen</span>(myReadStream);</div></pre></td></tr></table></figure>
+<h5 id="检查响应"><a href="#检查响应" class="headerlink" title="检查响应"></a>检查响应</h5><p>在你将请求添加到runloop中后，你最终会得到完整的头部回调。这时候，你可以调用<code>CFReadStreamCopyProperty</code>方法从读流中获取消息的响应。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFHTTPMessageRef</span> myResponse = (<span class="built_in">CFHTTPMessageRef</span>)<span class="built_in">CFReadStreamCopyProperty</span>(myReadStream, kCFStreamPropertyHTTPResponseHeader);</div></pre></td></tr></table></figure>
+<p>你可以调用<code>CFHTTPMessageCopyResponseStatusLine</code>方法从响应消息中得到状态行。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFStringRef</span> myStatusLine = <span class="built_in">CFHTTPMessageCopyResponseStatusLine</span>(myResponse);</div></pre></td></tr></table></figure>
+<p>或者，调用<code>CFHTTPMessageGetResponseStatusCode</code>方法得到响应消息的状态码。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">UInt32</span> myErrCode = <span class="built_in">CFHTTPMessageGetResponseStatusCode</span>(myResponse);</div></pre></td></tr></table></figure>
+<h5 id="处理认证错误"><a href="#处理认证错误" class="headerlink" title="处理认证错误"></a>处理认证错误</h5><p>如果<code>CFHTTPMessageGetResponseStatusCode</code>方法返回的状态码是401（远程服务器要求认证信息）或407（代理服务器要求认证），你需要将认证信息添加到请求中并重新发送。</p>
+<h5 id="处理重定向错误"><a href="#处理重定向错误" class="headerlink" title="处理重定向错误"></a>处理重定向错误</h5><p>当调用<code>CFReadStreamCreateForHTTPRequest</code>方法创建读流，默认情况下流的自动重定向是被禁用的。如果请求指向的URL被重定向给另一个URL，你需要关闭流并重新创建流，打开流的重定向选项，最后打开流。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFReadStreamClose</span>(myReadStream);</div><div class="line"><span class="built_in">CFReadStreamRef</span> myReadStream =</div><div class="line">    <span class="built_in">CFReadStreamCreateForHTTPRequest</span>(kCFAllocatorDefault, myRequest);</div><div class="line"><span class="keyword">if</span> (<span class="built_in">CFReadStreamSetProperty</span>(myReadStream, kCFStreamPropertyHTTPShouldAutoredirect, kCFBooleanTrue) == <span class="literal">false</span>) &#123;</div><div class="line">    <span class="comment">// something went wrong, exit</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">CFReadStreamOpen</span>(myReadStream);</div></pre></td></tr></table></figure>
+<h3 id="取消正在发送的请求"><a href="#取消正在发送的请求" class="headerlink" title="取消正在发送的请求"></a>取消正在发送的请求</h3><p>一旦请求发送出去后，就不可能阻止远程服务器对其进行操作。然而，如果你不再关心响应数据，你可以关闭流。注意，当另一个线程在同一个流中等待数据时不要从任何线程中关闭流。如果你需要终结请求，你需要使用不阻塞的方式（参见<a href=""></a>）。在关闭流之前要确保将流从runloop中移除。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一下吧~</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/alipay.png" alt="zakariyyaSv Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/05/CFNetwork学习笔记（一）/" rel="next" title="CFNetwork学习笔记（一）">
+                <i class="fa fa-chevron-left"></i> CFNetwork学习笔记（一）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/10/07/CFNetwork学习笔记（三）/"
+     data-title="CFNetwork学习笔记（三）"
+     data-content=""
+     data-url="http://yoursite.com/2016/10/07/CFNetwork学习笔记（三）/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/07/CFNetwork学习笔记（三）/"
+           data-title="CFNetwork学习笔记（三）" data-url="http://yoursite.com/2016/10/07/CFNetwork学习笔记（三）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">23</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建CFHTTP请求"><span class="nav-number">2.</span> <span class="nav-text">创建CFHTTP请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建CFHTTP响应"><span class="nav-number">3.</span> <span class="nav-text">创建CFHTTP响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反序列化HTTP请求"><span class="nav-number">4.</span> <span class="nav-text">反序列化HTTP请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反序列化HTTP响应"><span class="nav-number">5.</span> <span class="nav-text">反序列化HTTP响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用读流序列化和发送HTTP请求"><span class="nav-number">6.</span> <span class="nav-text">使用读流序列化和发送HTTP请求</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#序列化和发送HTTP请求"><span class="nav-number">6.0.1.</span> <span class="nav-text">序列化和发送HTTP请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#检查响应"><span class="nav-number">6.0.2.</span> <span class="nav-text">检查响应</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#处理认证错误"><span class="nav-number">6.0.3.</span> <span class="nav-text">处理认证错误</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#处理重定向错误"><span class="nav-number">6.0.4.</span> <span class="nav-text">处理重定向错误</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#取消正在发送的请求"><span class="nav-number">7.</span> <span class="nav-text">取消正在发送的请求</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+	
+
+</body>
+</html>
