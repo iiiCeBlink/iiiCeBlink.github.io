@@ -110,7 +110,7 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: 6310897846597977000,
+      userId: '6310897846597977000',
       author: '楼主大大'
     }
   };
@@ -121,10 +121,11 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
 
   <link rel="canonical" href="http://yoursite.com/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/"/>
 
+
   <title> 庖丁解牛KVO（一）——KVO概览和使用 | zakariyyaSv's Blog </title>
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+<body itemscope itemtype="//schema.org/WebPage" lang="en">
 
   
 
@@ -145,7 +146,7 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
   <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
       <div class="header-inner"><div class="site-meta ">
   
 
@@ -177,8 +178,6 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
             Home
           </a>
         </li>
@@ -187,8 +186,6 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
             Archives
           </a>
         </li>
@@ -196,8 +193,6 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
         
         <li class="menu-item menu-item-categories">
           <a href="/categories" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
             Categories
           </a>
@@ -209,8 +204,6 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
           
             <a href="javascript:;" class="popup-trigger">
           
-            
-              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
             
             Search
           </a>
@@ -253,7 +246,7 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
 
     
       <header class="post-header">
@@ -527,7 +520,7 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
       
 
       <section class="site-overview sidebar-panel ">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
                alt="zakariyyaSv" />
@@ -784,7 +777,7 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
                 if (this.value.trim().length > 1) {
                 // perform local searching
                 datas.forEach(function(data) {
-                    var isMatch = true;
+                    var isMatch = false;
                     var content_index = [];
                     var data_title = data.title.trim().toLowerCase();
                     var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
@@ -793,20 +786,17 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
                     var index_content = -1;
                     var first_occur = -1;
                     // only match artiles with not empty titles and contents
-                    if(data_title != '' && data_content != '') {
+                    if(data_title != '') {
                         keywords.forEach(function(keyword, i) {
                             index_title = data_title.indexOf(keyword);
                             index_content = data_content.indexOf(keyword);
-                            if( index_title < 0 && index_content < 0 ){
-                                isMatch = false;
-                            } else {
-                                if (index_content < 0) {
-                                    index_content = 0;
-                                }
-                                if (i == 0) {
+                            if( index_title >= 0 || index_content >= 0 ){
+                                isMatch = true;
+								if (i == 0) {
                                     first_occur = index_content;
                                 }
-                            }
+                            } 
+							
                         });
                     }
                     // show search results
@@ -875,6 +865,9 @@ KVO可以让观察者在被观察者的属性被修改时直接接收到通知�
   
 
   
+
+  
+
 
 	
 
