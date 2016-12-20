@@ -1,0 +1,849 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zakariyyaSv's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前言最近关于UINavigationBar背景色随tableView滚动而渐变的风格很流行，自己也想着研究去实现它，并决定把研究的结果写进这篇文章中。渐变的实现很简单，思路无非是监听tableView的contentOffset属性，在scrollViewDidScroll方法中更新navigationbar背景色的alpha值，我们的重点放在设置navigationbar背景色上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UINavigationBar背景色设置">
+<meta property="og:url" content="http://yoursite.com/2015/09/24/UINavigationBar背景色设置/index.html">
+<meta property="og:site_name" content="zakariyyaSv's Blog">
+<meta property="og:description" content="前言最近关于UINavigationBar背景色随tableView滚动而渐变的风格很流行，自己也想着研究去实现它，并决定把研究的结果写进这篇文章中。渐变的实现很简单，思路无非是监听tableView的contentOffset属性，在scrollViewDidScroll方法中更新navigationbar背景色的alpha值，我们的重点放在设置navigationbar背景色上。">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/TBNavigationbar.mov">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/1.png">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/2.png">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/3.png">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/4.png">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/5.png">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/6.png">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/7.png">
+<meta property="og:image" content="http://yoursite.com/images/navigationbarColor/8.png">
+<meta property="og:updated_time" content="2016-12-20T07:51:49.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UINavigationBar背景色设置">
+<meta name="twitter:description" content="前言最近关于UINavigationBar背景色随tableView滚动而渐变的风格很流行，自己也想着研究去实现它，并决定把研究的结果写进这篇文章中。渐变的实现很简单，思路无非是监听tableView的contentOffset属性，在scrollViewDidScroll方法中更新navigationbar背景色的alpha值，我们的重点放在设置navigationbar背景色上。">
+<meta name="twitter:image" content="http://yoursite.com/images/navigationbarColor/TBNavigationbar.mov">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6310897846597977000',
+      author: '楼主大大'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2015/09/24/UINavigationBar背景色设置/"/>
+
+
+  <title> UINavigationBar背景色设置 | zakariyyaSv's Blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zakariyyaSv's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule" rel="section">
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                UINavigationBar背景色设置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2015-09-24T11:22:21+08:00" content="2015-09-24">
+              2015-09-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/09/24/UINavigationBar背景色设置/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/24/UINavigationBar背景色设置/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近关于<code>UINavigationBar</code>背景色随tableView滚动而渐变的风格很流行，自己也想着研究去实现它，并决定把研究的结果写进这篇文章中。渐变的实现很简单，思路无非是监听tableView的<code>contentOffset</code>属性，在<code>scrollViewDidScroll</code>方法中更新navigationbar背景色的alpha值，我们的重点放在设置navigationbar背景色上。</p>
+<a id="more"></a>
+<p><img src="/images/navigationbarColor/TBNavigationbar.mov" alt=""></p>
+<h3 id="关于translucent属性"><a href="#关于translucent属性" class="headerlink" title="关于translucent属性"></a>关于translucent属性</h3><p>在iOS 7后<code>translucent</code>属性默认为YES，如果你给navigtionbar设置自定义的背景图片，若该图片的alpha值小于1，那么显示时会使用图片本身的alpha值，若该图片不透明，显示时则会应用系统设置的透明度到图片上。如果设置<code>translucent</code>为NO，那么背景图片显示将会正常。</p>
+<p>上面是苹果官方文档对于<code>translucent</code>属性的解释，我通过Reveal查看并在控制台打印两种情况下<code>UINavigationbar</code>的视图结构，结果也印证了文档中的说明。</p>
+<h5 id="translucent为NO"><a href="#translucent为NO" class="headerlink" title="translucent为NO"></a>translucent为NO</h5><p><img src="/images/navigationbarColor/1.png" alt=""></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;UINavigationBar: 0x7fe045a02530; frame = (0 20; 375 44); autoresize = W; gestureRecognizers = &lt;NSArray: 0x608000049ae0&gt;; layer = &lt;CALayer: 0x61000003e120&gt;&gt;</div><div class="line"> | &lt;_UIBarBackground: 0x7fe042405e20; frame = (0 -20; 375 64); userInteractionEnabled = NO; layer = &lt;CALayer: 0x61000003e000&gt;&gt;</div><div class="line"> |    | &lt;UIImageView: 0x7fe0424061c0; frame = (0 64; 375 0.5); userInteractionEnabled = NO; layer = &lt;CALayer: 0x61000003fba0&gt;&gt;</div><div class="line"> | &lt;&lt;UINavigationItemView: 0x7fe045809b00; frame = (170 8; 35 27); opaque = NO; userInteractionEnabled = NO; layer = &lt;CALayer: 0x61800003d6a0&gt;&gt;: item=&lt;&lt;UINavigationItem: 0x6100001c78f0&gt;: title:'标题'&gt; title=标题&gt;</div><div class="line"> |    | &lt;UILabel: 0x7fe04580a110; frame = (0 3.5; 35 21.5); text = '标题'; opaque = NO; userInteractionEnabled = NO; layer = &lt;_UILabelLayer: 0x61800009bc60&gt;&gt;</div><div class="line"> |    |    | &lt;_UILabelContentLayer: 0x60800003db80&gt; (layer)</div><div class="line"> | &lt;_UINavigationBarBackIndicatorView: 0x7fe042507680; frame = (8 11.5; 13 21); alpha = 0; opaque = NO; userInteractionEnabled = NO; layer = &lt;CALayer: 0x60800003dfa0&gt;&gt;</div></pre></td></tr></table></figure>
+<p>从视图结构可以看出，<code>UINavigationbar</code>主要由<code>_UIBarBackground</code>、<code>UINavigationItemView</code>、<code>_UINavigationBarBackIndicatorView</code>三部分组成，很简单。</p>
+<h5 id="translucent为YES"><a href="#translucent为YES" class="headerlink" title="translucent为YES"></a>translucent为YES</h5><p><img src="/images/navigationbarColor/2.png" alt=""></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;UINavigationBar: 0x7fcc06e07280; frame = (0 20; 375 44); opaque = NO; autoresize = W; gestureRecognizers = &lt;NSArray: 0x610000044710&gt;; layer = &lt;CALayer: 0x61800002e560&gt;&gt;</div><div class="line">   | &lt;_UIBarBackground: 0x7fcc06d01980; frame = (0 -20; 375 64); userInteractionEnabled = NO; layer = &lt;CALayer: 0x6080000303c0&gt;&gt;</div><div class="line">   |    | &lt;UIImageView: 0x7fcc06d03920; frame = (0 64; 375 0.5); userInteractionEnabled = NO; layer = &lt;CALayer: 0x6080000308c0&gt;&gt;</div><div class="line">   |    | &lt;UIVisualEffectView: 0x7fcc06d09e60; frame = (0 0; 375 64); layer = &lt;CALayer: 0x608000030980&gt;&gt;</div><div class="line">   |    |    | &lt;_UIVisualEffectBackdropView: 0x7fcc08901a90; frame = (0 0; 375 64); autoresize = W+H; userInteractionEnabled = NO; layer = &lt;UICABackdropLayer: 0x61000002fac0&gt;&gt;</div><div class="line">   |    |    | &lt;_UIVisualEffectFilterView: 0x7fcc06d09490; frame = (0 0; 375 64); autoresize = W+H; userInteractionEnabled = NO; layer = &lt;CALayer: 0x608000030c40&gt;&gt;</div><div class="line">   | &lt;&lt;UINavigationItemView: 0x7fcc08e007f0; frame = (170 8; 35 27); opaque = NO; userInteractionEnabled = NO; layer = &lt;CALayer: 0x61800002e740&gt;&gt;: item=&lt;&lt;UINavigationItem: 0x6180001c1fe0&gt;: title:'标题'&gt; title=标题&gt;</div><div class="line">   |    | &lt;UILabel: 0x7fcc08e00d30; frame = (0 3.5; 35 21.5); text = '标题'; opaque = NO; userInteractionEnabled = NO; layer = &lt;_UILabelLayer: 0x618000095f40&gt;&gt;</div><div class="line">   |    |    | &lt;_UILabelContentLayer: 0x61800002fb80&gt; (layer)</div><div class="line">   | &lt;_UINavigationBarBackIndicatorView: 0x7fcc06c05f30; frame = (8 11.5; 13 21); alpha = 0; opaque = NO; userInteractionEnabled = NO; layer = &lt;CALayer: 0x60000002e780&gt;&gt;</div></pre></td></tr></table></figure>
+<p>相比于<code>trasulent</code>为NO时，<code>UINavigationbar</code>在<code>_UIBarBackground</code>中多了一层<code>UIVisualEffectView</code>。我们都知道<code>UIVisualEffectView</code>类是给背景图层提供虚化效果的，这也解释了文档中对于<code>trasulent</code>为YES时的说明。</p>
+<h3 id="设置navigationbar背景色问题"><a href="#设置navigationbar背景色问题" class="headerlink" title="设置navigationbar背景色问题"></a>设置navigationbar背景色问题</h3><p>通常要设置navigationbar背景颜色，我们会调用<code>[self.navigationController.navigationBar setBackgroundColor:[UIColor redColor]];</code>方法。运行看看，效果好像跟预想的不太一样。</p>
+<h5 id="transulent-YES"><a href="#transulent-YES" class="headerlink" title="transulent=YES"></a>transulent=YES</h5><p><img src="/images/navigationbarColor/3.png" alt=""></p>
+<h5 id="transulent-NO"><a href="#transulent-NO" class="headerlink" title="transulent=NO"></a>transulent=NO</h5><p><img src="/images/navigationbarColor/4.png" alt=""></p>
+<p>在transulent=YES时，还能看见一点红色，而在transulent=NO时，则完全没效果。这是为嘛呢？回头看看前面<code>UINavigationbar</code>视图结构，你也许就有答案了。</p>
+<p><img src="/images/navigationbarColor/5.png" alt=""></p>
+<p>从上图可以看到，<code>UINavigationBar</code>实际上被前面的<code>_UIBarBackground</code>挡住了，故而没有效果。</p>
+<h3 id="设置navigationbar背景色解决方案"><a href="#设置navigationbar背景色解决方案" class="headerlink" title="设置navigationbar背景色解决方案"></a>设置navigationbar背景色解决方案</h3><p>既然找到了问题的缘由，自然也就有对应的解决方案。我这里只提供两种解决方法，实际上解决方法不止两种，而我选择这两种解决方法是因为一种很便利，一种可扩展性强，基本上这两种解决办法可以满足我们大部分的需求。</p>
+<p>先说第一种便利的解决办法。既然<code>_UIBarBackground</code>对象挡住了navigationbar，那就设置<code>_UIBarBackground</code>对象的backgroundColor。由于API中并没有提供关于<code>_UIBarBackground</code>对象，我们只能通过KVC的方式，通过断点调试我们发现<code>UINavigationbar</code>的成员变量如下：</p>
+<p><img src="/images/navigationbarColor/6.png" alt=""></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UINavigationBar</span> (<span class="title">ZS_BackgroundColor</span>)</span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)setZS_BackgroundColor:(<span class="built_in">UIColor</span> *)color&#123;</div><div class="line">    <span class="built_in">UIView</span> *originView = [<span class="keyword">self</span> valueForKey:<span class="string">@"_barBackgroundView"</span>];</div><div class="line">    originView.backgroundColor = color;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>从图中我们可以看出有个叫<code>_barBackgroundView</code>的<code>_UIBarBackground</code>对象，就它了。通过category去设置<code>_barBackgroundView</code>的背景色，貌似这样就能成功了。编译运行，结果大跌眼镜，并没有任何变化。猜想应该是内部在显示之前重置了<code>_barBackgroundView</code>的背景色，那就意味着此路不通，PASS。</p>
+<p>第二种方案是在<code>_barBackgroundView</code>上面插入自定义的view，通过这个view来控制navigationbar的背景色。实现上在category中运行runtime机制将view与指定的key动态绑定，以便可以做更多扩展性的事情，比如QQ空间中<code>UIActivityView</code>加载等。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">"UINavigationBar+BackgroundColor.h"</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UINavigationBar</span> (<span class="title">ZS_BackgroundColor</span>)</span></div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">char</span> overlayKey;</div><div class="line"></div><div class="line">- (<span class="built_in">UIView</span> *)overlay&#123;</div><div class="line">    <span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, &amp;overlayKey);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)setOverlay:(<span class="built_in">UIView</span> *)overlay&#123;</div><div class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, &amp;overlayKey, overlay, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)setZS_BackgroundColor:(<span class="built_in">UIColor</span> *)backgroundColor&#123;</div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">self</span>.overlay) &#123;</div><div class="line">        </div><div class="line">        <span class="comment">// insert an overlay into the view hierarchy</span></div><div class="line">        <span class="keyword">self</span>.overlay = [[<span class="built_in">UIView</span> alloc] initWithFrame:<span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">-20</span>, [<span class="built_in">UIScreen</span> mainScreen].bounds.size.width, <span class="keyword">self</span>.bounds.size.height + <span class="number">20</span>)];</div><div class="line">        </div><div class="line">        [<span class="keyword">self</span> insertSubview:<span class="keyword">self</span>.overlay aboveSubview:[<span class="keyword">self</span> valueForKey:<span class="string">@"_barBackgroundView"</span>]];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">self</span>.overlay.backgroundColor = backgroundColor;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>设置编译运行，看看效果，没有问题，问题解决！</p>
+<p><img src="/images/navigationbarColor/7.png" alt=""></p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>在<code>UINavigationbar</code>的视图层中插入自定义view是很好的解决方案，一方面不破坏视图结构，另一方面提供了更多的扩展性，例如下图QQ空间中的activityView。</p>
+<p><img src="/images/navigationbarColor/8.png" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一下吧~</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/alipay.png" alt="zakariyyaSv Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/10/18/Xcode-Target、Project、WorkSpace、Scheme/" rel="prev" title="Xcode-Target、Project、WorkSpace、Scheme">
+                Xcode-Target、Project、WorkSpace、Scheme <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2015/09/24/UINavigationBar背景色设置/"
+     data-title="UINavigationBar背景色设置"
+     data-content=""
+     data-url="http://yoursite.com/2015/09/24/UINavigationBar背景色设置/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/09/24/UINavigationBar背景色设置/"
+           data-title="UINavigationBar背景色设置" data-url="http://yoursite.com/2015/09/24/UINavigationBar背景色设置/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="zakariyyaSv" />
+          <p class="site-author-name" itemprop="name">zakariyyaSv</p>
+          <p class="site-description motion-element" itemprop="description">Just Forcus</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">27</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zakariyyaSv" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于translucent属性"><span class="nav-number">2.</span> <span class="nav-text">关于translucent属性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#translucent为NO"><span class="nav-number">2.0.1.</span> <span class="nav-text">translucent为NO</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#translucent为YES"><span class="nav-number">2.0.2.</span> <span class="nav-text">translucent为YES</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置navigationbar背景色问题"><span class="nav-number">3.</span> <span class="nav-text">设置navigationbar背景色问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#transulent-YES"><span class="nav-number">3.0.1.</span> <span class="nav-text">transulent=YES</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#transulent-NO"><span class="nav-number">3.0.2.</span> <span class="nav-text">transulent=NO</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置navigationbar背景色解决方案"><span class="nav-number">4.</span> <span class="nav-text">设置navigationbar背景色解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+  <!--   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=100 src="http://music.163.com/outchain/player?type=0&id=92908042&auto=1&height=430"></iframe> -->
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zakariyyaSv</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zakariyyaSv"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.html";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = false;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title >= 0 || index_content >= 0 ){
+                                isMatch = true;
+								if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            } 
+							
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+	
+
+</body>
+</html>
