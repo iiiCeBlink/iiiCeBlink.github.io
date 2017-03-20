@@ -411,18 +411,17 @@ Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际�
     
 
         <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">深入理解NSMapTable、NSHashTable、NSPointerArray</a></p>
+        <p class="article-headline-p"><a href="/2016/03/12/抽丝剥茧之block（上）/">抽丝剥茧之block（上）</a></p>
     </div>
 
     <!-- Post Excerpt -->
     <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
         
-            最近在学习YYCache中的YYDiskCache时，注意到了这段代码：
-12345678910111213141516171819202122232425262728/// weak reference for all instancesstatic NSMapTable *_globalInstances;static dispatch_semaphore_t _globalInstancesLock;static void _YYDiskCacheInitGlobal() &#123;    static dispatch_once_t onceToken;    dispatch_once(&amp;onceToken, ^&#123;        _globalInstancesLock = dispatch_semaphore_create(1);        _globalInstances = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];    &#125;);&#125;static YYDiskCache *_YYDiskCacheGetGlobal(NSString *path) &#123;    if (path.length == 0) return nil;    _YYDiskCacheInitGlobal();    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);    id cache = [_globalInstances objectForKey:path];    dispatch_semaphore_signal(_globalInstancesLock);    return cache;&#125;static void _YYDiskCacheSetGlobal(YYDiskCache *cache) &#123;    if (cache.path.length == 0) return;    _YYDiskCacheInitGlobal();    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);    [_globalInstances setObject:cache forKey:cache.path];    dispatch_semaphore_signal(_globalInstancesLock);&#125;
+            block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开...
         
         &nbsp;&nbsp;&nbsp;
         <span>
-            <a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/" target="_self">继续阅读</a>
+            <a href="/2016/03/12/抽丝剥茧之block（上）/" target="_self">继续阅读</a>
         </span>
     </div>
     <!-- Post_entry Info-->
@@ -434,7 +433,7 @@ Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际�
             </div>
             <div>
                 <strong>zakariyyasv</strong>
-                <span>3月 10, 2016</span>
+                <span>3月 12, 2016</span>
             </div>
         </div>
         <div id="post_entry-right-info">
@@ -469,26 +468,18 @@ Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际�
     
 
         <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2016/03/06/YYCache源码学习/">YYCache源码学习</a></p>
+        <p class="article-headline-p"><a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">深入理解NSMapTable、NSHashTable、NSPointerArray</a></p>
     </div>
 
     <!-- Post Excerpt -->
     <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
         
-            这篇文章并不是对YYCache的设计思路的范范分析，而是对YYCache代码实现的详细分析。一方面YYCache的设计思路作者已经写得比较清楚了，我就没必要再多此一举了，有兴趣的可以到大神的博客去看YYCache 设计思路。从代码层面进行分析，一方面是因为很多思路上的东西很虚理解起来大都很容易，但是要能用代码实现却往往不那么轻松，另一方面是因为代码分析可以学习优秀代码的编码风格以及加深对iOS技术上的理解，这样做给自己带来的帮助或许会更多。
-代码结构YYCache文件数并不多，主要包含四个文件：
-
-
-YYCache
-YYDiskCache  
-YYMemoryCache
-YYKVStorage
-
-
+            最近在学习YYCache中的YYDiskCache时，注意到了这段代码：
+12345678910111213141516171819202122232425262728/// weak reference for all instancesstatic NSMapTable *_globalInstances;static dispatch_semaphore_t _globalInstancesLock;static void _YYDiskCacheInitGlobal() &#123;    static dispatch_once_t onceToken;    dispatch_once(&amp;onceToken, ^&#123;        _globalInstancesLock = dispatch_semaphore_create(1);        _globalInstances = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];    &#125;);&#125;static YYDiskCache *_YYDiskCacheGetGlobal(NSString *path) &#123;    if (path.length == 0) return nil;    _YYDiskCacheInitGlobal();    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);    id cache = [_globalInstances objectForKey:path];    dispatch_semaphore_signal(_globalInstancesLock);    return cache;&#125;static void _YYDiskCacheSetGlobal(YYDiskCache *cache) &#123;    if (cache.path.length == 0) return;    _YYDiskCacheInitGlobal();    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);    [_globalInstances setObject:cache forKey:cache.path];    dispatch_semaphore_signal(_globalInstancesLock);&#125;
         
         &nbsp;&nbsp;&nbsp;
         <span>
-            <a href="/2016/03/06/YYCache源码学习/" target="_self">继续阅读</a>
+            <a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/" target="_self">继续阅读</a>
         </span>
     </div>
     <!-- Post_entry Info-->
@@ -500,7 +491,7 @@ YYKVStorage
             </div>
             <div>
                 <strong>zakariyyasv</strong>
-                <span>3月 06, 2016</span>
+                <span>3月 10, 2016</span>
             </div>
         </div>
         <div id="post_entry-right-info">
@@ -626,7 +617,7 @@ YYKVStorage
             </a>
             <ul class="dropdown-menu">
             <li>
-                <a class="sidebar_archives-link" href="/archives/2016/10/">十月 2016<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/09/">九月 2016<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/08/">八月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/07/">七月 2016<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/05/">五月 2016<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/04/">四月 2016<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/03/">三月 2016<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/02/">二月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/01/">一月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/12/">十二月 2015<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/10/">十月 2015<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/09/">九月 2015<span class="sidebar_archives-count">1</span></a>
+                <a class="sidebar_archives-link" href="/archives/2016/10/">十月 2016<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/09/">九月 2016<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/08/">八月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/07/">七月 2016<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/05/">五月 2016<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/04/">四月 2016<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/03/">三月 2016<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/02/">二月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/01/">一月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/12/">十二月 2015<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/10/">十月 2015<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/09/">九月 2015<span class="sidebar_archives-count">1</span></a>
             </ul>
         </li>
         

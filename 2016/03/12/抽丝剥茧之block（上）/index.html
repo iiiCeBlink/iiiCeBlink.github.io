@@ -10,7 +10,7 @@
     
     <title>
         
-            归档: 2015/9 | 
+            抽丝剥茧之block（上） | 
         
         zakariyyasv&#39;s blog
     </title>
@@ -48,7 +48,7 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://zakariyyasv.pub">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="归档: 2015/9 | zakariyyasv&#39;s blog">
+    <meta property="og:title" content="抽丝剥茧之block（上） | zakariyyasv&#39;s blog">
     <meta property="og:description" content="Just forcus">
     
 
@@ -208,93 +208,250 @@
                         </button>
                     
 
-                    <!-- Index Module -->
-<div class="material-index mdl-grid">
-    
-    <div class="locate-thumbnail-symbol"></div>
+                    <!-- Post TOC -->
 
-    <!-- Pin on top -->
     
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
 
-    <!-- Normal Post -->
-    
-        
-        
-            <!-- Paradox Thumbnail -->
-            <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
+    <!-- Left aligned menu below button -->
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#问题和结论"><span class="post-toc-number">1.</span> <span class="post-toc-text">问题和结论</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#栈和堆"><span class="post-toc-number">2.</span> <span class="post-toc-text">栈和堆</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#block存储"><span class="post-toc-number">3.</span> <span class="post-toc-text">block存储</span></a></li></ol>
+
+        <!--
+        <li class="mdl-menu__item">
+            Some Action
+        </li>
+        -->
+    </ul>
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
     
         
             <!-- Random Thumbnail -->
             <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
+            <script>
+    var randomNum = Math.floor(Math.random() * 19 + 1);
 
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2015/09/24/UINavigationBar背景色设置/">UINavigationBar背景色设置</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            前言最近关于UINavigationBar背景色随tableView滚动而渐变的风格很流行，自己也想着研究去实现它，并决定把研究的结果写进这篇文章中。渐变的实现很简单，思路无非是监听tableView的contentOffset属性，在scrollViewDidScroll方法中更新navigationbar背景色的alpha值，我们的重点放在设置navigationbar背景色上。
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2015/09/24/UINavigationBar背景色设置/" target="_self">继续阅读</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/avatar.png" width="44px" height="44px" alt="zakariyyasv's avatar">
-            </div>
-            <div>
-                <strong>zakariyyasv</strong>
-                <span>9月 24, 2015</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-            <!-- Category -->
-            <span class="post_entry-category">
-                <a class="post_category-link" href="/categories/iOS/">iOS</a>
-            </span>
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-        
-        
-        
-    
-
-    
-
-    
-        <script>
-    var randomNum;
-
-    var locatePost = $('.locate-thumbnail-symbol').next();
-    for(var i = 0; i < 5; i++) {
-        randomNum = Math.floor(Math.random() * 19 + 1);
-
-        locatePost.children('.post_thumbnail-random').attr('id', 'random_thumbnail-'+randomNum);
-        locatePost.children('.post_thumbnail-random').css('background-image', 'url(' + '/img/random/material-' + randomNum + '.png' + ')')
-
-        locatePost = locatePost.next();
-    }
+    $('.post_thumbnail-random').css('background-image', 'url(' + '/img/random/material-' + randomNum + '.png' + ')');
 </script>
 
+        
+    
+            <p class="article-headline-p">
+                抽丝剥茧之block（上）
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/avatar.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>zakariyyasv</strong>
+        <span>3月 12, 2016</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=抽丝剥茧之block（上）&url=http://zakariyyasv.pub//2016/03/12/抽丝剥茧之block（上）/index.html&pic=&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=抽丝剥茧之block（上）&url=http://zakariyyasv.pub//2016/03/12/抽丝剥茧之block（上）/index.html&via=zakariyyasv" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://zakariyyasv.pub//2016/03/12/抽丝剥茧之block（上）/index.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://zakariyyasv.pub//2016/03/12/抽丝剥茧之block（上）/index.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <p>block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的地方，系列索引在这里：</p>
+<p><a href="">抽丝剥茧之block（上）</a></p>
+<p><a href="">抽丝剥茧之block（下）</a></p>
+<h4 id="问题和结论"><a href="#问题和结论" class="headerlink" title="问题和结论"></a>问题和结论</h4><p>本篇主要的探讨的问题是声明block变量时的修饰符使用<code>strong</code>还是<code>copy</code>？两者是否有区别？</p>
+<p>这里先给出结论：在引入ARC之后，在ARC下使用<code>strong</code>和<code>copy</code>对于block而言，不管是实例变量、局部变量还是全局变量都是没有问题的，也可以说这两者几乎没有区别。</p>
+<h4 id="栈和堆"><a href="#栈和堆" class="headerlink" title="栈和堆"></a>栈和堆</h4><p>先说是不是，再说为什么，要解释清楚这个问题要从堆和栈讲起。iOS系统中运行代码使用的空间在三个不同的内存区域，分成三个段：“text segment “，“stack segment ”，“heap segment ”。</p>
+<blockquote>
+<p>栈：<br>在现代操作系统中,一个线程会分配一个stack. 当一个函数被调用,一个stack frame(栈帧)就会被压到stack里。里面包含这个函数涉及的参数,局部变量,返回地址等相关信息。当函数返回后,这个栈帧就会被销毁。而这一切都是自动的,由系统帮我们进行分配与销毁。</p>
+<p>堆：<br>提供一个保存中介贯穿函数的执行过程，全局和静态变量保存在“heap”中，直到应用退出。堆,内存可以随时在堆中分配和销毁。我们需要明确请求内存分配与内存销毁。 </p>
+</blockquote>
+<p><img src="/images/blockImages/1.gif" alt=""></p>
+<p>stack 对象的优点主要有两点，一是创建速度快，二是管理简单，它有严格的生命周期。stack 对象的缺点是它不灵活。创建时长度是多大就一直是多大，创建时是哪个函数创建的，它的owner 就一直是它。不像heap 对象那样有多个owner ，其实多个owner 等同于引用计数。只有heap 对象才是采用“引用计数”方法管理它。在栈中创建对象，只要栈的剩余空间大于stack 对象申请创建的空间，操作系统就会为程序提供这段内存空间，否则将报异常提示栈溢出。而在堆中创建对象，操作系统对于内存heap 段是采用链表进行管理的。操作系统有一个记录空闲内存地址的链表，当收到程序的申请时，会遍历链表，寻找第一个空间大于所申请的heap 节点，然后将该节点从空闲节点链表中删除，并将该节点的空间分配给程序。</p>
+<p>我们应该知道OC中的对象都分配在堆而不是栈中，其原因是stack对象的生命周期所导致的问题。例如一旦函数返回，则所在的stack frame就会被摧毁。那么此时返回的对象也会一并摧毁。这个时候我们去retain这个对象是无效的。因为整个stack frame都已经被摧毁了。简单而言，就是stack对象的生命周期不适合Objective-C的引用计数内存管理方法。同时，2. stack对象不够灵活，不具备足够的扩展性。创建时长度已经是固定的,而stack对象的拥有者也就是所在的stack frame。</p>
+<h4 id="block存储"><a href="#block存储" class="headerlink" title="block存储"></a>block存储</h4><p>由上文我们了解到iOS中的对象存储在堆上，那block存储在堆还是栈上呢？一般而言，block存储在栈上，这是编译器内部的优化策略，并不会直接对编写的代码产生影响。这样做的好处在于当block创建出来并作为方法的参数传递，方法调用后将其抛弃时，block可以快速的在栈上进行内存分配并且销毁的时候不需要涉及到堆（动态内存池）。</p>
+<p>将对象与局部变量做下比较。局部变量在栈中创建出来，当变量所属的方法返回时会自动销毁该变量，并且可以被方法调用者以地址方式传递给被调用方法。当变量的调用方法返回后临时变量的地址不会被存储和使用了，此时该变量已不再存在。</p>
+<p>然而，在必要情况下，对象则期望比它们的创建方法生命周期更长，因此，与局部变量不同，对象是在堆上进行分配并且不会被创建方法返回时自动销毁，是否销毁取决于对象是否还被“需要”，“需要”则是由ARC自动管理。</p>
+<p>再回到block，在栈上创建block在性能方面有好处但同时也会引起一个问题：如果block的生命周期需要超过它的创建方法，就像对象一样，那么它需要在创建方法的栈销毁之前移动到堆上。<br>在block第一次release时，由于编译器那时候无法自动处理需要移动到堆上的block的生命周期，所以需要开发者手动调用<code>block_copy()</code>方法将block复制到堆上。但是，在OC上层语言层面调用底层方法手动管理编译器中的变量生命周期显示时不合适的（block是<br>C语言结构）。因而，之后苹果发布了新版本的编译器来改善这方面的问题，开发者可以调用<br><code>[block copy]</code>代替<code>block_copy(block)</code>。然后，编译器会自动将block从栈复制到堆上，不过，这点并没有在官方文档中提及。</p>
+<p>关于block的修饰符说明，在14年的苹果文档<a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithBlocks/WorkingwithBlocks.html" target="_blank" rel="external">WorkingwithBlocks</a>中提到block类型的属性应使用<code>copy</code>，但是不多久就被删除了，原文在这里：</p>
+<blockquote>
+<p>You should specify copy as the property attribute, because a block needs to be copied to keep track of its captured state outside of the original scope. This isn’t something you need to worry about when using Automatic Reference Counting, as it will happen automatically, but it’s best practice for the property attribute to show the resultant behavior.</p>
+</blockquote>
+<p>内容的大致意思是使用<code>copy</code>修饰block在规范上更推荐，它预示了block会发生的结果行为。实际上，在ARC下不需要我们去关心block的拷贝，ARC会自动完成，因而<code>strong</code>和<code>copy</code>并没有本质上的区别，只是在规范上更倾向于<code>copy</code>而已。</p>
+
+    
+
     
 </div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+
+
+
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+        <a href="/2016/03/12/Mac workflow小记/" id="post_nav-newer" class="prev-content">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            新篇
+        </a>
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
 
 
                     

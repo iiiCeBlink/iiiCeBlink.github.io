@@ -377,6 +377,24 @@
   </entry>
   
   <entry>
+    <title>抽丝剥茧之block（上）</title>
+    <link href="http://zakariyyasv.pub/2016/03/12/%E6%8A%BD%E4%B8%9D%E5%89%A5%E8%8C%A7%E4%B9%8Bblock%EF%BC%88%E4%B8%8A%EF%BC%89/"/>
+    <id>http://zakariyyasv.pub/2016/03/12/抽丝剥茧之block（上）/</id>
+    <published>2016-03-12T11:38:21.000Z</published>
+    <updated>2017-03-20T08:48:36.000Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://zakariyyasv.pub/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>深入理解NSMapTable、NSHashTable、NSPointerArray</title>
     <link href="http://zakariyyasv.pub/2016/03/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3NSMapTable%E3%80%81NSHashTable%E3%80%81NSPointerArray/"/>
     <id>http://zakariyyasv.pub/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/</id>
@@ -387,33 +405,6 @@
     
       &lt;p&gt;最近在学习&lt;code&gt;YYCache&lt;/code&gt;中的&lt;code&gt;YYDiskCache&lt;/code&gt;时，注意到了这段代码：&lt;/p&gt;
 &lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;20&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;21&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;22&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;23&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;24&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;25&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;26&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;27&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;28&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// weak reference for all instances&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;NSMapTable&lt;/span&gt; *_globalInstances;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; dispatch_semaphore_t _globalInstancesLock;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; _YYDiskCacheInitGlobal() &amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;dispatch_once_t&lt;/span&gt; onceToken;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;dispatch_once&lt;/span&gt;(&amp;amp;onceToken, ^&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        _globalInstancesLock = dispatch_semaphore_create(&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        _globalInstances = [[&lt;span class=&quot;built_in&quot;&gt;NSMapTable&lt;/span&gt; alloc] initWithKeyOptions:&lt;span class=&quot;built_in&quot;&gt;NSPointerFunctionsStrongMemory&lt;/span&gt; valueOptions:&lt;span class=&quot;built_in&quot;&gt;NSPointerFunctionsWeakMemory&lt;/span&gt; capacity:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;];&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; YYDiskCache *_YYDiskCacheGetGlobal(&lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *path) &amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (path.length == &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    _YYDiskCacheInitGlobal();&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; cache = [_globalInstances objectForKey:path];&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    dispatch_semaphore_signal(_globalInstancesLock);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; cache;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; _YYDiskCacheSetGlobal(YYDiskCache *cache) &amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (cache.path.length == &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    _YYDiskCacheInitGlobal();&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    [_globalInstances setObject:cache forKey:cache.path];&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    dispatch_semaphore_signal(_globalInstancesLock);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-    
-    </summary>
-    
-      <category term="iOS" scheme="http://zakariyyasv.pub/categories/iOS/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>YYCache源码学习</title>
-    <link href="http://zakariyyasv.pub/2016/03/06/YYCache%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/"/>
-    <id>http://zakariyyasv.pub/2016/03/06/YYCache源码学习/</id>
-    <published>2016-03-06T06:17:28.000Z</published>
-    <updated>2016-09-19T14:33:19.000Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;这篇文章并不是对YYCache的设计思路的范范分析，而是对YYCache代码实现的详细分析。一方面YYCache的设计思路作者已经写得比较清楚了，我就没必要再多此一举了，有兴趣的可以到大神的博客去看&lt;a href=&quot;http://blog.ibireme.com/2015/10/26/yycache/&quot;&gt;YYCache 设计思路&lt;/a&gt;。从代码层面进行分析，一方面是因为很多思路上的东西很虚理解起来大都很容易，但是要能用代码实现却往往不那么轻松，另一方面是因为代码分析可以学习优秀代码的编码风格以及加深对iOS技术上的理解，这样做给自己带来的帮助或许会更多。&lt;/p&gt;
-&lt;h2 id=&quot;代码结构&quot;&gt;&lt;a href=&quot;#代码结构&quot; class=&quot;headerlink&quot; title=&quot;代码结构&quot;&gt;&lt;/a&gt;代码结构&lt;/h2&gt;&lt;p&gt;YYCache文件数并不多，主要包含四个文件：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;YYCache&lt;/li&gt;
-&lt;li&gt;YYDiskCache  &lt;/li&gt;
-&lt;li&gt;YYMemoryCache&lt;/li&gt;
-&lt;li&gt;YYKVStorage&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
     
     </summary>
     
