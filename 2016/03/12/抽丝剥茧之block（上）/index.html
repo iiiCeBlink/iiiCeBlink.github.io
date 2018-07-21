@@ -1,386 +1,266 @@
 <!DOCTYPE html>
-<html lang="zh">
-    <head>
-    <!-- 
-        © Material Theme
-        https://github.com/viosey/hexo-theme-material
-        Version: 1.3.0 -->
-
-    <!-- Title -->
-    
-    <title>
-        
-            抽丝剥茧之block（上） | 
-        
-        zakariyyasv&#39;s blog
-    </title>
-
-    <!-- Favicons -->
-    <link rel="icon shortcut" type="image/ico" href="/img/favicon.png">
-    <link rel="icon" sizes="192x192" href="/img/favicon.png">
-    <link rel="apple-touch-icon" href="/img/favicon.png">
-
-    <!-- Meta & Info -->
+<html lang=zh>
+<head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0097A7">
-    <meta name="author" content="zakariyyasv">
-    <meta name="description" content="Just forcus">
-    <meta name="keywords" content="null">
-
-    <!--iOS -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <meta name="apple-mobile-web-app-title" content="Title">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="480">
-
-    <!-- Add to homescreen for Chrome on Android -->
-    <meta name="mobile-web-app-capable" content="yes">
-
-    <!-- Add to homescreen for Safari on iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="zakariyyasv&#39;s blog">
-
-    <!-- The Open Graph protocol -->
-    <meta property="og:url" content="http://zakariyyasv.pub">
-    <meta property="og:type" content="blog">
-    <meta property="og:title" content="抽丝剥茧之block（上） | zakariyyasv&#39;s blog">
-    <meta property="og:description" content="Just forcus">
+    
+    <title>抽丝剥茧之block（上） | iCeBlink</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的地方，系列索引在这里：
+抽丝剥茧之block（上）
+抽丝剥茧之block（下）
+问题和结论本篇主要的探讨的问题是声明block">
+<meta property="og:type" content="article">
+<meta property="og:title" content="抽丝剥茧之block（上）">
+<meta property="og:url" content="http://zakariyyasv.pub/2016/03/12/抽丝剥茧之block（上）/index.html">
+<meta property="og:site_name" content="iCeBlink">
+<meta property="og:description" content="block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的地方，系列索引在这里：
+抽丝剥茧之block（上）
+抽丝剥茧之block（下）
+问题和结论本篇主要的探讨的问题是声明block">
+<meta property="og:image" content="http://zakariyyasv.pub/images/blockImages/1.gif">
+<meta property="og:updated_time" content="2017-03-20T08:48:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="抽丝剥茧之block（上）">
+<meta name="twitter:description" content="block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的地方，系列索引在这里：
+抽丝剥茧之block（上）
+抽丝剥茧之block（下）
+问题和结论本篇主要的探讨的问题是声明block">
+<meta name="twitter:image" content="http://zakariyyasv.pub/images/blockImages/1.gif">
     
 
-    <!--[if lte IE 9]>
-        <link rel="stylesheet" href="/css/ie-blocker.css">
-
-        
-            <script src="/js/ie-blocker.en.js"></script>
-        
-    <![endif]-->
-
-    <!-- Import CSS -->
-    <link rel="stylesheet" href="/css/material.min.css">
-    <link rel="stylesheet" href="/css/style.min.css">
-    <!-- Config CSS -->
-
-
-<!-- Other Styles -->
-<style>
-  body, html {
-    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-  }
-
-  a {
-    color: #00838F;
-  }
-
-  .mdl-card__media,
-  #search-label,
-  #search-form-label:after,
-  #scheme-Paradox .hot_tags-count,
-  #scheme-Paradox .sidebar_archives-count,
-  #scheme-Paradox .sidebar-colored .sidebar-header,
-  #scheme-Paradox .sidebar-colored .sidebar-badge{
-    background-color: #0097A7 !important;
-  }
-
-  /* Sidebar User Drop Down Menu Text Color */
-  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
-  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
-    color: #0097A7 !important;
-  }
-
-  #post_entry-right-info,
-  .sidebar-colored .sidebar-nav li:hover > a,
-  .sidebar-colored .sidebar-nav li:hover > a i,
-  .sidebar-colored .sidebar-nav li > a:hover,
-  .sidebar-colored .sidebar-nav li > a:hover i,
-  .sidebar-colored .sidebar-nav li > a:focus i,
-  .sidebar-colored .sidebar-nav > .open > a,
-  .sidebar-colored .sidebar-nav > .open > a:hover,
-  .sidebar-colored .sidebar-nav > .open > a:focus,
-  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
-    color: #0097A7 !important;
-  }
-
-  .toTop {
-    background: #757575 !important;
-  }
-
-  .material-layout .material-post>.material-nav,
-  .material-layout .material-index>.material-nav,
-  .material-nav a {
-    color: #757575;
-  }
-
-  #scheme-Paradox .MD-burger-layer {
-    background-color: #757575;
-  }
-
-  #scheme-Paradox #post-toc-trigger-btn {
-    color: #757575;
-  }
-
-  .post-toc a:hover {
-    color: #00838F;
-    text-decoration: underline;
-  }
-</style>
-
-
-<!-- Theme Background Related-->
-
-    <style>
-      body{
-        background-color: #F5F5F5;
-      }
-
-      /* blog_info bottom background */
-      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
-        background-color: #fff;
-      }
-    </style>
-
-
-
-
-<!-- Fade Effect -->
-
-    <style>
-      .fade {
-        transition: all 800ms linear;
-        -webkit-transform: translate3d(0,0,0);
-        -moz-transform: translate3d(0,0,0);
-        -ms-transform: translate3d(0,0,0);
-        -o-transform: translate3d(0,0,0);
-        transform: translate3d(0,0,0);
-        opacity: 1;
-      }
-
-      .fade.out{
-        opacity: 0;
-      }
-    </style>
-
-
-
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/queue.js"></script>
-
-    <!-- UC Browser Compatible -->
-    <script>
-        var agent = navigator.userAgent.toLowerCase();
-        if(agent.indexOf('ucbrowser')>0) {
-            document.write("<link rel=\"stylesheet\" href=\"/css/uc.css\">");
-            alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
-        }
-    </script>
-
+    
+        <link rel="alternate" href="/" title="iCeBlink" type="application/atom+xml" />
     
 
     
 
-    <!-- Bing Background -->
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
     
 
-    <!-- Custom Head -->
-    
+
 </head>
 
-
-    
-        <body id="scheme-Paradox" class="lazy">
-            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">iCeBlink</span>
+            </a>
+            <nav id="main-nav">
                 
-
-                <!-- Main Container -->
-                <main class="material-layout__content" id="main">
-
-                    <!-- Top Anchor -->
-                    <div id="top"></div>
-
-                    
-                        <!-- Hamburger Button -->
-                        <button class="MD-burger-icon sidebar-toggle">
-                            <span class="MD-burger-layer"></span>
-                        </button>
-                    
-
-                    <!-- Post TOC -->
-
-    
-    <!-- Back Button -->
-    <!--
-    <div class="material-back" id="backhome-div" tabindex="0">
-        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
-           href="#" onclick="window.history.back();return false;"
-           target="_self"
-           role="button"
-           data-upgraded=",MaterialButton,MaterialRipple">
-            <i class="material-icons" role="presentation">arrow_back</i>
-            <span class="mdl-button__ripple-container">
-                <span class="mdl-ripple"></span>
-            </span>
-        </a>
-    </div>
-    -->
-
-    <!-- Left aligned menu below button -->
-    <button id="post-toc-trigger-btn"
-        class="mdl-button mdl-js-button mdl-button--icon">
-        <i class="material-icons">format_list_numbered</i>
-    </button>
-
-    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn">
-        <ol class="post-toc"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#问题和结论"><span class="post-toc-number">1.</span> <span class="post-toc-text">问题和结论</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#栈和堆"><span class="post-toc-number">2.</span> <span class="post-toc-text">栈和堆</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#block存储"><span class="post-toc-number">3.</span> <span class="post-toc-text">block存储</span></a></li></ol>
-
-        <!--
-        <li class="mdl-menu__item">
-            Some Action
-        </li>
-        -->
-    </ul>
-
-
-
-
-<!-- Layouts -->
-
-    <!-- Post Module -->
-    <div class="material-post_container">
-
-        <div class="material-post mdl-grid">
-            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
-
-                <!-- Post Header(Thumbnail & Title) -->
+                    <a class="main-nav-link" href="/.">Home</a>
                 
-    <!-- Paradox Post Header -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-            <script>
-    var randomNum = Math.floor(Math.random() * 19 + 1);
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories">Categories</a>
+                
+                    <a class="main-nav-link" href="/tags">Tags</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/avatar.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
 
-    $('.post_thumbnail-random').css('background-image', 'url(' + '/img/random/material-' + randomNum + '.png' + ')');
-</script>
-
-        
-    
-            <p class="article-headline-p">
-                抽丝剥茧之block（上）
-            </p>
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
         </div>
-
-
-
-
-
-                
-                    <!-- Paradox Post Info -->
-                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
-
-    <!-- Author Avatar -->
-    <div id="author-avatar">
-        <img src="/img/avatar.png" width="44px" height="44px" alt="Author Avatar"/>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
     </div>
-    <!-- Author Name & Date -->
-    <div>
-        <strong>zakariyyasv</strong>
-        <span>3月 12, 2016</span>
-    </div>
-
-    <div class="section-spacer"></div>
-
-    <!-- Favorite -->
-    <!--
-        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
-            <i class="material-icons" role="presentation">favorite</i>
-            <span class="visuallyhidden">favorites</span>
-        </button>
-    -->
-
-    <!-- Qrcode -->
-    
-
-    <!-- Tags (bookmark) -->
-    
-    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
-        <i class="material-icons" role="presentation">bookmark</i>
-        <span class="visuallyhidden">bookmark</span>
-    </button>
-    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
-        <li class="mdl-menu__item">
-        
-    </ul>
-    
-
-    <!-- Share -->
-    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
-    <i class="material-icons" role="presentation">share</i>
-    <span class="visuallyhidden">share</span>
-</button>
-<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
-    
-
-    
-
-    <!-- Share Weibo -->
-    
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=抽丝剥茧之block（上）&url=http://zakariyyasv.pub//2016/03/12/抽丝剥茧之block（上）/index.html&pic=&searchPic=false&style=simple" target="_blank">
-            <li class="mdl-menu__item">
-                分享到微博
-            </li>
-        </a>
-    
-
-    <!-- Share Twitter -->
-    
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=抽丝剥茧之block（上）&url=http://zakariyyasv.pub//2016/03/12/抽丝剥茧之block（上）/index.html&via=zakariyyasv" target="_blank">
-            <li class="mdl-menu__item">
-                分享到 Twitter
-            </li>
-        </a>
-    
-
-    <!-- Share Facebook -->
-    
-        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://zakariyyasv.pub//2016/03/12/抽丝剥茧之block（上）/index.html" target="_blank">
-            <li class="mdl-menu__item">
-                分享到 Facebook
-            </li>
-        </a>
-    
-
-    <!-- Share Google+ -->
-    
-        <a class="post_share-link" href="https://plus.google.com/share?url=http://zakariyyasv.pub//2016/03/12/抽丝剥茧之block（上）/index.html" target="_blank">
-            <li class="mdl-menu__item">
-                分享到 Google+
-            </li>
-        </a>
-    
-
-    <!-- Share LinkedIn -->
-    
-
-    <!-- Share QQ -->
-    
-
-    <!-- Share Telegram -->
-    
-</ul>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
 
 </div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">Categories</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">Tags</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
 
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
                 
 
-                <!-- Post Content -->
-                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/avatar.png" />
+            <h2 id="name">iCeBlink</h2>
+            <h3 id="title">iOS &amp; Web Developer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/zakariyyasv">FOLLOW</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                29
+                <span>posts</span>
+            </div>
+            <div class="article-info-block">
+                0
+                <span>tag</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/zakariyyasv" target="_blank" title="github" class=tooltip>
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="twitter" class=tooltip>
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="dribbble" class=tooltip>
+                            <i class="fab fa-dribbble"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="rss" class=tooltip>
+                            <i class="fab fa-rss"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-抽丝剥茧之block（上）" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
     
-        <p>block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的地方，系列索引在这里：</p>
+        <h1 class="article-title" itemprop="name">
+            抽丝剥茧之block（上）
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/03/12/抽丝剥茧之block（上）/">
+            <time datetime="2016-03-12T11:38:21.000Z" itemprop="datePublished">2016-03-12</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的地方，系列索引在这里：</p>
 <p><a href="">抽丝剥茧之block（上）</a></p>
 <p><a href="">抽丝剥茧之block（下）</a></p>
 <h4 id="问题和结论"><a href="#问题和结论" class="headerlink" title="问题和结论"></a>问题和结论</h4><p>本篇主要的探讨的问题是声明block变量时的修饰符使用<code>strong</code>还是<code>copy</code>？两者是否有区别？</p>
@@ -403,362 +283,301 @@
 </blockquote>
 <p>内容的大致意思是使用<code>copy</code>修饰block在规范上更推荐，它预示了block会发生的结果行为。实际上，在ARC下不需要我们去关心block的拷贝，ARC会自动完成，因而<code>strong</code>和<code>copy</code>并没有本质上的区别，只是在规范上更倾向于<code>copy</code>而已。</p>
 
-    
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
 
-    
+
+
 </div>
 
+    <a data-url="http://zakariyyasv.pub/2016/03/12/抽丝剥茧之block（上）/" data-id="cjjv7w68j001ep7fyjvd00ck1" class="article-share-link"><i class="fas fa-share"></i>Share</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
 
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2016/03/12/Mac workflow小记/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
                 
-
-                <!-- Post Comments -->
-                
-                    
-
-
-
-
+                    Mac workflow小记
                 
             </div>
-
-            <!-- Post Prev & Next Nav -->
-            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
-    <!-- Prev Nav -->
-    
-        <a href="/2016/03/12/Mac workflow小记/" id="post_nav-newer" class="prev-content">
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
-                <i class="material-icons">arrow_back</i>
-            </button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            新篇
         </a>
     
-
-    <!-- Section Spacer -->
-    <div class="section-spacer"></div>
-
-    <!-- Next Nav -->
     
-        <a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/" id="post_nav-older" class="next-content">
-            旧篇
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
-                <i class="material-icons">arrow_forward</i>
-            </button>
+        <a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">深入理解NSMapTable、NSHashTable、NSPointerArray</div>
         </a>
     
 </nav>
 
-        </div>
-    </div>
 
-
-
-                    
-                        <!-- Overlay For Active Sidebar -->
-<div class="sidebar-overlay"></div>
-
-<!-- Material sidebar -->
-<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
-    <div id="sidebar-main">
-        <!-- Sidebar Header -->
-        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
-    <!-- Top bar -->
-    <div class="top-bar"></div>
-
-    <!-- Sidebar toggle button -->
-    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
-        <i class="material-icons">clear_all</i>
-        <span class="mdl-button__ripple-container">
-            <span class="mdl-ripple">
-            </span>
-        </span>
-    </button>
-
-    <!-- Sidebar Avatar -->
-    <div class="sidebar-image">
-        <img src="/img/avatar.png" alt="zakariyyasv's avatar">
-    </div>
-
-    <!-- Sidebar Email -->
-    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
-        zakariyyasv@gmail.com
-        <b class="caret"></b>
-    </a>
-</div>
-
-
-        <!-- Sidebar Navigation  -->
-        <ul class="nav sidebar-nav">
-    <!-- User dropdown  -->
-    <li class="dropdown">
-        <ul id="settings-dropdown" class="dropdown-menu">
-            
-                <li>
-                    <a href="#" target="_blank" title="Email Me">
-                        
-                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
-                        
-                        Email Me
-                    </a>
-                </li>
-            
-        </ul>
-    </li>
-
-    <!-- Homepage -->
     
-        <li id="sidebar-first-li">
-            <a href="/" target="_self">
+</article>
+
+
+    
+    
+
+</section>
+            
                 
-                    <i class="material-icons sidebar-material-icons">home</i>
-                
-                主页
-            </a>
-        </li>
+<aside id="sidebar">
+   
         
+    <div class="widget-wrap">
+        <h3 class="widget-title">recent</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/10/CFNetwork学习笔记（四）/" class="thumbnail">
     
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
 
-    <!-- Archives  -->
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
+                            <p class="item-title"><a href="/2016/10/10/CFNetwork学习笔记（四）/" class="title">CFNetwork学习笔记（四）</a></p>
+                            <p class="item-date"><time datetime="2016-10-10T08:46:53.000Z" itemprop="datePublished">2016-10-10</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/07/CFNetwork学习笔记（三）/" class="thumbnail">
     
-        <li class="dropdown">
-            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
+                            <p class="item-title"><a href="/2016/10/07/CFNetwork学习笔记（三）/" class="title">CFNetwork学习笔记（三）</a></p>
+                            <p class="item-date"><time datetime="2016-10-07T06:39:12.000Z" itemprop="datePublished">2016-10-07</time></p>
+                        </div>
+                    </li>
                 
-                    <i class="material-icons sidebar-material-icons">inbox</i>
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/06/CFNetwork学习笔记（二）/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
+                            <p class="item-title"><a href="/2016/10/06/CFNetwork学习笔记（二）/" class="title">CFNetwork学习笔记（二）</a></p>
+                            <p class="item-date"><time datetime="2016-10-06T12:50:01.000Z" itemprop="datePublished">2016-10-06</time></p>
+                        </div>
+                    </li>
                 
-                    归档
-                <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-            <li>
-                <a class="sidebar_archives-link" href="/archives/2016/10/">十月 2016<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/09/">九月 2016<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/08/">八月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/07/">七月 2016<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/05/">五月 2016<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/04/">四月 2016<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/03/">三月 2016<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/02/">二月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/01/">一月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/12/">十二月 2015<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/10/">十月 2015<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/09/">九月 2015<span class="sidebar_archives-count">1</span></a>
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/05/CFNetwork学习笔记（一）/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
+                            <p class="item-title"><a href="/2016/10/05/CFNetwork学习笔记（一）/" class="title">CFNetwork学习笔记（一）</a></p>
+                            <p class="item-date"><time datetime="2016-10-05T04:36:19.000Z" itemprop="datePublished">2016-10-05</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/03/dumpdecrypted砸壳记录/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+                            <p class="item-title"><a href="/2016/10/03/dumpdecrypted砸壳记录/" class="title">dumpdecrypted砸壳记录</a></p>
+                            <p class="item-date"><time datetime="2016-10-03T02:14:41.000Z" itemprop="datePublished">2016-10-03</time></p>
+                        </div>
+                    </li>
+                
             </ul>
-        </li>
-        
-    
-
-    <!-- Categories  -->
-    
-
-    <!-- Pages  -->
-    
-
-    <!-- Article Number  -->
-    
-</ul>
-
-
-        <!-- Sidebar Footer -->
-        <!--
-I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
-If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
-It will not impact the appearance and can give developers a lot of support :)
-
-很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
-如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
-它不会影响美观并可以给开发者很大的支持和动力。 :)
--->
-
-<!-- Sidebar Divider -->
-
-    <div class="sidebar-divider"></div>
-
-
-<!-- Theme Material -->
-
-    <a href="https://github.com/viosey/hexo-theme-material"  class="sidebar-footer-text-a" target="_blank">
-        <div class="sidebar-text mdl-button mdl-js-button mdl-js-ripple-effect sidebar-footer-text-div" data-upgraded=",MaterialButton,MaterialRipple">
-            主题 - Material
-            <span class="sidebar-badge badge-circle">i</span>
         </div>
-    </a>
-
-
-<!-- Help & Support -->
-<!--
-
--->
-
-<!-- Feedback -->
-<!--
-
--->
-
-<!-- About Theme -->
-<!--
-
--->
-
     </div>
 
-    <!-- Sidebar Image -->
     
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">categories</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/MacOS/">MacOS</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mac相关/">Mac相关</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS逆向工程/">iOS逆向工程</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/开发工具/">开发工具</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
 
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">archives</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    
+        
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">links</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
 </aside>
 
-                    
-
-                    
-                        <!-- Footer Top Button -->
-                        <div class="toTop-wrap">
-    <a href="#top" class="toTop">
-        <i class="material-icons footer_top-i">expand_less</i>
-    </a>
-</div>
-
-                    
-
-                    <!--Footer-->
-<footer class="mdl-mini-footer" id="bottom">
-    
-        <!-- Paradox Footer Left Section -->
-        <div class="mdl-mini-footer--left-section sns-list">
-    <!-- Twitter -->
-    
-        <a href="https://twitter.com/twitter" target="_blank">
-            <button class="mdl-mini-footer--social-btn social-btn" style="background-image: url(/img/footer/footer_ico-twitter.png);">
-                <span class="visuallyhidden">Twitter</span>
-            </button><!--
-     --></a>
-    
-
-    <!-- Facebook -->
-    
-        <a href="https://www.facebook.com/facebook" target="_blank">
-            <button class="mdl-mini-footer--social-btn social-btn" style="background-image: url(/img/footer/footer_ico-facebook.png);">
-                <span class="visuallyhidden">Facebook</span>
-            </button><!--
-     --></a>
-    
-
-    <!-- Google + -->
-    
-        <a href="https://www.google.com/" target="_blank">
-            <button class="mdl-mini-footer--social-btn social-btn" style="background-image: url(/img/footer/footer_ico-gplus.png);">
-                <span class="visuallyhidden">Google Plus</span>
-            </button><!--
-     --></a>
-    
-
-    <!-- Weibo -->
-    
-
-    <!-- Instagram -->
-    
-
-    <!-- Tumblr -->
-    
-
-    <!-- Github -->
-    
-        <a href="https://github.com/ZakariyyaSv" target="_blank">
-            <button class="mdl-mini-footer--social-btn social-btn" style="background-image: url(/img/footer/footer_ico-github.png);">
-                <span class="visuallyhidden">Github</span>
-            </button><!--
-     --></a>
-    
-
-    <!-- LinkedIn -->
-    
-
-    <!-- Zhihu -->
-    
-
-    <!-- Bilibili -->
-    
-
-    <!-- Telegram -->
-    
-</div>
-
-
-        <!--Copyright-->
-        <div id="copyright">
-            Copyright&nbsp;©&nbsp;
-            <script type="text/javascript">
-                var fd = new Date();
-                document.write(fd.getFullYear());
-            </script>
-            &nbsp;zakariyyasv's blog
+            
         </div>
-
-        <!-- Paradox Footer Right Section -->
-
-        <!--
-        I am glad you use this theme, the development is no so easy, I hope you can keep the copyright.
-        It will not impact the appearance and can give developers a lot of support :)
-
-        很高兴您使用该主题，开发不易，希望您可以保留一下版权声明。
-        它不会影响美观并可以给开发者很大的支持。 :)
-        -->
-
-        <div class="mdl-mini-footer--right-section">
-            <div>
-                <div class="footer-develop-div">Powered by <a href="https://hexo.io" target="_blank" class="footer-develop-a">Hexo</a></div>
-                <div class="footer-develop-div">Theme - <a href="https://github.com/viosey/hexo-theme-material" target="_blank" class="footer-develop-a">Material</a></div>
-            </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 zakariyyasv<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
         </div>
-    
+    </div>
 </footer>
+        
 
 
-                    <!-- Import File -->
-<script src="/js/lazyload.min.js"></script>
-<script src="/js/js.min.js"></script>
-<script src="/js/nprogress.js"></script>
-
-<script type="text/javascript">
-    NProgress.configure({
-        showSpinner: true
-    });
-    NProgress.start();
-    $('#nprogress .bar').css({
-        'background': '#29d'
-    });
-    $('#nprogress .peg').css({
-        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
-    });
-    $('#nprogress .spinner-icon').css({
-        'border-top-color': '#29d',
-        'border-left-color': '#29d'
-    });
-    setTimeout(function() {
-        NProgress.done();
-        $('.fade').removeClass('out');
-    }, 800);
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Swiftye -->
-
-
-<!-- Local Search-->
-
-
-<!-- Window Load-->
-<script>
-    $(window).load(function() {
-        // Post_Toc parent position fixed
-        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
-    });
-</script>
-
-<!-- MathJax Load-->
-
-
-                </main>
-            </div>
-        </body>
     
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
 </html>

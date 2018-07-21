@@ -1,850 +1,1097 @@
 <!DOCTYPE html>
-<html lang="zh">
-    <head>
-    <!-- 
-        © Material Theme
-        https://github.com/viosey/hexo-theme-material
-        Version: 1.3.0 -->
-
-    <!-- Title -->
-    
-    <title>
-        
-        zakariyyasv&#39;s blog
-    </title>
-
-    <!-- Favicons -->
-    <link rel="icon shortcut" type="image/ico" href="/img/favicon.png">
-    <link rel="icon" sizes="192x192" href="/img/favicon.png">
-    <link rel="apple-touch-icon" href="/img/favicon.png">
-
-    <!-- Meta & Info -->
+<html lang=zh>
+<head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0097A7">
-    <meta name="author" content="zakariyyasv">
+    
+    <title>iCeBlink</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="Just forcus">
-    <meta name="keywords" content="null">
-
-    <!--iOS -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <meta name="apple-mobile-web-app-title" content="Title">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="480">
-
-    <!-- Add to homescreen for Chrome on Android -->
-    <meta name="mobile-web-app-capable" content="yes">
-
-    <!-- Add to homescreen for Safari on iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="zakariyyasv&#39;s blog">
-
-    <!-- The Open Graph protocol -->
-    <meta property="og:url" content="http://zakariyyasv.pub">
-    <meta property="og:type" content="blog">
-    <meta property="og:title" content="zakariyyasv&#39;s blog">
-    <meta property="og:description" content="Just forcus">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iCeBlink">
+<meta property="og:url" content="http://zakariyyasv.pub/page/4/index.html">
+<meta property="og:site_name" content="iCeBlink">
+<meta property="og:description" content="Just forcus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iCeBlink">
+<meta name="twitter:description" content="Just forcus">
     
 
-    <!--[if lte IE 9]>
-        <link rel="stylesheet" href="/css/ie-blocker.css">
-
-        
-            <script src="/js/ie-blocker.en.js"></script>
-        
-    <![endif]-->
-
-    <!-- Import CSS -->
-    <link rel="stylesheet" href="/css/material.min.css">
-    <link rel="stylesheet" href="/css/style.min.css">
-    <!-- Config CSS -->
-
-
-<!-- Other Styles -->
-<style>
-  body, html {
-    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-  }
-
-  a {
-    color: #00838F;
-  }
-
-  .mdl-card__media,
-  #search-label,
-  #search-form-label:after,
-  #scheme-Paradox .hot_tags-count,
-  #scheme-Paradox .sidebar_archives-count,
-  #scheme-Paradox .sidebar-colored .sidebar-header,
-  #scheme-Paradox .sidebar-colored .sidebar-badge{
-    background-color: #0097A7 !important;
-  }
-
-  /* Sidebar User Drop Down Menu Text Color */
-  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
-  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
-    color: #0097A7 !important;
-  }
-
-  #post_entry-right-info,
-  .sidebar-colored .sidebar-nav li:hover > a,
-  .sidebar-colored .sidebar-nav li:hover > a i,
-  .sidebar-colored .sidebar-nav li > a:hover,
-  .sidebar-colored .sidebar-nav li > a:hover i,
-  .sidebar-colored .sidebar-nav li > a:focus i,
-  .sidebar-colored .sidebar-nav > .open > a,
-  .sidebar-colored .sidebar-nav > .open > a:hover,
-  .sidebar-colored .sidebar-nav > .open > a:focus,
-  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
-    color: #0097A7 !important;
-  }
-
-  .toTop {
-    background: #757575 !important;
-  }
-
-  .material-layout .material-post>.material-nav,
-  .material-layout .material-index>.material-nav,
-  .material-nav a {
-    color: #757575;
-  }
-
-  #scheme-Paradox .MD-burger-layer {
-    background-color: #757575;
-  }
-
-  #scheme-Paradox #post-toc-trigger-btn {
-    color: #757575;
-  }
-
-  .post-toc a:hover {
-    color: #00838F;
-    text-decoration: underline;
-  }
-</style>
-
-
-<!-- Theme Background Related-->
-
-    <style>
-      body{
-        background-color: #F5F5F5;
-      }
-
-      /* blog_info bottom background */
-      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
-        background-color: #fff;
-      }
-    </style>
-
-
-
-
-<!-- Fade Effect -->
-
-    <style>
-      .fade {
-        transition: all 800ms linear;
-        -webkit-transform: translate3d(0,0,0);
-        -moz-transform: translate3d(0,0,0);
-        -ms-transform: translate3d(0,0,0);
-        -o-transform: translate3d(0,0,0);
-        transform: translate3d(0,0,0);
-        opacity: 1;
-      }
-
-      .fade.out{
-        opacity: 0;
-      }
-    </style>
-
-
-
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/queue.js"></script>
-
-    <!-- UC Browser Compatible -->
-    <script>
-        var agent = navigator.userAgent.toLowerCase();
-        if(agent.indexOf('ucbrowser')>0) {
-            document.write("<link rel=\"stylesheet\" href=\"/css/uc.css\">");
-            alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
-        }
-    </script>
-
+    
+        <link rel="alternate" href="/" title="iCeBlink" type="application/atom+xml" />
     
 
     
 
-    <!-- Bing Background -->
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
     
 
-    <!-- Custom Head -->
-    
+
 </head>
 
-
-    
-        <body id="scheme-Paradox" class="lazy">
-            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">iCeBlink</span>
+            </a>
+            <nav id="main-nav">
                 
-
-                <!-- Main Container -->
-                <main class="material-layout__content" id="main">
-
-                    <!-- Top Anchor -->
-                    <div id="top"></div>
-
-                    
-                        <!-- Hamburger Button -->
-                        <button class="MD-burger-icon sidebar-toggle">
-                            <span class="MD-burger-layer"></span>
-                        </button>
-                    
-
-                    <!-- Index Module -->
-<div class="material-index mdl-grid">
-    
-    <div class="locate-thumbnail-symbol"></div>
-
-    <!-- Pin on top -->
-    
-
-    <!-- Normal Post -->
-    
-        
-        
-            <!-- Paradox Thumbnail -->
-            <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">庖丁解牛KVO（二）——KVO实现原理</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            概览在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。
-KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：
-
-Automatic key-value observing is implemented using a technique called isa-swizzling.
-The is a pointer, as the name suggests, points to the object’s class which maintains a dispatch table. This dispatch table essentially contains pointers to the methods the class implements, among other data.
-When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class. As a result the value of the isa pointer does not necessarily reflect the actual class of the instance.
-You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.
-
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/" target="_self">继续阅读</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/avatar.png" width="44px" height="44px" alt="zakariyyasv's avatar">
-            </div>
-            <div>
-                <strong>zakariyyasv</strong>
-                <span>4月 23, 2016</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-            <!-- Category -->
-            <span class="post_entry-category">
-                <a class="post_category-link" href="/categories/iOS/">iOS</a>
-            </span>
-
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories">Categories</a>
+                
+                    <a class="main-nav-link" href="/tags">Tags</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
             
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/avatar.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
 
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
         </div>
     </div>
 </div>
-
-        
-        
-        
-    
-        
-        
-            <!-- Paradox Thumbnail -->
-            <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/">庖丁解牛KVO（一）——KVO概览和使用</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（-bind:toObject:withKeyPath:options:）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。
-KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。
-在通知机制中，KVO与NSNotification提供的通知机制类似，但是也存在很鲜明的区别。NSNotification是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" target="_self">继续阅读</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/avatar.png" width="44px" height="44px" alt="zakariyyasv's avatar">
-            </div>
-            <div>
-                <strong>zakariyyasv</strong>
-                <span>4月 13, 2016</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-            <!-- Category -->
-            <span class="post_entry-category">
-                <a class="post_category-link" href="/categories/iOS/">iOS</a>
-            </span>
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-        
-        
-        
-    
-        
-        
-            <!-- Paradox Thumbnail -->
-            <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2016/03/12/Mac workflow小记/">Mac workflow小记</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。
-Homebrew
-Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际上是Mac下的套件管理器。比如你想安装MySQL、git等等工具软件，都可以使用homebrew来下载和管理。homebrew的安装也非常方便，你可以去到它的官网，根据提示进行安装。安装成功后就使用homebrew的命令去下载和管理你需要的工具软件了。
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2016/03/12/Mac workflow小记/" target="_self">继续阅读</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/avatar.png" width="44px" height="44px" alt="zakariyyasv's avatar">
-            </div>
-            <div>
-                <strong>zakariyyasv</strong>
-                <span>3月 12, 2016</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-            <!-- Category -->
-            <span class="post_entry-category">
-                <a class="post_category-link" href="/categories/Mac相关/">Mac相关</a>
-            </span>
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-        
-        
-        
-    
-        
-        
-            <!-- Paradox Thumbnail -->
-            <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2016/03/12/抽丝剥茧之block（上）/">抽丝剥茧之block（上）</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2016/03/12/抽丝剥茧之block（上）/" target="_self">继续阅读</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/avatar.png" width="44px" height="44px" alt="zakariyyasv's avatar">
-            </div>
-            <div>
-                <strong>zakariyyasv</strong>
-                <span>3月 12, 2016</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-            <!-- Category -->
-            <span class="post_entry-category">
-                <a class="post_category-link" href="/categories/iOS/">iOS</a>
-            </span>
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-        
-        
-        
-    
-        
-        
-            <!-- Paradox Thumbnail -->
-            <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">深入理解NSMapTable、NSHashTable、NSPointerArray</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            最近在学习YYCache中的YYDiskCache时，注意到了这段代码：
-12345678910111213141516171819202122232425262728/// weak reference for all instancesstatic NSMapTable *_globalInstances;static dispatch_semaphore_t _globalInstancesLock;static void _YYDiskCacheInitGlobal() &#123;    static dispatch_once_t onceToken;    dispatch_once(&amp;onceToken, ^&#123;        _globalInstancesLock = dispatch_semaphore_create(1);        _globalInstances = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];    &#125;);&#125;static YYDiskCache *_YYDiskCacheGetGlobal(NSString *path) &#123;    if (path.length == 0) return nil;    _YYDiskCacheInitGlobal();    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);    id cache = [_globalInstances objectForKey:path];    dispatch_semaphore_signal(_globalInstancesLock);    return cache;&#125;static void _YYDiskCacheSetGlobal(YYDiskCache *cache) &#123;    if (cache.path.length == 0) return;    _YYDiskCacheInitGlobal();    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);    [_globalInstances setObject:cache forKey:cache.path];    dispatch_semaphore_signal(_globalInstancesLock);&#125;
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/" target="_self">继续阅读</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/avatar.png" width="44px" height="44px" alt="zakariyyasv's avatar">
-            </div>
-            <div>
-                <strong>zakariyyasv</strong>
-                <span>3月 10, 2016</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-            <!-- Category -->
-            <span class="post_entry-category">
-                <a class="post_category-link" href="/categories/iOS/">iOS</a>
-            </span>
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-        
-        
-        
-    
-
-    
-    <!-- Index nav -->
-        <nav class="material-nav mdl-cell mdl-cell--12-col">
-            <a class="extend prev" rel="prev" href="/page/3/"><button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"><i class="material-icons" role="presentation">arrow_back</i></button></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/"><button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"><i class="material-icons" role="presentation">arrow_forward</i></button></a>
-        </nav>
-    
-
-    
-        <script>
-    var randomNum;
-
-    var locatePost = $('.locate-thumbnail-symbol').next();
-    for(var i = 0; i < 5; i++) {
-        randomNum = Math.floor(Math.random() * 19 + 1);
-
-        locatePost.children('.post_thumbnail-random').attr('id', 'random_thumbnail-'+randomNum);
-        locatePost.children('.post_thumbnail-random').css('background-image', 'url(' + '/img/random/material-' + randomNum + '.png' + ')')
-
-        locatePost = locatePost.next();
-    }
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
 </script>
+<script src="/js/insight.js"></script>
 
-    
 </div>
-
-
-                    
-                        <!-- Overlay For Active Sidebar -->
-<div class="sidebar-overlay"></div>
-
-<!-- Material sidebar -->
-<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
-    <div id="sidebar-main">
-        <!-- Sidebar Header -->
-        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
-    <!-- Top bar -->
-    <div class="top-bar"></div>
-
-    <!-- Sidebar toggle button -->
-    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
-        <i class="material-icons">clear_all</i>
-        <span class="mdl-button__ripple-container">
-            <span class="mdl-ripple">
-            </span>
-        </span>
-    </button>
-
-    <!-- Sidebar Avatar -->
-    <div class="sidebar-image">
-        <img src="/img/avatar.png" alt="zakariyyasv's avatar">
-    </div>
-
-    <!-- Sidebar Email -->
-    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
-        zakariyyasv@gmail.com
-        <b class="caret"></b>
-    </a>
-</div>
-
-
-        <!-- Sidebar Navigation  -->
-        <ul class="nav sidebar-nav">
-    <!-- User dropdown  -->
-    <li class="dropdown">
-        <ul id="settings-dropdown" class="dropdown-menu">
-            
-                <li>
-                    <a href="#" target="_blank" title="Email Me">
-                        
-                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
-                        
-                        Email Me
-                    </a>
-                </li>
-            
-        </ul>
-    </li>
-
-    <!-- Homepage -->
-    
-        <li id="sidebar-first-li">
-            <a href="/" target="_self">
-                
-                    <i class="material-icons sidebar-material-icons">home</i>
-                
-                主页
-            </a>
-        </li>
-        
-    
-
-    <!-- Archives  -->
-    
-        <li class="dropdown">
-            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
-                
-                    <i class="material-icons sidebar-material-icons">inbox</i>
-                
-                    归档
-                <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-            <li>
-                <a class="sidebar_archives-link" href="/archives/2016/10/">十月 2016<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/09/">九月 2016<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/08/">八月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/07/">七月 2016<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/05/">五月 2016<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/04/">四月 2016<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/03/">三月 2016<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/02/">二月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2016/01/">一月 2016<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/12/">十二月 2015<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/10/">十月 2015<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2015/09/">九月 2015<span class="sidebar_archives-count">1</span></a>
-            </ul>
-        </li>
-        
-    
-
-    <!-- Categories  -->
-    
-
-    <!-- Pages  -->
-    
-
-    <!-- Article Number  -->
-    
-</ul>
-
-
-        <!-- Sidebar Footer -->
-        <!--
-I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
-If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
-It will not impact the appearance and can give developers a lot of support :)
-
-很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
-如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
-它不会影响美观并可以给开发者很大的支持和动力。 :)
--->
-
-<!-- Sidebar Divider -->
-
-    <div class="sidebar-divider"></div>
-
-
-<!-- Theme Material -->
-
-    <a href="https://github.com/viosey/hexo-theme-material"  class="sidebar-footer-text-a" target="_blank">
-        <div class="sidebar-text mdl-button mdl-js-button mdl-js-ripple-effect sidebar-footer-text-div" data-upgraded=",MaterialButton,MaterialRipple">
-            主题 - Material
-            <span class="sidebar-badge badge-circle">i</span>
         </div>
-    </a>
-
-
-<!-- Help & Support -->
-<!--
-
--->
-
-<!-- Feedback -->
-<!--
-
--->
-
-<!-- About Theme -->
-<!--
-
--->
-
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">Categories</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">Tags</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
     </div>
 
-    <!-- Sidebar Image -->
-    
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
 
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/avatar.png" />
+            <h2 id="name">iCeBlink</h2>
+            <h3 id="title">iOS &amp; Web Developer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/zakariyyasv">FOLLOW</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                29
+                <span>posts</span>
+            </div>
+            <div class="article-info-block">
+                0
+                <span>tag</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/zakariyyasv" target="_blank" title="github" class=tooltip>
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="twitter" class=tooltip>
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="dribbble" class=tooltip>
+                            <i class="fab fa-dribbble"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="rss" class=tooltip>
+                            <i class="fab fa-rss"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
 </aside>
 
-                    
+            
+            <section id="main">
+    <article id="post-庖丁解牛KVO（二）——KVO实现原理" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">庖丁解牛KVO（二）——KVO实现原理</a>
+        </h1>
+    
 
-                    
-                        <!-- Footer Top Button -->
-                        <div class="toTop-wrap">
-    <a href="#top" class="toTop">
-        <i class="material-icons footer_top-i">expand_less</i>
-    </a>
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">
+            <time datetime="2016-04-23T08:38:13.000Z" itemprop="datePublished">2016-04-23</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            <p><h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。</p>
+<p>KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：</p>
+<blockquote>
+<p>Automatic key-value observing is implemented using a technique called isa-swizzling.</p>
+<p>The is a pointer, as the name suggests, points to the object’s class which maintains a dispatch table. This dispatch table essentially contains pointers to the methods the class implements, among other data.</p>
+<p>When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class. As a result the value of the isa pointer does not necessarily reflect the actual class of the instance.</p>
+<p>You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.</p>
+</blockquote></p>
+            <p class="article-more-link">
+                <a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/#more">Read More</a>
+            </p>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
 </div>
 
-                    
-
-                    <!--Footer-->
-<footer class="mdl-mini-footer" id="bottom">
-    
-        <!-- Paradox Footer Left Section -->
-        <div class="mdl-mini-footer--left-section sns-list">
-    <!-- Twitter -->
-    
-        <a href="https://twitter.com/twitter" target="_blank">
-            <button class="mdl-mini-footer--social-btn social-btn" style="background-image: url(/img/footer/footer_ico-twitter.png);">
-                <span class="visuallyhidden">Twitter</span>
-            </button><!--
-     --></a>
-    
-
-    <!-- Facebook -->
-    
-        <a href="https://www.facebook.com/facebook" target="_blank">
-            <button class="mdl-mini-footer--social-btn social-btn" style="background-image: url(/img/footer/footer_ico-facebook.png);">
-                <span class="visuallyhidden">Facebook</span>
-            </button><!--
-     --></a>
-    
-
-    <!-- Google + -->
-    
-        <a href="https://www.google.com/" target="_blank">
-            <button class="mdl-mini-footer--social-btn social-btn" style="background-image: url(/img/footer/footer_ico-gplus.png);">
-                <span class="visuallyhidden">Google Plus</span>
-            </button><!--
-     --></a>
-    
-
-    <!-- Weibo -->
-    
-
-    <!-- Instagram -->
-    
-
-    <!-- Tumblr -->
-    
-
-    <!-- Github -->
-    
-        <a href="https://github.com/ZakariyyaSv" target="_blank">
-            <button class="mdl-mini-footer--social-btn social-btn" style="background-image: url(/img/footer/footer_ico-github.png);">
-                <span class="visuallyhidden">Github</span>
-            </button><!--
-     --></a>
-    
-
-    <!-- LinkedIn -->
-    
-
-    <!-- Zhihu -->
-    
-
-    <!-- Bilibili -->
-    
-
-    <!-- Telegram -->
-    
-</div>
-
-
-        <!--Copyright-->
-        <div id="copyright">
-            Copyright&nbsp;©&nbsp;
-            <script type="text/javascript">
-                var fd = new Date();
-                document.write(fd.getFullYear());
-            </script>
-            &nbsp;zakariyyasv's blog
-        </div>
-
-        <!-- Paradox Footer Right Section -->
-
-        <!--
-        I am glad you use this theme, the development is no so easy, I hope you can keep the copyright.
-        It will not impact the appearance and can give developers a lot of support :)
-
-        很高兴您使用该主题，开发不易，希望您可以保留一下版权声明。
-        它不会影响美观并可以给开发者很大的支持。 :)
-        -->
-
-        <div class="mdl-mini-footer--right-section">
-            <div>
-                <div class="footer-develop-div">Powered by <a href="https://hexo.io" target="_blank" class="footer-develop-a">Hexo</a></div>
-                <div class="footer-develop-div">Theme - <a href="https://github.com/viosey/hexo-theme-material" target="_blank" class="footer-develop-a">Material</a></div>
-            </div>
-        </div>
-    
-</footer>
-
-
-                    <!-- Import File -->
-<script src="/js/lazyload.min.js"></script>
-<script src="/js/js.min.js"></script>
-<script src="/js/nprogress.js"></script>
-
-<script type="text/javascript">
-    NProgress.configure({
-        showSpinner: true
-    });
-    NProgress.start();
-    $('#nprogress .bar').css({
-        'background': '#29d'
-    });
-    $('#nprogress .peg').css({
-        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
-    });
-    $('#nprogress .spinner-icon').css({
-        'border-top-color': '#29d',
-        'border-left-color': '#29d'
-    });
-    setTimeout(function() {
-        NProgress.done();
-        $('.fade').removeClass('out');
-    }, 800);
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Swiftye -->
-
-
-<!-- Local Search-->
-
-
-<!-- Window Load-->
+    <a data-url="http://zakariyyasv.pub/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/" data-id="cjjv7w68n001op7fy6hhsce0x" class="article-share-link"><i class="fas fa-share"></i>Share</a>
 <script>
-    $(window).load(function() {
-        // Post_Toc parent position fixed
-        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
-    });
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
 </script>
 
-<!-- MathJax Load-->
-
-
-                </main>
-            </div>
-        </body>
+            
     
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-庖丁解牛KVO（一）——KVO概览和使用" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/">庖丁解牛KVO（一）——KVO概览和使用</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/">
+            <time datetime="2016-04-13T10:21:33.000Z" itemprop="datePublished">2016-04-13</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            <p><p>KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（<code>-bind:toObject:withKeyPath:options:</code>）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。</p>
+<p>KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。</p>
+<p>在通知机制中，KVO与<code>NSNotification</code>提供的通知机制类似，但是也存在很鲜明的区别。<code>NSNotification</code>是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。<br></p>
+            <p class="article-more-link">
+                <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/#more">Read More</a>
+            </p>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://zakariyyasv.pub/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" data-id="cjjv7w68h001bp7fyx5inr1vt" class="article-share-link"><i class="fas fa-share"></i>Share</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-UIScrollView实践小记——分页" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/03/21/UIScrollView实践小记——分页/">【转】UIScrollView实践小记——分页</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/03/21/UIScrollView实践小记——分页/">
+            <time datetime="2016-03-21T08:45:53.000Z" itemprop="datePublished">2016-03-21</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p><code>UIScrollView</code>是iOS中很有意思也是最常用的控件之一，同时也是为数不多可以响应手势的UIKit控件。本篇文章主要研究的是<code>UIScrollView</code>的分页实现。分页有多种实现方法，且各自的效果和优点各不相同，但它们都依赖于<code>UIScrollView</code>的代理方法，所以，我们先从<code>UIScrollViewDelegate</code>说起。</p>
+<h4 id="UIScrollViewDelegate"><a href="#UIScrollViewDelegate" class="headerlink" title="UIScrollViewDelegate"></a>UIScrollViewDelegate</h4><p><code>UIScrollView</code>有意思的功能都是通过它的 <code>delegate</code> 方法实现的。了解这些方法被触发的条件及调用的顺序对于使用 <code>UIScrollView</code> 是很有必要的。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewDidScroll:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
+<p>这个方法在任何方式触发 <code>contentOffset</code> 变化的时候都会被调用（包括用户拖动，减速过程，直接通过代码设置等），可以用于监控 <code>contentOffset</code> 的变化，并根据当前的 <code>contentOffset</code> 对其他 view 做出随动调整。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewWillBeginDragging:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
+<p>用户开始拖动 scroll view 的时候被调用。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewWillEndDragging:(<span class="built_in">UIScrollView</span> *)scrollView withVelocity:(<span class="built_in">CGPoint</span>)velocity targetContentOffset:(<span class="keyword">inout</span> <span class="built_in">CGPoint</span> *)targetContentOffset</div></pre></td></tr></table></figure>
+<p>该方法从 iOS 5 引入，在 <code>didEndDragging</code> 前被调用，当 <code>willEndDragging</code> 方法中 <code>velocity</code> 为 <code>CGPointZero</code>（结束拖动时两个方向都没有速度）时，<code>didEndDragging</code> 中的 <code>decelerate</code> 为 NO，即没有减速过程，<code>willBeginDecelerating</code> 和 <code>didEndDecelerating</code> 也就不会被调用。反之，当 <code>velocity</code> 不为 <code>CGPointZero</code> 时，scroll view 会以 <code>velocity</code> 为初速度，减速直到 <code>targetContentOffset</code>。值得注意的是，这里的 <code>targetContentOffset</code> 是个指针，没错，你可以改变减速运动的目的地，这在一些效果的实现时十分有用，实例章节中会具体提到它的用法，并和其他实现方式作比较。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewDidEndDragging:(<span class="built_in">UIScrollView</span> *)scrollView willDecelerate:(<span class="built_in">BOOL</span>)decelerate</div></pre></td></tr></table></figure>
+<p>在用户结束拖动后被调用，<code>decelerate</code> 为 <code>YES</code> 时，结束拖动后会有减速过程。注，在 <code>didEndDragging</code> 之后，如果有减速过程，<code>scroll view</code> 的 <code>dragging</code>并不会立即置为 NO，而是要等到减速结束之后，<strong><strong>所以这个 dragging 属性的实际语义更接近 scrolling</strong></strong>。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewWillBeginDecelerating:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
+<p>减速动画开始前被调用。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewDidEndDecelerating:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
+<p>减速动画结束时被调用，这里有一种特殊情况：当一次减速动画尚未结束的时候再次<code>drag scroll view</code>，<code>didEndDecelerating</code> 不会被调用，并且这时 scroll view 的 <code>dragging</code> 和 <code>decelerating</code> 属性都是 YES。新的 dragging 如果有加速度，那么 <code>willBeginDecelerating</code> 会再一次被调用，然后才是 <code>didEndDecelerating</code>；如果没有加速度，虽然 <code>willBeginDecelerating</code> 不会被调用，但前一次留下的 <code>didEndDecelerating</code> 会被调用，所以连续快速滚动一个 <code>scroll view</code> 时，delegate 方法被调用的顺序（不含 didScroll）可能是这样的：</p>
+<blockquote>
+<p>scrollViewWillBeginDragging:<br>scrollViewWillEndDragging: withVelocity: targetContentOffset:<br>scrollViewDidEndDragging: willDecelerate:<br>scrollViewWillBeginDecelerating:<br>scrollViewWillBeginDragging:<br>scrollViewWillEndDragging: withVelocity: targetContentOffset:<br>scrollViewDidEndDragging: willDecelerate:<br>scrollViewWillBeginDecelerating:<br>…<br>scrollViewWillBeginDragging:<br>scrollViewWillEndDragging: withVelocity: targetContentOffset:<br>scrollViewDidEndDragging: willDecelerate:<br>scrollViewWillBeginDecelerating:<br>scrollViewDidEndDecelerating:  </p>
+</blockquote>
+<p>虽然很少有因为这个导致的 bug，但是你需要知道这种很常见的用户操作会导致的中间状态。例如你尝试在 <code>UITableViewDataSource</code> 的 <code>tableView:cellForRowAtIndexPath:</code> 方法中基于 tableView 的 dragging 和 decelerating 属性判断是在用户拖拽还是减速过程中的话可能会误判（见例 1）。</p>
+<p>了解了<code>UIScrollView</code>的核心代理方法，接下来就来看看<code>UIScrollView</code>的几种分页方式。</p>
+<h4 id="pagingEnabled"><a href="#pagingEnabled" class="headerlink" title="pagingEnabled"></a>pagingEnabled</h4><p>这是系统提供的分页方式，最简单，但是有一些局限性：</p>
+<blockquote>
+<ul>
+<li>只能以 frame size 为单位翻页，减速动画阻尼大，减速过程不超过一页</li>
+<li>需要一些 hacking 实现 bleeding 和 padding（即页与页之间有 padding，在当前页可以看到前后页的部分内容）</li>
+</ul>
+</blockquote>
+<p>Sample 中 <a href="https://github.com/allenhsu/UIScrollView-Samples/tree/master/Pagination" target="_blank" rel="external">Pagination</a> 有简单实现 bleeding 和 padding 效果的代码，主要的思路是：</p>
+<p>让 <code>scroll view</code> 的宽度为 page 宽度 + padding，并且设置 <code>clipsToBounds</code> 为 NO<br>这样虽然能看到前后页的内容，但是无法响应 touch，所以需要另一个覆盖期望的可触摸区域的 view 来实现类似 <code>touch bridging</code> 的功能<br><strong><strong>适用场景：*</strong></strong>上述局限性同时也是这种实现方式的优点，比如一般 App 的引导页（教程），Calendar 里的月视图，都可以用这种方法实现。</p>
+<h4 id="Snap"><a href="#Snap" class="headerlink" title="Snap"></a>Snap</h4><p>这种方法就是在 <code>didEndDragging</code> 且无减速动画，或在减速动画完成时，snap 到一个整数页。核心算法是通过当前 <code>contentOffset</code> 计算最近的整数页及其对应的 <code>contentOffset</code>，通过动画 snap 到该页。这个方法实现的效果都有个通病，就是最后的 snap 会在 <code>decelerate</code> 结束以后才发生，总感觉很突兀。</p>
+<h4 id="修改targetContentOffset"><a href="#修改targetContentOffset" class="headerlink" title="修改targetContentOffset"></a>修改targetContentOffset</h4><p>通过修改 <code>scrollViewWillEndDragging: withVelocity: targetContentOffset:</code> 方法中的 <code>targetContentOffset</code> 直接修改目标 offset 为整数页位置。其中核心代码：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">CGPoint</span>)nearestTargetOffsetForOffset:(<span class="built_in">CGPoint</span>)offset</div><div class="line">&#123;</div><div class="line">    <span class="built_in">CGFloat</span> pageSize = BUBBLE_DIAMETER + BUBBLE_PADDING;</div><div class="line">    <span class="built_in">NSInteger</span> page = roundf(offset.x / pageSize);</div><div class="line">    <span class="built_in">CGFloat</span> targetX = pageSize * page;</div><div class="line">    <span class="keyword">return</span> <span class="built_in">CGPointMake</span>(targetX, offset.y);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)scrollViewWillEndDragging:(<span class="built_in">UIScrollView</span> *)scrollView withVelocity:(<span class="built_in">CGPoint</span>)velocity targetContentOffset:(<span class="keyword">inout</span> <span class="built_in">CGPoint</span> *)targetContentOffset</div><div class="line">&#123;</div><div class="line">    <span class="built_in">CGPoint</span> targetOffset = [<span class="keyword">self</span> nearestTargetOffsetForOffset:*targetContentOffset];</div><div class="line">    targetContentOffset-&gt;x = targetOffset.x;</div><div class="line">    targetContentOffset-&gt;y = targetOffset.y;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong><strong>适用场景：</strong></strong>方法 2 和 方法 3 的原理近似，效果也相近，适用场景也基本相同，但方法 3 的体验会好很多，snap 到整数页的过程很自然，或者说用户完全感知不到 snap 过程的存在。这两种方法的减速过程流畅，适用于一屏有多页，但需要按整数页滑动的场景；也适用于如图表中自动 snap 到整数天的场景；还适用于每页大小不同的情况下 snap 到整数页的场景（不做举例，自行发挥，其实只需要修改计算目标 offset 的方法）。</p>
+<p>完整代码参见 <a href="https://github.com/allenhsu/UIScrollView-Samples/tree/master/Pagination" target="_blank" rel="external">Pagination</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://zakariyyasv.pub/2016/03/21/UIScrollView实践小记——分页/" data-id="cjjv7w689000xp7fyv2v97dv9" class="article-share-link"><i class="fas fa-share"></i>Share</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Mac workflow小记" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/03/12/Mac workflow小记/">Mac workflow小记</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/03/12/Mac workflow小记/">
+            <time datetime="2016-03-12T12:11:39.000Z" itemprop="datePublished">2016-03-12</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Mac相关/">Mac相关</a>
+    </div>
+
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            <p><p>在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。</p>
+<h3 id="Homebrew"><a href="#Homebrew" class="headerlink" title="Homebrew"></a><a href="http://brew.sh/index_zh-cn.html">Homebrew</a></h3><p><img src="/images/workflow/homebrew.png" alt=""></p>
+<p>Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际上是Mac下的套件管理器。比如你想安装MySQL、git等等工具软件，都可以使用homebrew来下载和管理。<br>homebrew的安装也非常方便，你可以去到它的官网，根据提示进行安装。安装成功后就使用homebrew的命令去下载和管理你需要的工具软件了。<br></p>
+            <p class="article-more-link">
+                <a href="/2016/03/12/Mac workflow小记/#more">Read More</a>
+            </p>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://zakariyyasv.pub/2016/03/12/Mac workflow小记/" data-id="cjjv7w681000fp7fyls0ulzcy" class="article-share-link"><i class="fas fa-share"></i>Share</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-抽丝剥茧之block（上）" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/03/12/抽丝剥茧之block（上）/">抽丝剥茧之block（上）</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/03/12/抽丝剥茧之block（上）/">
+            <time datetime="2016-03-12T11:38:21.000Z" itemprop="datePublished">2016-03-12</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的地方，系列索引在这里：</p>
+<p><a href="">抽丝剥茧之block（上）</a></p>
+<p><a href="">抽丝剥茧之block（下）</a></p>
+<h4 id="问题和结论"><a href="#问题和结论" class="headerlink" title="问题和结论"></a>问题和结论</h4><p>本篇主要的探讨的问题是声明block变量时的修饰符使用<code>strong</code>还是<code>copy</code>？两者是否有区别？</p>
+<p>这里先给出结论：在引入ARC之后，在ARC下使用<code>strong</code>和<code>copy</code>对于block而言，不管是实例变量、局部变量还是全局变量都是没有问题的，也可以说这两者几乎没有区别。</p>
+<h4 id="栈和堆"><a href="#栈和堆" class="headerlink" title="栈和堆"></a>栈和堆</h4><p>先说是不是，再说为什么，要解释清楚这个问题要从堆和栈讲起。iOS系统中运行代码使用的空间在三个不同的内存区域，分成三个段：“text segment “，“stack segment ”，“heap segment ”。</p>
+<blockquote>
+<p>栈：<br>在现代操作系统中,一个线程会分配一个stack. 当一个函数被调用,一个stack frame(栈帧)就会被压到stack里。里面包含这个函数涉及的参数,局部变量,返回地址等相关信息。当函数返回后,这个栈帧就会被销毁。而这一切都是自动的,由系统帮我们进行分配与销毁。</p>
+<p>堆：<br>提供一个保存中介贯穿函数的执行过程，全局和静态变量保存在“heap”中，直到应用退出。堆,内存可以随时在堆中分配和销毁。我们需要明确请求内存分配与内存销毁。 </p>
+</blockquote>
+<p><img src="/images/blockImages/1.gif" alt=""></p>
+<p>stack 对象的优点主要有两点，一是创建速度快，二是管理简单，它有严格的生命周期。stack 对象的缺点是它不灵活。创建时长度是多大就一直是多大，创建时是哪个函数创建的，它的owner 就一直是它。不像heap 对象那样有多个owner ，其实多个owner 等同于引用计数。只有heap 对象才是采用“引用计数”方法管理它。在栈中创建对象，只要栈的剩余空间大于stack 对象申请创建的空间，操作系统就会为程序提供这段内存空间，否则将报异常提示栈溢出。而在堆中创建对象，操作系统对于内存heap 段是采用链表进行管理的。操作系统有一个记录空闲内存地址的链表，当收到程序的申请时，会遍历链表，寻找第一个空间大于所申请的heap 节点，然后将该节点从空闲节点链表中删除，并将该节点的空间分配给程序。</p>
+<p>我们应该知道OC中的对象都分配在堆而不是栈中，其原因是stack对象的生命周期所导致的问题。例如一旦函数返回，则所在的stack frame就会被摧毁。那么此时返回的对象也会一并摧毁。这个时候我们去retain这个对象是无效的。因为整个stack frame都已经被摧毁了。简单而言，就是stack对象的生命周期不适合Objective-C的引用计数内存管理方法。同时，2. stack对象不够灵活，不具备足够的扩展性。创建时长度已经是固定的,而stack对象的拥有者也就是所在的stack frame。</p>
+<h4 id="block存储"><a href="#block存储" class="headerlink" title="block存储"></a>block存储</h4><p>由上文我们了解到iOS中的对象存储在堆上，那block存储在堆还是栈上呢？一般而言，block存储在栈上，这是编译器内部的优化策略，并不会直接对编写的代码产生影响。这样做的好处在于当block创建出来并作为方法的参数传递，方法调用后将其抛弃时，block可以快速的在栈上进行内存分配并且销毁的时候不需要涉及到堆（动态内存池）。</p>
+<p>将对象与局部变量做下比较。局部变量在栈中创建出来，当变量所属的方法返回时会自动销毁该变量，并且可以被方法调用者以地址方式传递给被调用方法。当变量的调用方法返回后临时变量的地址不会被存储和使用了，此时该变量已不再存在。</p>
+<p>然而，在必要情况下，对象则期望比它们的创建方法生命周期更长，因此，与局部变量不同，对象是在堆上进行分配并且不会被创建方法返回时自动销毁，是否销毁取决于对象是否还被“需要”，“需要”则是由ARC自动管理。</p>
+<p>再回到block，在栈上创建block在性能方面有好处但同时也会引起一个问题：如果block的生命周期需要超过它的创建方法，就像对象一样，那么它需要在创建方法的栈销毁之前移动到堆上。<br>在block第一次release时，由于编译器那时候无法自动处理需要移动到堆上的block的生命周期，所以需要开发者手动调用<code>block_copy()</code>方法将block复制到堆上。但是，在OC上层语言层面调用底层方法手动管理编译器中的变量生命周期显示时不合适的（block是<br>C语言结构）。因而，之后苹果发布了新版本的编译器来改善这方面的问题，开发者可以调用<br><code>[block copy]</code>代替<code>block_copy(block)</code>。然后，编译器会自动将block从栈复制到堆上，不过，这点并没有在官方文档中提及。</p>
+<p>关于block的修饰符说明，在14年的苹果文档<a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithBlocks/WorkingwithBlocks.html" target="_blank" rel="external">WorkingwithBlocks</a>中提到block类型的属性应使用<code>copy</code>，但是不多久就被删除了，原文在这里：</p>
+<blockquote>
+<p>You should specify copy as the property attribute, because a block needs to be copied to keep track of its captured state outside of the original scope. This isn’t something you need to worry about when using Automatic Reference Counting, as it will happen automatically, but it’s best practice for the property attribute to show the resultant behavior.</p>
+</blockquote>
+<p>内容的大致意思是使用<code>copy</code>修饰block在规范上更推荐，它预示了block会发生的结果行为。实际上，在ARC下不需要我们去关心block的拷贝，ARC会自动完成，因而<code>strong</code>和<code>copy</code>并没有本质上的区别，只是在规范上更倾向于<code>copy</code>而已。</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://zakariyyasv.pub/2016/03/12/抽丝剥茧之block（上）/" data-id="cjjv7w68j001ep7fyjvd00ck1" class="article-share-link"><i class="fas fa-share"></i>Share</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <nav id="page-nav">
+        <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
+    </nav>
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">recent</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/10/CFNetwork学习笔记（四）/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
+                            <p class="item-title"><a href="/2016/10/10/CFNetwork学习笔记（四）/" class="title">CFNetwork学习笔记（四）</a></p>
+                            <p class="item-date"><time datetime="2016-10-10T08:46:53.000Z" itemprop="datePublished">2016-10-10</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/07/CFNetwork学习笔记（三）/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
+                            <p class="item-title"><a href="/2016/10/07/CFNetwork学习笔记（三）/" class="title">CFNetwork学习笔记（三）</a></p>
+                            <p class="item-date"><time datetime="2016-10-07T06:39:12.000Z" itemprop="datePublished">2016-10-07</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/06/CFNetwork学习笔记（二）/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
+                            <p class="item-title"><a href="/2016/10/06/CFNetwork学习笔记（二）/" class="title">CFNetwork学习笔记（二）</a></p>
+                            <p class="item-date"><time datetime="2016-10-06T12:50:01.000Z" itemprop="datePublished">2016-10-06</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/05/CFNetwork学习笔记（一）/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
+                            <p class="item-title"><a href="/2016/10/05/CFNetwork学习笔记（一）/" class="title">CFNetwork学习笔记（一）</a></p>
+                            <p class="item-date"><time datetime="2016-10-05T04:36:19.000Z" itemprop="datePublished">2016-10-05</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/10/03/dumpdecrypted砸壳记录/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+                            <p class="item-title"><a href="/2016/10/03/dumpdecrypted砸壳记录/" class="title">dumpdecrypted砸壳记录</a></p>
+                            <p class="item-date"><time datetime="2016-10-03T02:14:41.000Z" itemprop="datePublished">2016-10-03</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">categories</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/MacOS/">MacOS</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mac相关/">Mac相关</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS逆向工程/">iOS逆向工程</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/开发工具/">开发工具</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">archives</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    
+        
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">links</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 zakariyyasv<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
 </html>
