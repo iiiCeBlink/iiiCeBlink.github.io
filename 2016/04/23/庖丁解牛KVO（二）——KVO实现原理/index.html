@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang=zh>
+<html>
 <head>
-    <meta charset="utf-8">
-    
-    <title>庖丁解牛KVO（二）——KVO实现原理 | iCeBlink</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="概览在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。
+  <meta charset="utf-8">
+  
+  <title>庖丁解牛KVO（二）——KVO实现原理 | iCeBlink</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概览在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。
 KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：
 
 Automatic key-value observing is implemented using a technique called isa-swizzling.
 The">
 <meta property="og:type" content="article">
 <meta property="og:title" content="庖丁解牛KVO（二）——KVO实现原理">
-<meta property="og:url" content="http://zakariyyasv.pub/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/index.html">
+<meta property="og:url" content="http://yoursite.com/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/index.html">
 <meta property="og:site_name" content="iCeBlink">
 <meta property="og:description" content="概览在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。
 KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：
@@ -27,241 +27,258 @@ KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍�
 
 Automatic key-value observing is implemented using a technique called isa-swizzling.
 The">
-    
-
-    
-        <link rel="alternate" href="/" title="iCeBlink" type="application/atom+xml" />
-    
-
-    
-
-    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
-    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
-    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
-    <link rel="stylesheet" href="/libs/open-sans/styles.css">
-    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
-
-    <link rel="stylesheet" href="/css/style.css">
-
-    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
-    
-    
-        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
-    
-    
-        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
-    
-    
-    
-    
-
-
+  
+    <link rel="alternative" href="/atom.xml" title="iCeBlink" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
 </head>
-
 <body>
-    <div id="container">
-        <header id="header">
-    <div id="header-main" class="header-inner">
-        <div class="outer">
-            <a href="/" id="logo">
-                <i class="logo"></i>
-                <span class="site-title">iCeBlink</span>
-            </a>
-            <nav id="main-nav">
-                
-                    <a class="main-nav-link" href="/.">Home</a>
-                
-                    <a class="main-nav-link" href="/archives">Archives</a>
-                
-                    <a class="main-nav-link" href="/categories">Categories</a>
-                
-                    <a class="main-nav-link" href="/tags">Tags</a>
-                
-                    <a class="main-nav-link" href="/about">About</a>
-                
-            </nav>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
             
-                
-                <nav id="sub-nav">
-                    <div class="profile" id="profile-nav">
-                        <a id="profile-anchor" href="javascript:;">
-                            <img class="avatar" src="/css/images/avatar.png" />
-                            <i class="fas fa-caret-down"></i>
-                        </a>
-                    </div>
-                </nav>
+            <img lazy-src="/img/head.jpg" class="js-avatar">
             
-            <div id="search-form-wrap">
-
-    <form class="search-form">
-        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
-        <button type="submit" class="search-form-submit"></button>
-    </form>
-    <div class="ins-search">
-    <div class="ins-search-mask"></div>
-    <div class="ins-search-container">
-        <div class="ins-input-wrapper">
-            <input type="text" class="ins-search-input" placeholder="Type something..." />
-            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
-        </div>
-        <div class="ins-section-wrapper">
-            <div class="ins-section-container"></div>
-        </div>
-    </div>
-</div>
-<script>
-(function (window) {
-    var INSIGHT_CONFIG = {
-        TRANSLATION: {
-            POSTS: 'Posts',
-            PAGES: 'Pages',
-            CATEGORIES: 'Categories',
-            TAGS: 'Tags',
-            UNTITLED: '(Untitled)',
-        },
-        ROOT_URL: '/',
-        CONTENT_URL: '/content.json',
-    };
-    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
-})(window);
-</script>
-<script src="/js/insight.js"></script>
-
-</div>
-        </div>
-    </div>
-    <div id="main-nav-mobile" class="header-sub header-inner">
-        <table class="menu outer">
-            <tr>
-                
-                    <td><a class="main-nav-link" href="/.">Home</a></td>
-                
-                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
-                
-                    <td><a class="main-nav-link" href="/categories">Categories</a></td>
-                
-                    <td><a class="main-nav-link" href="/tags">Tags</a></td>
-                
-                    <td><a class="main-nav-link" href="/about">About</a></td>
-                
-                <td>
-                    
-    <div class="search-form">
-        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
-    </div>
-
-                </td>
-            </tr>
-        </table>
-    </div>
-</header>
-
-        <div class="outer">
-            
-                
-
-<aside id="profile" class="profile-fixed">
-    <div class="inner profile-inner">
-        <div class="base-info profile-block">
-            <img id="avatar" src="/css/images/avatar.png" />
-            <h2 id="name">iCeBlink</h2>
-            <h3 id="title">iOS &amp; Web Developer</h3>
-            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
-            <a id="follow" target="_blank" href="https://github.com/zakariyyasv">FOLLOW</a>
-        </div>
-        <div class="article-info profile-block">
-            <div class="article-info-block">
-                29
-                <span>posts</span>
-            </div>
-            <div class="article-info-block">
-                0
-                <span>tag</span>
-            </div>
-        </div>
-        
-        <div class="profile-block social-links">
-            <table>
-                <tr>
-                    
-                    
-                    <td>
-                        <a href="https://github.com/zakariyyasv" target="_blank" title="github" class=tooltip>
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </td>
-                    
-                    <td>
-                        <a href="/" target="_blank" title="twitter" class=tooltip>
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </td>
-                    
-                    <td>
-                        <a href="/" target="_blank" title="facebook" class=tooltip>
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                    </td>
-                    
-                    <td>
-                        <a href="/" target="_blank" title="dribbble" class=tooltip>
-                            <i class="fab fa-dribbble"></i>
-                        </a>
-                    </td>
-                    
-                    <td>
-                        <a href="/" target="_blank" title="rss" class=tooltip>
-                            <i class="fab fa-rss"></i>
-                        </a>
-                    </td>
-                    
-                </tr>
-            </table>
-        </div>
-        
-    </div>
-</aside>
-
-            
-            <section id="main"><article id="post-庖丁解牛KVO（二）——KVO实现原理" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 class="article-title" itemprop="name">
-            庖丁解牛KVO（二）——KVO实现原理
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">
-            <time datetime="2016-04-23T08:38:13.000Z" itemprop="datePublished">2016-04-23</time>
         </a>
-    </div>
 
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">zakariyyasv</a></h1>
+        </hgroup>
 
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
                         
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/iOS/">iOS</a>
-    </div>
-
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
                         
                     </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/Home">博客首页</a></li>
+                        
+                            <li><a href="/works">作品展示</a></li>
+                        
+                            <li><a href="/about">留言打卡</a></li>
+                        
+                            <li><a href="/FrontEndGuide">前端导航</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=PAkNDgsKBQ4MCnxNTRJfU1E" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/luuman" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
                 
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://luuman.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">纯海迷、爱运动、爱交友、爱旅行、喜欢接触新鲜事物、迎接新的挑战，更爱游离于错综复杂的编码与逻辑中</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">zakariyyasv</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">zakariyyasv</a></h1>
+            </hgroup>
             
-            <h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。</p>
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/Home">博客首页</a></li>
+                
+                    <li><a href="/works">作品展示</a></li>
+                
+                    <li><a href="/about">留言打卡</a></li>
+                
+                    <li><a href="/FrontEndGuide">前端导航</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=PAkNDgsKBQ4MCnxNTRJfU1E" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://github.com/luuman" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-庖丁解牛KVO（二）——KVO实现原理" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/" class="article-date">
+      <time datetime="2016-04-23T08:38:13.000Z" itemprop="datePublished">2016-04-23</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      庖丁解牛KVO（二）——KVO实现原理
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。</p>
 <p>KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：</p>
 <blockquote>
 <p>Automatic key-value observing is implemented using a technique called isa-swizzling.</p>
@@ -280,301 +297,298 @@ The">
 <p>以下是运行的输出结果：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">A: &lt;Cat: <span class="number">0x100500aa0</span>&gt;</div><div class="line">	<span class="built_in">NSObject</span> <span class="keyword">class</span>: Cat</div><div class="line">	libobjc <span class="keyword">class</span>: <span class="built_in">NSKVONotifying_Cat</span></div><div class="line">	implements methods: &lt;setAge:, setName:, <span class="keyword">class</span>, dealloc, _isKVOA&gt;</div><div class="line">B: &lt;Cat: <span class="number">0x1005035f0</span>&gt;</div><div class="line">	<span class="built_in">NSObject</span> <span class="keyword">class</span>: Cat</div><div class="line">	libobjc <span class="keyword">class</span>: <span class="built_in">NSKVONotifying_Cat</span></div><div class="line">	implements methods: &lt;setAge:, setName:, <span class="keyword">class</span>, dealloc, _isKVOA&gt;</div><div class="line">C: &lt;Cat: <span class="number">0x100503610</span>&gt;</div><div class="line">	<span class="built_in">NSObject</span> <span class="keyword">class</span>: Cat</div><div class="line">	libobjc <span class="keyword">class</span>: <span class="built_in">NSKVONotifying_Cat</span></div><div class="line">	implements methods: &lt;setAge:, setName:, <span class="keyword">class</span>, dealloc, _isKVOA&gt;</div><div class="line">D: &lt;Cat: <span class="number">0x1005037a0</span>&gt;</div><div class="line">	<span class="built_in">NSObject</span> <span class="keyword">class</span>: Cat</div><div class="line">	libobjc <span class="keyword">class</span>: Cat</div><div class="line">	implements methods: &lt;setWeight:, name, setName:, weight, .cxx_destruct, age, setAge:&gt;</div></pre></td></tr></table></figure></p>
 <p>A、B被观察的属性都是”name”，而C被观察的属性是”age”。A、B、C在runtime下所指向的类均是<code>NSKVONotifying_Cat</code>，这个类应该就是<code>isa-swizzling</code>中的中间类。而并没有被观察的D在runtime下锁指向的仍然是Cat类。这说明只有在对象的属性被观察的时候才会动态创建中间类，对象的isa指针也就不再指向原来的类，而是指向这个中间类。被观察的属性中没有包括weight，而动态生成的中间类所实现的方法列表中也没有重写<code>setWeight:</code>方法，说明方法是按需动态重写的。此外，仔细观察，我们发现虽然A、B只有name属性被观察了，但是动态生成的中间类仍然实现了<code>setAge:</code>方法，说明A、B、C在运行时实际上指向的是同一个中间类。另外，方法列表中有一个叫做<code>_isKVOA</code>的方法引起我的注意，这应该是一个私有方法，无从得知关于这个方法更多的实现细节，暂时悬在这里，待日后有机会能解开这个疑惑。</p>
 
-        
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
         </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="http://zakariyyasv.pub/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/" data-id="cjjv7w68n001op7fy6hhsce0x" class="article-share-link"><i class="fas fa-share"></i>Share</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
             
-    
-
-        </footer>
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
     </div>
     
-        
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">庖丁解牛KVO（二）——KVO实现原理</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 zakariyyasv 的个人博客">zakariyyasv</a></p>
+        <p><span>发布时间:</span>2016年04月23日 - 16时38分</p>
+        <p><span>最后更新:</span>2016年10月10日 - 19时58分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/" title="庖丁解牛KVO（二）——KVO实现原理">http://yoursite.com/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/　　作者: zakariyyasv" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
 <nav id="article-nav">
-    
-        <a href="/2016/05/17/H5游戏接入技术小结（上）/" id="article-nav-newer" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">Newer</strong>
-            <div class="article-nav-title">
-                
-                    H5游戏接入技术小结（上）
-                
-            </div>
-        </a>
-    
-    
-        <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" id="article-nav-older" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">Older</strong>
-            <div class="article-nav-title">庖丁解牛KVO（一）——KVO概览和使用</div>
-        </a>
-    
+  
+    <a href="/2016/05/17/H5游戏接入技术小结（上）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          H5游戏接入技术小结（上）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">庖丁解牛KVO（一）——KVO概览和使用</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
 </nav>
 
-
-    
+  
 </article>
 
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概览"><span class="toc-number">1.</span> <span class="toc-text">概览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现原理剖析"><span class="toc-number">2.</span> <span class="toc-text">实现原理剖析</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
 
     
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'luuman',
+      repo: 'luuman.github.io',
+      oauth: {
+        client_id: 'null',
+        client_secret: 'null',
+      },
+    })
+    gitment.render('gitments')
+</script>
     
 
-</section>
-            
-                
-<aside id="sidebar">
-   
+
+
+    <div class="scroll" id="post-nav-button">
         
-    <div class="widget-wrap">
-        <h3 class="widget-title">recent</h3>
-        <div class="widget">
-            <ul id="recent-post" class="">
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2016/10/10/CFNetwork学习笔记（四）/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
-                            <p class="item-title"><a href="/2016/10/10/CFNetwork学习笔记（四）/" class="title">CFNetwork学习笔记（四）</a></p>
-                            <p class="item-date"><time datetime="2016-10-10T08:46:53.000Z" itemprop="datePublished">2016-10-10</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2016/10/07/CFNetwork学习笔记（三）/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
-                            <p class="item-title"><a href="/2016/10/07/CFNetwork学习笔记（三）/" class="title">CFNetwork学习笔记（三）</a></p>
-                            <p class="item-date"><time datetime="2016-10-07T06:39:12.000Z" itemprop="datePublished">2016-10-07</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2016/10/06/CFNetwork学习笔记（二）/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
-                            <p class="item-title"><a href="/2016/10/06/CFNetwork学习笔记（二）/" class="title">CFNetwork学习笔记（二）</a></p>
-                            <p class="item-date"><time datetime="2016-10-06T12:50:01.000Z" itemprop="datePublished">2016-10-06</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2016/10/05/CFNetwork学习笔记（一）/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/MacOS/">MacOS</a></p>
-                            <p class="item-title"><a href="/2016/10/05/CFNetwork学习笔记（一）/" class="title">CFNetwork学习笔记（一）</a></p>
-                            <p class="item-date"><time datetime="2016-10-05T04:36:19.000Z" itemprop="datePublished">2016-10-05</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2016/10/03/dumpdecrypted砸壳记录/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
-                            <p class="item-title"><a href="/2016/10/03/dumpdecrypted砸壳记录/" class="title">dumpdecrypted砸壳记录</a></p>
-                            <p class="item-date"><time datetime="2016-10-03T02:14:41.000Z" itemprop="datePublished">2016-10-03</time></p>
-                        </div>
-                    </li>
-                
-            </ul>
-        </div>
+            <a href="/2016/05/17/H5游戏接入技术小结（上）/" title="上一篇: H5游戏接入技术小结（上）">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" title="下一篇: 庖丁解牛KVO（一）——KVO概览和使用">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
     </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/CFNetwork学习笔记（四）/">CFNetwork学习笔记（四）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/07/CFNetwork学习笔记（三）/">CFNetwork学习笔记（三）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/06/CFNetwork学习笔记（二）/">CFNetwork学习笔记（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/CFNetwork学习笔记（一）/">CFNetwork学习笔记（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/03/dumpdecrypted砸壳记录/">dumpdecrypted砸壳记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/20/iOS OpenDev踩坑记录/">iOS OpenDev踩坑记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/18/iOS APP砸壳小记/">iOS APP砸壳小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/04/iOS APP中调用私有方法/">iOS APP中调用私有方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/24/拆解ARC下的self/">拆解ARC下的self</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/30/CallKit学习笔记/">CallKit学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/26/iOS 10推送通知小记（下）/">iOS 10推送通知小记（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/23/iOS 10推送通知小记（上）/">iOS 10推送通知小记（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/18/iOS 10 UICollectionView新特性小记/">iOS 10 UICollectionView新特性小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/20/H5游戏接入技术小结（下）/">H5游戏接入技术小结（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/17/H5游戏接入技术小结（上）/">H5游戏接入技术小结（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">庖丁解牛KVO（二）——KVO实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/">庖丁解牛KVO（一）——KVO概览和使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/21/UIScrollView实践小记——分页/">【转】UIScrollView实践小记——分页</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/12/Mac workflow小记/">Mac workflow小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/12/抽丝剥茧之block（上）/">抽丝剥茧之block（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">深入理解NSMapTable、NSHashTable、NSPointerArray</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/06/YYCache源码学习/">YYCache源码学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/02/20/runtime对containsString方法的小改进/">runtime对containsString方法的小改进</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/14/ApplePay线上支付教程/">ApplePay线上支付教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/28/UIButton之titleLabel、imageView解析/">UIButton之titleLabel、imageView解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/17/UICollectionView Layout学习笔记/">UICollectionView Layout学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/20/UIImage加载图片方式的研究/">UIImage加载图片方式的研究</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/18/Xcode-Target、Project、WorkSpace、Scheme/">Xcode-Target、Project、WorkSpace、Scheme</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/24/UINavigationBar背景色设置/">UINavigationBar背景色设置</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
 
-    
+
+
+    <script>
         
-    <div class="widget-wrap">
-        <h3 class="widget-title">categories</h3>
-        <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/MacOS/">MacOS</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mac相关/">Mac相关</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS逆向工程/">iOS逆向工程</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/开发工具/">开发工具</a><span class="category-list-count">1</span></li></ul>
-        </div>
-    </div>
-
-    
-        
-    <div class="widget-wrap">
-        <h3 class="widget-title">archives</h3>
-        <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">1</span></li></ul>
-        </div>
-    </div>
-
-    
-        
-    
-        
-    
-        
-    <div class="widget-wrap widget-list">
-        <h3 class="widget-title">links</h3>
-        <div class="widget">
-            <ul>
-                
-                    <li>
-                        <a href="http://hexo.io">Hexo</a>
-                    </li>
-                
-            </ul>
-        </div>
-    </div>
-
-
-    
-    <div id="toTop" class="fas fa-angle-up"></div>
-</aside>
-
-            
-        </div>
-        <footer id="footer">
+    </script>
+</div>
+      <footer id="footer">
     <div class="outer">
-        <div id="footer-info" class="inner">
-            &copy; 2018 zakariyyasv<br>
-            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 zakariyyasv
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
         </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
     </div>
 </footer>
-        
-
-
-    
-        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
-        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
-        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
-        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
-        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
-        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
-        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
-        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
-        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
-    
-    
-        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
-    
-    
-
-
-
-<!-- Custom Scripts -->
-<script src="/js/main.js"></script>
 
     </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
 </body>
 </html>
