@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Weak 属性在 dealloc() 背后的逻辑 | iiiCeBlink</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言我们都知道在 ARC 环境无论是强指针还是弱指针都无需在 dealloc 设置为 nil ， ARC 会自动帮我们处理。然而，最近在项目中遇到这样一个问题，代码示例如下：
+123456// class Foo- (void)dealloc &amp;#123;    if (_obj) &amp;#123;        [_obj removeObserver:[KVOObserverStub stub]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Weak 属性在 dealloc() 背后的逻辑">
+<meta property="og:url" content="http://yoursite.com/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/index.html">
+<meta property="og:site_name" content="iiiCeBlink">
+<meta property="og:description" content="前言我们都知道在 ARC 环境无论是强指针还是弱指针都无需在 dealloc 设置为 nil ， ARC 会自动帮我们处理。然而，最近在项目中遇到这样一个问题，代码示例如下：
+123456// class Foo- (void)dealloc &amp;#123;    if (_obj) &amp;#123;        [_obj removeObserver:[KVOObserverStub stub]">
+<meta property="og:updated_time" content="2018-08-27T05:05:28.364Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Weak 属性在 dealloc() 背后的逻辑">
+<meta name="twitter:description" content="前言我们都知道在 ARC 环境无论是强指针还是弱指针都无需在 dealloc 设置为 nil ， ARC 会自动帮我们处理。然而，最近在项目中遇到这样一个问题，代码示例如下：
+123456// class Foo- (void)dealloc &amp;#123;    if (_obj) &amp;#123;        [_obj removeObserver:[KVOObserverStub stub]">
+  
+    <link rel="alternative" href="/atom.xml" title="iiiCeBlink" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.ico">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">iiiCeBlink</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/Home">博客首页</a></li>
+                        
+                            <li><a href="/tags">静心阅读</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/iiiCeBlink" title="github">github</a>
+                            
+                                <a class="fl rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+                            
+                                <a class="fl stackoverflow" target="_blank" href="https://stackoverflow.com/users/7310173/zakariyyasv?tab=profile" title="stackoverflow">stackoverflow</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://iiiCeBlink.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">iiiCeBlink</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">iiiCeBlink</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/Home">博客首页</a></li>
+                
+                    <li><a href="/tags">静心阅读</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/iiiCeBlink" title="github">github</a>
+                    
+                        <a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+                    
+                        <a class="stackoverflow" target="_blank" href="https://stackoverflow.com/users/7310173/zakariyyasv?tab=profile" title="stackoverflow">stackoverflow</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-Weak 属性在 dealloc() 背后的逻辑" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/" class="article-date">
+      <time datetime="2017-10-04T09:29:32.000Z" itemprop="datePublished">2017-10-04</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Weak 属性在 dealloc() 背后的逻辑
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>我们都知道在 ARC 环境无论是强指针还是弱指针都无需在 <code>dealloc</code> 设置为 <code>nil</code> ， ARC 会自动帮我们处理。然而，最近在项目中遇到这样一个问题，代码示例如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// class Foo</span></div><div class="line">- (<span class="keyword">void</span>)dealloc &#123;</div><div class="line">    <span class="keyword">if</span> (_obj) &#123;</div><div class="line">        [_obj removeObserver:[KVOObserverStub stub] forKeyPath:_keyPath];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中，<code>_obj</code> 是类 <code>Foo</code> 的 weak 属性，这段代码所做的工作是在 <code>Foo</code> 的实例对象销毁的时候，移除 <code>_obj</code> 对象上的观察者，否则，会导致 <code>KVO still registering when deallocated</code> 的 crash 。原以为这样写会 work ，然而在实际测试中发现，在触发 <code>dealloc</code> 方法时，<code>_obj</code> 此时已被置为 <code>nil</code> ，即 <code>[_obj removeObserver:[KVOObserverStub stub] forKeyPath:_keyPath];</code> 并不会触发。解决方案则是将 <code>_obj</code> 属性的修饰符由 <code>weak</code> 改为 <code>unsafe_unretained</code> 或者 <code>assign</code> 。但是，这样改可能会为其他代码引入 bug ，因为现在 ARC 不会自动为将 <code>_obj</code> 对象置为 <code>nil</code> ，需要去检查涉及 <code>_obj</code> 部分的代码。虽然这样解决问题了，但是，我还是对 <code>weak</code> 属性在其持有对象的 <code>dealloc</code> 方法触发时背后的逻辑很感兴趣。</p>
+<a id="more"></a>
+<h3 id="探究"><a href="#探究" class="headerlink" title="探究"></a>探究</h3><p>llvm 官方的 ARC 文档中对 ARC 下的 <code>dealloc</code> 过程做了简单说明：</p>
+<blockquote>
+<p>A class may provide a method definition for an instance method named dealloc. This method will be called after the final release of the object but before it is deallocated or any of its instance variables are destroyed. The superclass’s implementation of dealloc will be called automatically when the method returns.</p>
+</blockquote>
+<p>大概意思是： <code>dealloc</code> 方法在最后一次 <code>release</code> 后被调用，但<strong>此时实例变量（Ivars）并未释放</strong>，父类的 <code>dealloc</code> 的方法将在子类 <code>dealloc</code> 方法返回后自动调用</p>
+<blockquote>
+<p>The instance variables for an ARC-compiled class will be destroyed at some point after control enters the dealloc method for the root class of the class. The ordering of the destruction of instance variables is unspecified, both within a single class and between subclasses and superclasses.</p>
+</blockquote>
+<p>理解： ARC 下对象的实例变量在根类 <code>[NSObject dealloc]</code> 中释放。</p>
+<p>为了探究背后的逻辑，我写了一个例子，代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">A</span></span></div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">weak</span>) <span class="keyword">id</span> refObject;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">A</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)foo &#123;</div><div class="line">   B* b = [B new];</div><div class="line">   <span class="keyword">self</span>.refObject = b;</div><div class="line">   <span class="comment">// Just use b after the weak assignment</span></div><div class="line">   <span class="comment">// in order to not dealloc 'b' before assignement </span></div><div class="line">   <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">B</span></span></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">B</span></span></div><div class="line">- (<span class="keyword">void</span>)dealloc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"In dealloc"</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>上面的代码意思大致是类 A 有一个 <code>weak</code> 属性 <code>refObject</code> ，在 <code>foo()</code> 方法中将 <code>refObject</code> 设置为 b 。运行代码，并在 <code>dealloc</code> 方法调用时断点观察，我们会发现在 <code>dealloc</code> 方法执行的最后，<code>a-&gt;_refObject</code> 被置为 <code>nil</code> ，调用栈大致是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">frame #0: 0x00007fff8ab9f0f8 libobjc.A.dylib`arr_clear_deallocating + 83</div><div class="line">frame #1: 0x00007fff8ab889ee libobjc.A.dylib`objc_clear_deallocating + 151</div><div class="line">frame #2: 0x00007fff8ab88940 libobjc.A.dylib`objc_destructInstance + 121</div><div class="line">frame #3: 0x00007fff8ab88fa0 libobjc.A.dylib`object_dispose + 22</div><div class="line">frame #4: 0x0000000100000b27 weakdealloc`-[B dealloc](self=0x000000010010a640, _cmd=0x00007fff887f807b) + 151 at main.m:28</div><div class="line">frame #5: 0x0000000100000bbc weakdealloc`-[A foo](self=0x0000000100108290, _cmd=0x0000000100000e6f) + 140 at main.m:41</div><div class="line">frame #6: 0x0000000100000cf5 weakdealloc`main(argc=1, argv=0x00007fff5fbff968) + 117 at main.m:52</div><div class="line">frame #7: 0x00007fff8c0987e1 libdyld.dylib`start + 1</div></pre></td></tr></table></figure>
+<p>调用栈中的 <code>object_dispose</code> 方法是在 <code>-[NSObject dealloc]</code> 方法中调用的，我们可以从 <a href="https://opensource.apple.com/source/objc4/objc4-532/runtime/NSObject.mm" target="_blank" rel="external">NSObject.mm</a> 看出。因而，在调用 <code>-[B dealloc]</code> 方法时，在 <code>-[NSObject dealloc]</code> 方法调用之前，<code>a-&gt;_refObject</code> 都不为 <code>nil</code> 。那么问题来了，为什么我们在 <code>-[B dealloc]</code> 方法中访问 <code>a.refObject</code> 是为 <code>nil</code> 呢？</p>
+<p>查阅 <a href="http://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-loadweakretained" target="_blank" rel="external">LLVM文档</a> 时发现，原来是 <code>objc_loadWeakRetained</code> 方法在作祟：</p>
+<blockquote>
+<p><strong>id objc_loadWeakRetained(id *object)</strong><br><br><br>If object is registered as a __weak object, and the last value stored into object has not yet been deallocated or begun deallocation, retains that value and returns it. Otherwise, returns null.</p>
+</blockquote>
+<p>这段文档意思是 <code>weak</code> 对象在开始 <code>deallocate</code> 后，<code>objc_loadWeakRetained</code> 会返回 <code>nil</code> 。因而，我们无法通过 <code>a._refObject</code> 去访问对象。那么为什么可以通过 <code>a-&gt;refObject</code> 去访问到呢？其实，很简单，因为 debugger 通过 <code>a-&gt;refObject</code> 访问对象时，并没有调用 <code>objc_loadWeak()</code> 方法。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>在 <code>dealloc</code> 操作开始后，在 <code>-[B dealloc]</code> 中实例对象 <code>a-&gt;refObejct</code> 并不为 <code>nil</code> ，但是指向该对象的 <code>weak</code> 指针经过 <code>ARC runtime</code> 函数的处理已经返回 <code>nil</code>。</p>
+
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipayImg.png" alt="支付宝" /></span>
+                </div>
+              
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/">Weak 属性在 dealloc() 背后的逻辑</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 iiiCeBlink 的个人博客">iiiCeBlink</a></p>
+        <p><span>发布时间:</span>2017年10月04日 - 17时29分</p>
+        <p><span>最后更新:</span>2018年08月27日 - 13时05分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/" title="Weak 属性在 dealloc() 背后的逻辑">http://yoursite.com/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/　　作者: iiiCeBlink" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          探究 iOS 11 下的 UIDebuggingInformationOverlay
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/10/10/CFNetwork学习笔记（四）/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">CFNetwork学习笔记（四）</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#探究"><span class="toc-number">2.</span> <span class="toc-text">探究</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">3.</span> <span class="toc-text">结论</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <section id="comments">
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'iiiCeBlink'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/" title="上一篇: 探究 iOS 11 下的 UIDebuggingInformationOverlay">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2016/10/10/CFNetwork学习笔记（四）/" title="下一篇: CFNetwork学习笔记（四）">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/">探究 iOS 11 下的 UIDebuggingInformationOverlay</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/">Weak 属性在 dealloc() 背后的逻辑</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/CFNetwork学习笔记（四）/">CFNetwork学习笔记（四）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/07/CFNetwork学习笔记（三）/">CFNetwork学习笔记（三）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/06/CFNetwork学习笔记（二）/">CFNetwork学习笔记（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/CFNetwork学习笔记（一）/">CFNetwork学习笔记（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/03/dumpdecrypted砸壳记录/">dumpdecrypted砸壳记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/20/iOS OpenDev踩坑记录/">iOS OpenDev踩坑记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/18/iOS APP砸壳小记/">iOS APP砸壳小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/04/iOS APP中调用私有方法/">iOS APP中调用私有方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/24/拆解ARC下的self/">拆解ARC下的self</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/30/CallKit学习笔记/">CallKit学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/26/iOS 10推送通知小记（下）/">iOS 10推送通知小记（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/23/iOS 10推送通知小记（上）/">iOS 10推送通知小记（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/18/iOS 10 UICollectionView新特性小记/">iOS 10 UICollectionView新特性小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/20/H5游戏接入技术小结（下）/">H5游戏接入技术小结（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/17/H5游戏接入技术小结（上）/">H5游戏接入技术小结（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">庖丁解牛KVO（二）——KVO实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/">庖丁解牛KVO（一）——KVO概览和使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/21/UIScrollView实践小记——分页/">【转】UIScrollView实践小记——分页</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/12/Mac workflow小记/">Mac workflow小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/12/抽丝剥茧之block（上）/">抽丝剥茧之block（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">深入理解NSMapTable、NSHashTable、NSPointerArray</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/06/YYCache源码学习/">YYCache源码学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/02/20/runtime对containsString方法的小改进/">runtime对containsString方法的小改进</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/14/ApplePay线上支付教程/">ApplePay线上支付教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/28/UIButton之titleLabel、imageView解析/">UIButton之titleLabel、imageView解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/17/UICollectionView Layout学习笔记/">UICollectionView Layout学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/20/UIImage加载图片方式的研究/">UIImage加载图片方式的研究</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/18/Xcode-Target、Project、WorkSpace、Scheme/">Xcode-Target、Project、WorkSpace、Scheme</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/24/UINavigationBar背景色设置/">UINavigationBar背景色设置</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 iiiCeBlink
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -1,19 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>iCeBlink</title>
+  <title>iiiCeBlink</title>
   
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2016-10-22T04:59:18.000Z</updated>
+  <updated>2018-08-27T05:05:35.467Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
-    <name>zakariyyasv</name>
+    <name>iiiCeBlink</name>
     
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>探究 iOS 11 下的 UIDebuggingInformationOverlay</title>
+    <link href="http://yoursite.com/2017/11/18/%E6%8E%A2%E7%A9%B6%20iOS%2011%20%E4%B8%8B%E7%9A%84%20UIDebuggingInformationOverlay/"/>
+    <id>http://yoursite.com/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/</id>
+    <published>2017-11-18T12:43:48.000Z</published>
+    <updated>2018-08-27T05:05:35.467Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h3&gt;&lt;p&gt;自 iOS 9 以后，Apple 加入了悬浮窗调试工具，也就是 &lt;code&gt;UIDebuggingInformationOverlay&lt;/code&gt; 。利用它我们可以做到很多事情，例如：查看视图层级，控制器层级，页面中的变量，测量等等。那么我们如何开启这个调试工具呢？只需要添加如下的代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; overlayClass = &lt;span class=&quot;type&quot;&gt;NSClassFromString&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;UIDebuggingInformationOverlay&quot;&lt;/span&gt;) &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt;? &lt;span class=&quot;type&quot;&gt;UIWindow&lt;/span&gt;.&lt;span class=&quot;type&quot;&gt;Type&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;_&lt;/span&gt; = overlayClass?.perform(&lt;span class=&quot;type&quot;&gt;NSSelectorFromString&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;prepareDebuggingOverlay&quot;&lt;/span&gt;))&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; overlay = overlayClass?.perform(&lt;span class=&quot;type&quot;&gt;NSSelectorFromString&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;overlay&quot;&lt;/span&gt;)).takeUnretainedValue() &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt;? &lt;span class=&quot;type&quot;&gt;UIWindow&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;_&lt;/span&gt; = overlay?.perform(&lt;span class=&quot;type&quot;&gt;NSSelectorFromString&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;toggleVisibility&quot;&lt;/span&gt;))&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这段代码的实际意义可以转换成以下两行代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;[&lt;span class=&quot;built_in&quot;&gt;UIDebuggingInformationOverlay&lt;/span&gt; prepareDebuggingOverlay];&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;[[&lt;span class=&quot;built_in&quot;&gt;UIDebuggingInformationOverlay&lt;/span&gt; overlay] toggleVisibility];&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;调用成功后，我们就能看到悬浮窗的庐山真面目了。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Weak 属性在 dealloc() 背后的逻辑</title>
+    <link href="http://yoursite.com/2017/10/04/Weak%20%E5%B1%9E%E6%80%A7%E5%9C%A8%20dealloc()%20%E8%83%8C%E5%90%8E%E7%9A%84%E9%80%BB%E8%BE%91/"/>
+    <id>http://yoursite.com/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/</id>
+    <published>2017-10-04T09:29:32.000Z</published>
+    <updated>2018-08-27T05:05:28.364Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h3&gt;&lt;p&gt;我们都知道在 ARC 环境无论是强指针还是弱指针都无需在 &lt;code&gt;dealloc&lt;/code&gt; 设置为 &lt;code&gt;nil&lt;/code&gt; ， ARC 会自动帮我们处理。然而，最近在项目中遇到这样一个问题，代码示例如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// class Foo&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)dealloc &amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (_obj) &amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        [_obj removeObserver:[KVOObserverStub stub] forKeyPath:_keyPath];&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;其中，&lt;code&gt;_obj&lt;/code&gt; 是类 &lt;code&gt;Foo&lt;/code&gt; 的 weak 属性，这段代码所做的工作是在 &lt;code&gt;Foo&lt;/code&gt; 的实例对象销毁的时候，移除 &lt;code&gt;_obj&lt;/code&gt; 对象上的观察者，否则，会导致 &lt;code&gt;KVO still registering when deallocated&lt;/code&gt; 的 crash 。原以为这样写会 work ，然而在实际测试中发现，在触发 &lt;code&gt;dealloc&lt;/code&gt; 方法时，&lt;code&gt;_obj&lt;/code&gt; 此时已被置为 &lt;code&gt;nil&lt;/code&gt; ，即 &lt;code&gt;[_obj removeObserver:[KVOObserverStub stub] forKeyPath:_keyPath];&lt;/code&gt; 并不会触发。解决方案则是将 &lt;code&gt;_obj&lt;/code&gt; 属性的修饰符由 &lt;code&gt;weak&lt;/code&gt; 改为 &lt;code&gt;unsafe_unretained&lt;/code&gt; 或者 &lt;code&gt;assign&lt;/code&gt; 。但是，这样改可能会为其他代码引入 bug ，因为现在 ARC 不会自动为将 &lt;code&gt;_obj&lt;/code&gt; 对象置为 &lt;code&gt;nil&lt;/code&gt; ，需要去检查涉及 &lt;code&gt;_obj&lt;/code&gt; 部分的代码。虽然这样解决问题了，但是，我还是对 &lt;code&gt;weak&lt;/code&gt; 属性在其持有对象的 &lt;code&gt;dealloc&lt;/code&gt; 方法触发时背后的逻辑很感兴趣。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>CFNetwork学习笔记（四）</title>
@@ -366,44 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;&lt;code&gt;UIScrollView&lt;/code&gt;是iOS中很有意思也是最常用的控件之一，同时也是为数不多可以响应手势的UIKit控件。本篇文章主要研究的是&lt;code&gt;UIScrollView&lt;/code&gt;的分页实现。分页有多种实现方法，且各自的效果和优点各不相同，但它们都
-    
-    </summary>
-    
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Mac workflow小记</title>
-    <link href="http://yoursite.com/2016/03/12/Mac%20workflow%E5%B0%8F%E8%AE%B0/"/>
-    <id>http://yoursite.com/2016/03/12/Mac workflow小记/</id>
-    <published>2016-03-12T12:11:39.000Z</published>
-    <updated>2016-08-31T12:36:48.000Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。&lt;/p&gt;
-&lt;h3 id=&quot;Homebrew&quot;&gt;&lt;a href=&quot;#Homebrew&quot; class=&quot;headerlink&quot; title=&quot;Homebrew&quot;&gt;&lt;/a&gt;&lt;a href=&quot;http://brew.sh/index_zh-cn.html&quot;&gt;Homebrew&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/images/workflow/homebrew.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际上是Mac下的套件管理器。比如你想安装MySQL、git等等工具软件，都可以使用homebrew来下载和管理。&lt;br&gt;homebrew的安装也非常方便，你可以去到它的官网，根据提示进行安装。安装成功后就使用homebrew的命令去下载和管理你需要的工具软件了。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Mac相关" scheme="http://yoursite.com/categories/Mac%E7%9B%B8%E5%85%B3/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>抽丝剥茧之block（上）</title>
-    <link href="http://yoursite.com/2016/03/12/%E6%8A%BD%E4%B8%9D%E5%89%A5%E8%8C%A7%E4%B9%8Bblock%EF%BC%88%E4%B8%8A%EF%BC%89/"/>
-    <id>http://yoursite.com/2016/03/12/抽丝剥茧之block（上）/</id>
-    <published>2016-03-12T11:38:21.000Z</published>
-    <updated>2017-03-20T08:48:36.000Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的
     
     </summary>
     
