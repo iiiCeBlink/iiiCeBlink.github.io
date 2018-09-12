@@ -195,6 +195,77 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-iOS 10 UICollectionView新特性小记" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/07/18/iOS 10 UICollectionView新特性小记/" class="article-date">
+      <time datetime="2016-07-18T06:36:31.000Z" itemprop="datePublished">2016-07-18</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/18/iOS 10 UICollectionView新特性小记/">iOS 10 UICollectionView新特性小记</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p>iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：</p>
+<blockquote>
+<ul>
+<li>平滑的滑动体验</li>
+<li>self-sizing改进</li>
+<li>interactive reordering</li>
+</ul>
+</blockquote>
+<h3 id="平滑的滑动体验"><a href="#平滑的滑动体验" class="headerlink" title="平滑的滑动体验"></a>平滑的滑动体验</h3><h5 id="1-卡顿的原因"><a href="#1-卡顿的原因" class="headerlink" title="1.卡顿的原因"></a>1.卡顿的原因</h5>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/2016/07/18/iOS 10 UICollectionView新特性小记/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-H5游戏接入技术小结（下）" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -440,97 +511,6 @@
         <p class="article-more-link">
           <a  href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/#more">大航海 >></a>
         </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-UIScrollView实践小记——分页" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/03/21/UIScrollView实践小记——分页/" class="article-date">
-      <time datetime="2016-03-21T08:45:53.000Z" itemprop="datePublished">2016-03-21</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/03/21/UIScrollView实践小记——分页/">【转】UIScrollView实践小记——分页</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <p><code>UIScrollView</code>是iOS中很有意思也是最常用的控件之一，同时也是为数不多可以响应手势的UIKit控件。本篇文章主要研究的是<code>UIScrollView</code>的分页实现。分页有多种实现方法，且各自的效果和优点各不相同，但它们都依赖于<code>UIScrollView</code>的代理方法，所以，我们先从<code>UIScrollViewDelegate</code>说起。</p>
-<h4 id="UIScrollViewDelegate"><a href="#UIScrollViewDelegate" class="headerlink" title="UIScrollViewDelegate"></a>UIScrollViewDelegate</h4><p><code>UIScrollView</code>有意思的功能都是通过它的 <code>delegate</code> 方法实现的。了解这些方法被触发的条件及调用的顺序对于使用 <code>UIScrollView</code> 是很有必要的。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewDidScroll:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
-<p>这个方法在任何方式触发 <code>contentOffset</code> 变化的时候都会被调用（包括用户拖动，减速过程，直接通过代码设置等），可以用于监控 <code>contentOffset</code> 的变化，并根据当前的 <code>contentOffset</code> 对其他 view 做出随动调整。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewWillBeginDragging:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
-<p>用户开始拖动 scroll view 的时候被调用。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewWillEndDragging:(<span class="built_in">UIScrollView</span> *)scrollView withVelocity:(<span class="built_in">CGPoint</span>)velocity targetContentOffset:(<span class="keyword">inout</span> <span class="built_in">CGPoint</span> *)targetContentOffset</div></pre></td></tr></table></figure>
-<p>该方法从 iOS 5 引入，在 <code>didEndDragging</code> 前被调用，当 <code>willEndDragging</code> 方法中 <code>velocity</code> 为 <code>CGPointZero</code>（结束拖动时两个方向都没有速度）时，<code>didEndDragging</code> 中的 <code>decelerate</code> 为 NO，即没有减速过程，<code>willBeginDecelerating</code> 和 <code>didEndDecelerating</code> 也就不会被调用。反之，当 <code>velocity</code> 不为 <code>CGPointZero</code> 时，scroll view 会以 <code>velocity</code> 为初速度，减速直到 <code>targetContentOffset</code>。值得注意的是，这里的 <code>targetContentOffset</code> 是个指针，没错，你可以改变减速运动的目的地，这在一些效果的实现时十分有用，实例章节中会具体提到它的用法，并和其他实现方式作比较。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewDidEndDragging:(<span class="built_in">UIScrollView</span> *)scrollView willDecelerate:(<span class="built_in">BOOL</span>)decelerate</div></pre></td></tr></table></figure>
-<p>在用户结束拖动后被调用，<code>decelerate</code> 为 <code>YES</code> 时，结束拖动后会有减速过程。注，在 <code>didEndDragging</code> 之后，如果有减速过程，<code>scroll view</code> 的 <code>dragging</code>并不会立即置为 NO，而是要等到减速结束之后，<strong><strong>所以这个 dragging 属性的实际语义更接近 scrolling</strong></strong>。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewWillBeginDecelerating:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
-<p>减速动画开始前被调用。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewDidEndDecelerating:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
-<p>减速动画结束时被调用，这里有一种特殊情况：当一次减速动画尚未结束的时候再次<code>drag scroll view</code>，<code>didEndDecelerating</code> 不会被调用，并且这时 scroll view 的 <code>dragging</code> 和 <code>decelerating</code> 属性都是 YES。新的 dragging 如果有加速度，那么 <code>willBeginDecelerating</code> 会再一次被调用，然后才是 <code>didEndDecelerating</code>；如果没有加速度，虽然 <code>willBeginDecelerating</code> 不会被调用，但前一次留下的 <code>didEndDecelerating</code> 会被调用，所以连续快速滚动一个 <code>scroll view</code> 时，delegate 方法被调用的顺序（不含 didScroll）可能是这样的：</p>
-<blockquote>
-<p>scrollViewWillBeginDragging:<br>scrollViewWillEndDragging: withVelocity: targetContentOffset:<br>scrollViewDidEndDragging: willDecelerate:<br>scrollViewWillBeginDecelerating:<br>scrollViewWillBeginDragging:<br>scrollViewWillEndDragging: withVelocity: targetContentOffset:<br>scrollViewDidEndDragging: willDecelerate:<br>scrollViewWillBeginDecelerating:<br>…<br>scrollViewWillBeginDragging:<br>scrollViewWillEndDragging: withVelocity: targetContentOffset:<br>scrollViewDidEndDragging: willDecelerate:<br>scrollViewWillBeginDecelerating:<br>scrollViewDidEndDecelerating:  </p>
-</blockquote>
-<p>虽然很少有因为这个导致的 bug，但是你需要知道这种很常见的用户操作会导致的中间状态。例如你尝试在 <code>UITableViewDataSource</code> 的 <code>tableView:cellForRowAtIndexPath:</code> 方法中基于 tableView 的 dragging 和 decelerating 属性判断是在用户拖拽还是减速过程中的话可能会误判（见例 1）。</p>
-<p>了解了<code>UIScrollView</code>的核心代理方法，接下来就来看看<code>UIScrollView</code>的几种分页方式。</p>
-<h4 id="pagingEnabled"><a href="#pagingEnabled" class="headerlink" title="pagingEnabled"></a>pagingEnabled</h4><p>这是系统提供的分页方式，最简单，但是有一些局限性：</p>
-<blockquote>
-<ul>
-<li>只能以 frame size 为单位翻页，减速动画阻尼大，减速过程不超过一页</li>
-<li>需要一些 hacking 实现 bleeding 和 padding（即页与页之间有 padding，在当前页可以看到前后页的部分内容）</li>
-</ul>
-</blockquote>
-<p>Sample 中 <a href="https://github.com/allenhsu/UIScrollView-Samples/tree/master/Pagination" target="_blank" rel="external">Pagination</a> 有简单实现 bleeding 和 padding 效果的代码，主要的思路是：</p>
-<p>让 <code>scroll view</code> 的宽度为 page 宽度 + padding，并且设置 <code>clipsToBounds</code> 为 NO<br>这样虽然能看到前后页的内容，但是无法响应 touch，所以需要另一个覆盖期望的可触摸区域的 view 来实现类似 <code>touch bridging</code> 的功能<br><strong><strong>适用场景：*</strong></strong>上述局限性同时也是这种实现方式的优点，比如一般 App 的引导页（教程），Calendar 里的月视图，都可以用这种方法实现。</p>
-<h4 id="Snap"><a href="#Snap" class="headerlink" title="Snap"></a>Snap</h4><p>这种方法就是在 <code>didEndDragging</code> 且无减速动画，或在减速动画完成时，snap 到一个整数页。核心算法是通过当前 <code>contentOffset</code> 计算最近的整数页及其对应的 <code>contentOffset</code>，通过动画 snap 到该页。这个方法实现的效果都有个通病，就是最后的 snap 会在 <code>decelerate</code> 结束以后才发生，总感觉很突兀。</p>
-<h4 id="修改targetContentOffset"><a href="#修改targetContentOffset" class="headerlink" title="修改targetContentOffset"></a>修改targetContentOffset</h4><p>通过修改 <code>scrollViewWillEndDragging: withVelocity: targetContentOffset:</code> 方法中的 <code>targetContentOffset</code> 直接修改目标 offset 为整数页位置。其中核心代码：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">CGPoint</span>)nearestTargetOffsetForOffset:(<span class="built_in">CGPoint</span>)offset</div><div class="line">&#123;</div><div class="line">    <span class="built_in">CGFloat</span> pageSize = BUBBLE_DIAMETER + BUBBLE_PADDING;</div><div class="line">    <span class="built_in">NSInteger</span> page = roundf(offset.x / pageSize);</div><div class="line">    <span class="built_in">CGFloat</span> targetX = pageSize * page;</div><div class="line">    <span class="keyword">return</span> <span class="built_in">CGPointMake</span>(targetX, offset.y);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)scrollViewWillEndDragging:(<span class="built_in">UIScrollView</span> *)scrollView withVelocity:(<span class="built_in">CGPoint</span>)velocity targetContentOffset:(<span class="keyword">inout</span> <span class="built_in">CGPoint</span> *)targetContentOffset</div><div class="line">&#123;</div><div class="line">    <span class="built_in">CGPoint</span> targetOffset = [<span class="keyword">self</span> nearestTargetOffsetForOffset:*targetContentOffset];</div><div class="line">    targetContentOffset-&gt;x = targetOffset.x;</div><div class="line">    targetContentOffset-&gt;y = targetOffset.y;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><strong><strong>适用场景：</strong></strong>方法 2 和 方法 3 的原理近似，效果也相近，适用场景也基本相同，但方法 3 的体验会好很多，snap 到整数页的过程很自然，或者说用户完全感知不到 snap 过程的存在。这两种方法的减速过程流畅，适用于一屏有多页，但需要按整数页滑动的场景；也适用于如图表中自动 snap 到整数天的场景；还适用于每页大小不同的情况下 snap 到整数页的场景（不做举例，自行发挥，其实只需要修改计算目标 offset 的方法）。</p>
-<p>完整代码参见 <a href="https://github.com/allenhsu/UIScrollView-Samples/tree/master/Pagination" target="_blank" rel="external">Pagination</a></p>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/iOS/">iOS</a>
-    </div>
-
-
-      
       
       <div class="clearfix"></div>
     </div>

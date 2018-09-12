@@ -3,21 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>runtime对containsString方法的小改进 | iiiCeBlink</title>
+  <title>利用 KVO 解决 swizzle 失效问题 | iiiCeBlink</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
+  <meta name="description" content="最近碰到一个需求，类似于下图所示，几个 UIButton 排列在一起，在某个事件触发时，隐藏或者显示中间的 button ，重点是隐藏中间的 button 时，上下 button 之间的间距保持为原来的间距。比较好的做法是重写 alignmentRectInsets 的 get 方法，当然更新约束的方法也是 OK 的。直接创建子类去重写 alignmentRectInsets 的 get 方法不够">
 <meta property="og:type" content="article">
-<meta property="og:title" content="runtime对containsString方法的小改进">
-<meta property="og:url" content="http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/index.html">
+<meta property="og:title" content="利用 KVO 解决 swizzle 失效问题">
+<meta property="og:url" content="http://yoursite.com/2018/09/12/利用KVO解决swizzle失效问题/index.html">
 <meta property="og:site_name" content="iiiCeBlink">
-<meta property="og:description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
-<meta property="og:updated_time" content="2016-09-19T15:24:32.000Z">
+<meta property="og:description" content="最近碰到一个需求，类似于下图所示，几个 UIButton 排列在一起，在某个事件触发时，隐藏或者显示中间的 button ，重点是隐藏中间的 button 时，上下 button 之间的间距保持为原来的间距。比较好的做法是重写 alignmentRectInsets 的 get 方法，当然更新约束的方法也是 OK 的。直接创建子类去重写 alignmentRectInsets 的 get 方法不够">
+<meta property="og:image" content="http://yoursite.com/images/KVOSwizzle/button.gif">
+<meta property="og:updated_time" content="2018-09-12T16:17:37.300Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="runtime对containsString方法的小改进">
-<meta name="twitter:description" content="最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是NSstring的containsString:方法在从中作梗。看了一下文档发现原来containsString:是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替containsString:方法：
-1BOOL isContained = [aStrin">
+<meta name="twitter:title" content="利用 KVO 解决 swizzle 失效问题">
+<meta name="twitter:description" content="最近碰到一个需求，类似于下图所示，几个 UIButton 排列在一起，在某个事件触发时，隐藏或者显示中间的 button ，重点是隐藏中间的 button 时，上下 button 之间的间距保持为原来的间距。比较好的做法是重写 alignmentRectInsets 的 get 方法，当然更新约束的方法也是 OK 的。直接创建子类去重写 alignmentRectInsets 的 get 方法不够">
+<meta name="twitter:image" content="http://yoursite.com/images/KVOSwizzle/button.gif">
   
     <link rel="alternative" href="/atom.xml" title="iiiCeBlink" type="application/atom+xml">
   
@@ -194,11 +193,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-runtime对containsString方法的小改进" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-利用KVO解决swizzle失效问题" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/02/20/runtime对containsString方法的小改进/" class="article-date">
-      <time datetime="2016-02-20T15:23:28.000Z" itemprop="datePublished">2016-02-20</time>
+      <a href="/2018/09/12/利用KVO解决swizzle失效问题/" class="article-date">
+      <time datetime="2018-09-12T13:11:23.000Z" itemprop="datePublished">2018-09-12</time>
 </a>
     </div>
   
@@ -211,7 +210,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      runtime对containsString方法的小改进
+      利用 KVO 解决 swizzle 失效问题
     </h1>
   
 
@@ -232,11 +231,29 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是<code>NSstring</code>的<code>containsString:</code>方法在从中作梗。看了一下文档发现原来<code>containsString:</code>是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替<code>containsString:</code>方法：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> isContained = [aString rangeOfString:bString].location != <span class="built_in">NSNotFound</span></div></pre></td></tr></table></figure>
-<p>不过，我觉得要在每一个需要调用<code>containsString:</code>方法写一遍有点麻烦，把适配的代码抽离出来写入一个方法倒是可以，但我还是觉得有点麻烦，毕竟懒癌患者。于是，我想到了用runtime运行时机制动态添加<code>containsString:</code>方法就可以一劳永逸了。<br>实现的原理也很简单，在iOS 7下判断<code>NSString</code>中是否存在<code>containsString:</code>实例方法，若不存在，则动态添加该方法。这样就不用再需要调用<code>containsString:</code>实例方法去判断了。原理很简单，代码也很简单，还是很符合我这个懒癌患者的口味的嘛。<br><a id="more"></a></p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// NSString+containsStringCategory.h</span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#if __IPHONE_OS_VERSION_MIN_REQUIRED <span class="meta-string">&lt; 80000</span></span></div><div class="line"></div><div class="line">@interface NSString (containsStringCategory)</div><div class="line"></div><div class="line">- (BOOL)containsString:(NSString *)str;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">#endif</div></pre></td></tr></table></figure>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// NSString+containsStringCategory.m</span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">"NSString+containsStringCategory.h"</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#if __IPHONE_OS_VERSION_MIN_REQUIRED <span class="meta-string">&lt; 80000</span></span></div><div class="line"></div><div class="line">@implementation NSString (containsStringCategory)</div><div class="line"></div><div class="line">+ (void)load&#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line">        [self zs_modernizeSelector:@selector(containsString:) withSelector:@selector(zs_containsString:)];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)zs_modernizeSelector:(SEL)originSelector withSelector:(SEL)newSelector&#123;</div><div class="line">    if (![NSString instancesRespondToSelector:originSelector]) &#123;</div><div class="line">        Method newMethod = 	class_getInstanceMethod(self, newSelector);</div><div class="line">        class_addMethod(self, originSelector, method_getImplementation(newMethod), method_getTypeEncoding(newMethod));</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (BOOL)zs_containsString:(NSString *)str&#123;</div><div class="line">    return [self rangeOfString:str].location != NSNotFound;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">#endif</div></pre></td></tr></table></figure>
+        <p>最近碰到一个需求，类似于下图所示，几个 <code>UIButton</code> 排列在一起，在某个事件触发时，隐藏或者显示中间的 <code>button</code> ，重点是隐藏中间的 <code>button</code> 时，上下 <code>button</code> 之间的间距保持为原来的间距。比较好的做法是重写 <code>alignmentRectInsets</code> 的 get 方法，当然更新约束的方法也是 OK 的。直接创建子类去重写 <code>alignmentRectInsets</code> 的 get 方法不够优雅，因而想到创建分类， swizzle <code>UIView</code> 的 <code>alignmentRectInsets</code> 的 get 方法，在自己的自定义方法中去完成真正的修改逻辑。</p>
+<p><img src="/images/KVOSwizzle/button.gif" alt=""></p>
+<p>原以为写完分类，在项目中调用再 run 一下就大功告成了，然而，我还是 naive 啊。运行项目后，发现竟然没有 work ，打断点调试，发现 swizzle method 没有调用。没有调用的原因在于 <code>UIButton</code> 类本身的实现已经重写了 <code>alignmentRectInsets</code> 的 get 方法，所以，不会再调用 <code>UIView</code> 的相同方法了。那怎么办呢？最简单的办法就是给 <code>UIButton</code> 创建分类而不是 <code>UIView</code> ，但是感觉这样写不是很好，有些冗余。</p>
+<p>经过一番研究后，想到可以利用 KVO 的机制来解决这个问题。</p>
+<a id="more"></a>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>关于 KVO 的具体细节不是本文的重点，如果不是很了解，可以参考<a href="https://www.jianshu.com/p/829864680648" target="_blank" rel="external">这篇文章</a>。这里提一点，苹果在 KVO 的底层实现上，会创建一个子类对象，类名类似于 <code>NSKVONotifying_xxxxx</code> ，并将原来对象的 isa 指针指向这个子类对象。有了这个特性，就可以解决我们之前的问题啦！</p>
+<p>那解决的思路是怎么样的呢？主要还是围绕 KVO 会动态创建子类的特性。具体思路可以分为以下几步：</p>
+<ol>
+<li>让苹果为我们的目标类的对象动态创建子类对象</li>
+<li>获取目标对象真正的类</li>
+<li>拿到需要 swizzle 的 <code>alignmentRectInsets</code> 方法的函数签名</li>
+<li>在 KVO 子类添加该方法和对应的 IMP</li>
+</ol>
+<p>第一步很简单，只要一个对象观察某个键值，苹果就会为这个对象动态创建子类对象。但这里有个地方需要注意，当某个对象观察某个键值时，需要在该对象 <code>dealloc</code> 方法中移除对该键值的观察，否则，会导致 <code>KVO still registering when deallocated</code> 的 crash 。第二步依赖于第一步中的动态创建的子类对象，调用 <code>class_getSuperclass()</code> 方法来获取目标对象真正的类。第三步承接第二步，知道了目标对象的真正类，则可以拿到 swizzle 的 <code>alignmentRectInsets</code> 的 get 方法的函数签名，这没什么问题。第四步将完整的 <code>selector</code> 、函数签名以及自己实现的 IMP 添加到 KVO 子类的方法列表中即可。</p>
+<h3 id="如何解决-KVO-属性移除"><a href="#如何解决-KVO-属性移除" class="headerlink" title="如何解决 KVO 属性移除"></a>如何解决 KVO 属性移除</h3><p>刚才有提到，KVO 观察的键值，需要在对象 <code>dealloc</code> 时移除，但是，在 category 中是无法重写 <code>dealloc</code> 方法的。那怎么解决这个问题呢？我们知道，一个对象 A 持有另一个对象 B ，且 B 仅被 A 持有，那么当对象 A 释放时，也会释放对 B 的持有，也就表示在 A 的 <code>dealloc</code> 触发时，B 的 <code>dealloc</code> 方法也会触发。按照这个思想，我们可以创建一个单例对象作为 <code>observer</code> ，再实例化一个对象 <code>remover</code> 去持有该单例对象，而让目标对象去持有该实例化的对象 <code>remover</code>，在 <code>remover</code> 的 <code>dealloc</code> 方法中执行移除 KVO 键值的操作。当目标对象销毁时，就会释放 <code>remover</code> ，也就会触发 <code>remover</code> 的 <code>dealloc</code> 方法。对这两个类的定义如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// ICFakeKVOObject.h</span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ICFakeKVOObserver</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line">+ (<span class="keyword">instancetype</span>)shared;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ICFakeKVORemover</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="comment">/// unsafe_unretained makes sure that targe can call method in dealloc()</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">unsafe_unretained</span>) <span class="keyword">id</span> target;</div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *keyPath;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// ICFakeKVOObject.m</span></div><div class="line"><span class="meta">#import <span class="meta-string">"ICFakeKVOObject.h"</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ICFakeKVOObserver</span></span></div><div class="line"></div><div class="line">+ (<span class="keyword">instancetype</span>)shared &#123;</div><div class="line"></div><div class="line">	<span class="keyword">static</span> <span class="keyword">id</span> sharedInstance;</div><div class="line">	<span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</div><div class="line"></div><div class="line">	<span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</div><div class="line">	sharedInstance = [[<span class="keyword">self</span> alloc] init];</div><div class="line">	&#125;);</div><div class="line">	<span class="keyword">return</span> sharedInstance;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ICFakeKVORemover</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)dealloc &#123;</div><div class="line"></div><div class="line">	[_target removeObserver:[ICFakeKVOObserver shared] forKeyPath:_keyPath];</div><div class="line">	_target = <span class="literal">nil</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>注意，<code>ICFakeKVORemover</code> 中的 target 的修饰符要用 <code>unsafe_unretained</code> 而不能用 <code>weak</code> ，否则，在 <code>dealloc</code> 方法执行时， _target 已经置为 nil 而无法移除键值观察。至于其中的详细细节，可以参考我的另一篇文章<a href="https://iiiceblink.github.io/2017/10/04/Weak%20%E5%B1%9E%E6%80%A7%E5%9C%A8%20dealloc%20%E8%83%8C%E5%90%8E%E7%9A%84%E9%80%BB%E8%BE%91/" target="_blank" rel="external">Weak 属性在 dealloc 背后的逻辑</a>。这样当 <code>ICFakeKVOObserver</code> 单例对象销毁时，<code>ICFakeKVORemover</code> 对象的 <code>dealloc</code> 方法也会触发。</p>
+<h3 id="在-KVO-子类添加-alignmentRectInsets-方法和对应的-IMP"><a href="#在-KVO-子类添加-alignmentRectInsets-方法和对应的-IMP" class="headerlink" title="在 KVO 子类添加 alignmentRectInsets 方法和对应的 IMP"></a>在 KVO 子类添加 <code>alignmentRectInsets</code> 方法和对应的 IMP</h3><p>如何在子类中添加目标方法以及相应的 IMP 已经在上面提过，核心代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">/// NSKVONotifying_xxxxx</span></div><div class="line">Class kvoCls = object_getClass(<span class="keyword">self</span>);</div><div class="line"></div><div class="line"><span class="comment">/// original class</span></div><div class="line">Class originCls = class_getSuperclass(kvoCls);</div><div class="line"></div><div class="line"><span class="comment">/// get original type encoding</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> *originAlignmentRectInsetsEncoding = method_getTypeEncoding(class_getInstanceMethod(originCls, <span class="keyword">@selector</span>(alignmentRectInsets)));</div><div class="line"></div><div class="line"><span class="comment">/// add IMP for KVO class</span></div><div class="line">class_addMethod(kvoCls, <span class="keyword">@selector</span>(alignmentRectInsets),</div><div class="line">                   (IMP)ic_alignmentRectInsets,</div><div class="line">                   originAlignmentRectInsetsEncoding);</div></pre></td></tr></table></figure>
+<p>这里面有个需要注意的点，那就是如何创建符合要求的 <code>IMP</code> ？我们知道 OC 语言的核心在于消息传递，我们调用的方法本质上是会转变成消息发送给目标对象，依据消息中的 <code>selector</code> 找到对应的 <code>IMP</code> ，然后调用它。我们所写的方法实现在经过 clang 编译之后会变成 C 函数，而函数参数也会发生变化。比如 <code>- (void)viewWillAppear:(BOOL)animated</code> 编译后会变成 <code>static void viewWillAppear(UIViewController *self, SEL sel, bool animated)</code> ，其中函数名不变，返回值则会在 OC 和 C 之间做转换，而参数列表则多了两个参数 <code>self</code> 和 <code>sel</code> 分别代表了当前方法的调用者和对应的方法名。编译后的函数实现可以理解为就是真正的 <code>IMP</code> 。那么我们要创建自己的 <code>IMP</code> ，则只需要按照要求在函数参数中加上 <code>self</code> 和 <code>sel</code> 即可。这里的 <code>ic_alignmentRectInsets</code> <code>IMP</code> 代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="built_in">UIEdgeInsets</span> ic_alignmentRectInsets(<span class="built_in">UIView</span> *kvo_self, SEL _sel) &#123;</div><div class="line">	</div><div class="line">	Class kvo_cls = object_getClass(kvo_self);</div><div class="line">	Class origin_cls = class_getSuperclass(kvo_cls);</div><div class="line">	</div><div class="line">	IMP origin_imp = method_getImplementation(class_getInstanceMethod(origin_cls, _sel));</div><div class="line">	assert(origin_imp != <span class="literal">NULL</span>);</div><div class="line">	</div><div class="line">  <span class="built_in">UIEdgeInsets</span> (*func)(<span class="built_in">UIView</span> *, SEL) = (<span class="built_in">UIEdgeInsets</span> (*)(<span class="built_in">UIView</span> *, SEL))origin_imp;</div><div class="line">	</div><div class="line">  AlignmentRectInsetsBlock block = kvo_self.yc_alignmentRectInsetsBlock;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (block) &#123;</div><div class="line">      <span class="keyword">return</span> block();</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">return</span> func(kvo_self, _sel);;</div><div class="line">  &#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>写完 category 再调用一下，大功告成！没想到由于 <code>UIButton</code> 的 <code>alignmentRectInsets</code> 在 category 中的失效问题竟然学习到了这么多知识，酥服。</p>
 
       
       
@@ -287,13 +304,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/02/20/runtime对containsString方法的小改进/">runtime对containsString方法的小改进</a></p>
+        <p><span>本文标题:</span><a href="/2018/09/12/利用KVO解决swizzle失效问题/">利用 KVO 解决 swizzle 失效问题</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 iiiCeBlink 的个人博客">iiiCeBlink</a></p>
-        <p><span>发布时间:</span>2016年02月20日 - 23时23分</p>
-        <p><span>最后更新:</span>2016年09月19日 - 23时24分</p>
+        <p><span>发布时间:</span>2018年09月12日 - 21时11分</p>
+        <p><span>最后更新:</span>2018年09月13日 - 00时17分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/02/20/runtime对containsString方法的小改进/" title="runtime对containsString方法的小改进">http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2016/02/20/runtime对containsString方法的小改进/　　作者: iiiCeBlink" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/09/12/利用KVO解决swizzle失效问题/" title="利用 KVO 解决 swizzle 失效问题">http://yoursite.com/2018/09/12/利用KVO解决swizzle失效问题/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/09/12/利用KVO解决swizzle失效问题/　　作者: iiiCeBlink" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -306,18 +323,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2016/03/06/YYCache源码学习/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          YYCache源码学习
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/01/14/ApplePay线上支付教程/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">ApplePay线上支付教程</div>
+    <a href="/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">探究 iOS 11 下的 UIDebuggingInformationOverlay</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -328,7 +336,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#思路"><span class="toc-number">1.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何解决-KVO-属性移除"><span class="toc-number">2.</span> <span class="toc-text">如何解决 KVO 属性移除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在-KVO-子类添加-alignmentRectInsets-方法和对应的-IMP"><span class="toc-number">3.</span> <span class="toc-text">在 KVO 子类添加 alignmentRectInsets 方法和对应的 IMP</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -395,13 +403,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/03/06/YYCache源码学习/" title="上一篇: YYCache源码学习">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/01/14/ApplePay线上支付教程/" title="下一篇: ApplePay线上支付教程">
+            <a href="/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/" title="下一篇: 探究 iOS 11 下的 UIDebuggingInformationOverlay">
                 <i class="fa fa-angle-right"></i>
             </a>
         

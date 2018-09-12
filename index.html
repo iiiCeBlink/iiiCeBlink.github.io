@@ -195,6 +195,72 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-利用KVO解决swizzle失效问题" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/12/利用KVO解决swizzle失效问题/" class="article-date">
+      <time datetime="2018-09-12T13:11:23.000Z" itemprop="datePublished">2018-09-12</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/12/利用KVO解决swizzle失效问题/">利用 KVO 解决 swizzle 失效问题</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>最近碰到一个需求，类似于下图所示，几个 <code>UIButton</code> 排列在一起，在某个事件触发时，隐藏或者显示中间的 <code>button</code> ，重点是隐藏中间的 <code>button</code> 时，上下 <code>button</code> 之间的间距保持为原来的间距。比较好的做法是重写 <code>alignmentRectInsets</code> 的 get 方法，当然更新约束的方法也是 OK 的。直接创建子类去重写 <code>alignmentRectInsets</code> 的 get 方法不够优雅，因而想到创建分类， swizzle <code>UIView</code> 的 <code>alignmentRectInsets</code> 的 get 方法，在自己的自定义方法中去完成真正的修改逻辑。</p>
+<p><img src="/images/KVOSwizzle/button.gif" alt=""></p>
+<p>原以为写完分类，在项目中调用再 run 一下就大功告成了，然而，我还是 naive 啊。运行项目后，发现竟然没有 work ，打断点调试，发现 swizzle method 没有调用。没有调用的原因在于 <code>UIButton</code> 类本身的实现已经重写了 <code>alignmentRectInsets</code> 的 get 方法，所以，不会再调用 <code>UIView</code> 的相同方法了。那怎么办呢？最简单的办法就是给 <code>UIButton</code> 创建分类而不是 <code>UIView</code> ，但是感觉这样写不是很好，有些冗余。</p>
+<p>经过一番研究后，想到可以利用 KVO 的机制来解决这个问题。</p>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/2018/09/12/利用KVO解决swizzle失效问题/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-探究 iOS 11 下的 UIDebuggingInformationOverlay" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -262,10 +328,10 @@
 
 
   
-    <article id="post-Weak 属性在 dealloc() 背后的逻辑" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Weak 属性在 dealloc 背后的逻辑" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/" class="article-date">
+      <a href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/" class="article-date">
       <time datetime="2017-10-04T09:29:32.000Z" itemprop="datePublished">2017-10-04</time>
 </a>
     </div>
@@ -279,7 +345,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/">Weak 属性在 dealloc() 背后的逻辑</a>
+      <a class="article-title" href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/">Weak 属性在 dealloc() 背后的逻辑</a>
     </h1>
   
 
@@ -308,7 +374,7 @@
       
       
         <p class="article-more-link">
-          <a  href="/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/#more">大航海 >></a>
+          <a  href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>
@@ -435,70 +501,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/10/07/CFNetwork学习笔记（三）/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-CFNetwork学习笔记（二）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/10/06/CFNetwork学习笔记（二）/" class="article-date">
-      <time datetime="2016-10-06T12:50:01.000Z" itemprop="datePublished">2016-10-06</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/10/06/CFNetwork学习笔记（二）/">CFNetwork学习笔记（二）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讨论如何创建、开启读写流并检查读写流上的错误。此外，还会介绍如何从读流中读出数据，如何向写流中写入数据，如何在读写的过程中防止发生阻塞，如何通过代理服务器来引导流。</p>
-<p>CFStream可以用来读写文件或者与socket一起工作。除了创建流的过程之外，它们其他的行为都很相似。<br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/MacOS/">MacOS</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/10/06/CFNetwork学习笔记（二）/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-08-27T05:05:35.467Z</updated>
+  <updated>2018-09-12T16:17:37.300Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>利用 KVO 解决 swizzle 失效问题</title>
+    <link href="http://yoursite.com/2018/09/12/%E5%88%A9%E7%94%A8KVO%E8%A7%A3%E5%86%B3swizzle%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/"/>
+    <id>http://yoursite.com/2018/09/12/利用KVO解决swizzle失效问题/</id>
+    <published>2018-09-12T13:11:23.000Z</published>
+    <updated>2018-09-12T16:17:37.300Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近碰到一个需求，类似于下图所示，几个 &lt;code&gt;UIButton&lt;/code&gt; 排列在一起，在某个事件触发时，隐藏或者显示中间的 &lt;code&gt;button&lt;/code&gt; ，重点是隐藏中间的 &lt;code&gt;button&lt;/code&gt; 时，上下 &lt;code&gt;button&lt;/code&gt; 之间的间距保持为原来的间距。比较好的做法是重写 &lt;code&gt;alignmentRectInsets&lt;/code&gt; 的 get 方法，当然更新约束的方法也是 OK 的。直接创建子类去重写 &lt;code&gt;alignmentRectInsets&lt;/code&gt; 的 get 方法不够优雅，因而想到创建分类， swizzle &lt;code&gt;UIView&lt;/code&gt; 的 &lt;code&gt;alignmentRectInsets&lt;/code&gt; 的 get 方法，在自己的自定义方法中去完成真正的修改逻辑。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/KVOSwizzle/button.gif&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;原以为写完分类，在项目中调用再 run 一下就大功告成了，然而，我还是 naive 啊。运行项目后，发现竟然没有 work ，打断点调试，发现 swizzle method 没有调用。没有调用的原因在于 &lt;code&gt;UIButton&lt;/code&gt; 类本身的实现已经重写了 &lt;code&gt;alignmentRectInsets&lt;/code&gt; 的 get 方法，所以，不会再调用 &lt;code&gt;UIView&lt;/code&gt; 的相同方法了。那怎么办呢？最简单的办法就是给 &lt;code&gt;UIButton&lt;/code&gt; 创建分类而不是 &lt;code&gt;UIView&lt;/code&gt; ，但是感觉这样写不是很好，有些冗余。&lt;/p&gt;
+&lt;p&gt;经过一番研究后，想到可以利用 KVO 的机制来解决这个问题。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>探究 iOS 11 下的 UIDebuggingInformationOverlay</title>
@@ -39,8 +60,8 @@
   
   <entry>
     <title>Weak 属性在 dealloc() 背后的逻辑</title>
-    <link href="http://yoursite.com/2017/10/04/Weak%20%E5%B1%9E%E6%80%A7%E5%9C%A8%20dealloc()%20%E8%83%8C%E5%90%8E%E7%9A%84%E9%80%BB%E8%BE%91/"/>
-    <id>http://yoursite.com/2017/10/04/Weak 属性在 dealloc() 背后的逻辑/</id>
+    <link href="http://yoursite.com/2017/10/04/Weak%20%E5%B1%9E%E6%80%A7%E5%9C%A8%20dealloc%20%E8%83%8C%E5%90%8E%E7%9A%84%E9%80%BB%E8%BE%91/"/>
+    <id>http://yoursite.com/2017/10/04/Weak 属性在 dealloc 背后的逻辑/</id>
     <published>2017-10-04T09:29:32.000Z</published>
     <updated>2018-08-27T05:05:28.364Z</updated>
     
@@ -219,12 +240,12 @@
     <link href="http://yoursite.com/2016/08/24/%E6%8B%86%E8%A7%A3ARC%E4%B8%8B%E7%9A%84self/"/>
     <id>http://yoursite.com/2016/08/24/拆解ARC下的self/</id>
     <published>2016-08-24T13:23:28.000Z</published>
-    <updated>2016-10-10T13:14:54.000Z</updated>
+    <updated>2018-09-12T14:40:13.135Z</updated>
     
     <summary type="html">
     
       &lt;p&gt;最近在研究AFNetworking源码的过程中碰到了很多处地方用到了&lt;code&gt;weakSelf&lt;/code&gt;和&lt;code&gt;strongSelf&lt;/code&gt;。依据自己之前的理解，正常情况下使用&lt;code&gt;weakSelf&lt;/code&gt;是为了避免发生循环引用，而使用&lt;code&gt;strongSelf&lt;/code&gt;是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。&lt;/p&gt;
-&lt;h3 id=&quot;self的本质&quot;&gt;&lt;a href=&quot;#self的本质&quot; class=&quot;headerlink&quot; title=&quot;self的本质&quot;&gt;&lt;/a&gt;self的本质&lt;/h3&gt;&lt;p&gt;self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是&lt;code&gt;const Class self&lt;/code&gt;，在实例方法中self是&lt;code&gt;Person const* self&lt;/code&gt;（以Person类举例）。事实确实如此么？来验证一下。&lt;br&gt;
+&lt;h3 id=&quot;self的本质&quot;&gt;&lt;a href=&quot;#self的本质&quot; class=&quot;headerlink&quot; title=&quot;self的本质&quot;&gt;&lt;/a&gt;self的本质&lt;/h3&gt;&lt;p&gt;self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是&lt;code&gt;const Class self&lt;/code&gt;，在实例方法中self是&lt;code&gt;Person const* self&lt;/code&gt;（以Person类举例）。事实确实如此么？来验证一下。&lt;/p&gt;
     
     </summary>
     
@@ -390,24 +411,6 @@
       &lt;p&gt;KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（&lt;code&gt;-bind:toObject:withKeyPath:options:&lt;/code&gt;）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。&lt;/p&gt;
 &lt;p&gt;KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。&lt;/p&gt;
 &lt;p&gt;在通知机制中，KVO与&lt;code&gt;NSNotification&lt;/code&gt;提供的通知机制类似，但是也存在很鲜明的区别。&lt;code&gt;NSNotification&lt;/code&gt;是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>【转】UIScrollView实践小记——分页</title>
-    <link href="http://yoursite.com/2016/03/21/UIScrollView%E5%AE%9E%E8%B7%B5%E5%B0%8F%E8%AE%B0%E2%80%94%E2%80%94%E5%88%86%E9%A1%B5/"/>
-    <id>http://yoursite.com/2016/03/21/UIScrollView实践小记——分页/</id>
-    <published>2016-03-21T08:45:53.000Z</published>
-    <updated>2017-03-29T10:06:14.000Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;code&gt;UIScrollView&lt;/code&gt;是iOS中很有意思也是最常用的控件之一，同时也是为数不多可以响应手势的UIKit控件。本篇文章主要研究的是&lt;code&gt;UIScrollView&lt;/code&gt;的分页实现。分页有多种实现方法，且各自的效果和优点各不相同，但它们都
     
     </summary>
     

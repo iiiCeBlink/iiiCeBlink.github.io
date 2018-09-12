@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>iiiCeBlink</title>
+  <title>Archives: 2018 | iiiCeBlink</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Just focus">
 <meta property="og:type" content="website">
 <meta property="og:title" content="iiiCeBlink">
-<meta property="og:url" content="http://yoursite.com/page/2/index.html">
+<meta property="og:url" content="http://yoursite.com/archives/2018/index.html">
 <meta property="og:site_name" content="iiiCeBlink">
 <meta property="og:description" content="Just focus">
 <meta name="twitter:card" content="summary">
@@ -27,9 +27,6 @@
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   
-    
-    
-  
   
       <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
   
@@ -41,9 +38,9 @@
           rootUrl: '/',
           fancybox: true,
           animate: true,
-          isHome: true,
+          isHome: false,
           isPost: false,
-          isArchive: false,
+          isArchive: true,
           isTag: false,
           isCategory: false,
           open_in_new: false
@@ -195,339 +192,52 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-CFNetwork学习笔记（二）" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="/2016/10/06/CFNetwork学习笔记（二）/" class="article-date">
-      <time datetime="2016-10-06T12:50:01.000Z" itemprop="datePublished">2016-10-06</time>
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+          <div class="article-meta">
+              <a href="/2018/09/12/利用KVO解决swizzle失效问题/" class="archive-article-date">
+      <time datetime="2018-09-12T13:11:23.000Z" itemprop="datePublished">09-12</time>
 </a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
+        </div>
+         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/10/06/CFNetwork学习笔记（二）/">CFNetwork学习笔记（二）</a>
+      <a class="archive-article-title" href="/2018/09/12/利用KVO解决swizzle失效问题/">利用 KVO 解决 swizzle 失效问题</a>
     </h1>
   
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="article-info info-on-archive">
           
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讨论如何创建、开启读写流并检查读写流上的错误。此外，还会介绍如何从读流中读出数据，如何向写流中写入数据，如何在读写的过程中防止发生阻塞，如何通过代理服务器来引导流。</p>
-<p>CFStream可以用来读写文件或者与socket一起工作。除了创建流的过程之外，它们其他的行为都很相似。<br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/MacOS/">MacOS</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/10/06/CFNetwork学习笔记（二）/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-CFNetwork学习笔记（一）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/10/05/CFNetwork学习笔记（一）/" class="article-date">
-      <time datetime="2016-10-05T04:36:19.000Z" itemprop="datePublished">2016-10-05</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/10/05/CFNetwork学习笔记（一）/">CFNetwork学习笔记（一）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。<br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/MacOS/">MacOS</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/10/05/CFNetwork学习笔记（一）/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-dumpdecrypted砸壳记录" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/10/03/dumpdecrypted砸壳记录/" class="article-date">
-      <time datetime="2016-10-03T02:14:41.000Z" itemprop="datePublished">2016-10-03</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/10/03/dumpdecrypted砸壳记录/">dumpdecrypted砸壳记录</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前一直采用Clutch对ipa包进行砸壳，后来发现Clutch在某些iOS版本下砸壳会失效，故而放弃了Clutch而采用dumpdecrypted。本篇文章就是记录用dumpdecrypted砸壳的过程以及其中的注意点。</p>
-<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>砸壳需要的东西：</p>
-<blockquote>
-<ul>
-<li><a href="https://github.com/stefanesser/dumpdecrypted">dumpdecrypted</a></li>
-<li>越狱的iOS设备</li>
-<li>OpenSSH（Cydia）</li>
-<li>iFile（Cydia）</li>
-<li>Cycript（Cydia）</li>
-<li>XCode</li>
-<li>Command Line Tools</li>
-</ul>
-</blockquote>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
     <div class="article-category tagcloud">
     <a class="article-category-link" href="/categories/iOS/">iOS</a>
     </div>
 
 
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/10/03/dumpdecrypted砸壳记录/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
+          
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
-  
 </article>
-
-
-
-
-
-
-
-
-
   
-    <article id="post-iOS OpenDev踩坑记录" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="/2016/09/20/iOS OpenDev踩坑记录/" class="article-date">
-      <time datetime="2016-09-20T14:52:58.000Z" itemprop="datePublished">2016-09-20</time>
-</a>
-    </div>
+    </div></section>
   
-  <div class="article-inner">
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/20/iOS OpenDev踩坑记录/">iOS OpenDev踩坑记录</a>
-    </h1>
-  
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近在研究iOS逆向工程，需要用到iOSDev工具，心想那就安装呗，多大点事儿。谁知道自己有点too young too simple，原以为下载完安装包再按步骤点点点就完了，谁知道到了最后一步，它给我来个安装失败。真是没有一点点防备啊，于是各种找办法解决安装问题，最终解决了，于是，决定把解决的过程写下来，方便以后回顾。<br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/iOS逆向工程/">iOS逆向工程</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/09/20/iOS OpenDev踩坑记录/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-iOS APP砸壳小记" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/09/18/iOS APP砸壳小记/" class="article-date">
-      <time datetime="2016-09-18T01:07:15.000Z" itemprop="datePublished">2016-09-18</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/18/iOS APP砸壳小记/">iOS APP砸壳小记</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在逆向工程中，砸壳是很必要并且不可缺少的一个步骤。所谓“壳”，其实就是苹果给应用加密的一层保护，我们只要是从APP Store上下载的APP都是带壳的。带壳的APP是无法进行class-dump以及hook等操作，因此，需要对APP进行砸壳。接下来，我以微信为例来进行砸壳。<br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/iOS逆向工程/">iOS逆向工程</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/09/18/iOS APP砸壳小记/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
-    </nav>
-  
 </div>
       <footer id="footer">
     <div class="outer">
@@ -572,6 +282,17 @@
         };
     })
 </script>
+
+    <button class="hide-labels">TAG 开关</button>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js">
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("button").click(function() {
+                $(".article-info").toggle(200);
+            });
+        });
+    </script>
 
 <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>
