@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-09-12T16:17:37.300Z</updated>
+  <updated>2018-10-23T03:48:53.757Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -16,11 +16,35 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>反射如何工作</title>
+    <link href="http://yoursite.com/2018/10/22/HowMirrorWorks/"/>
+    <id>http://yoursite.com/2018/10/22/HowMirrorWorks/</id>
+    <published>2018-10-22T03:32:28.000Z</published>
+    <updated>2018-10-23T03:48:53.757Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文地址 &lt;a href=&quot;https://swift.org/blog/how-mirror-works/?utm_source=mybridge&amp;amp;utm_medium=blog&amp;amp;utm_campaign=read_more&quot;&gt;https://swift.org/blog/how-mirror-works/?utm_source=mybridge&amp;amp;utm_medium=blog&amp;amp;utm_campaign=read_more&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;虽然 swift 是一门特别强调静态类型的语言，但是它同时也支持丰富的元数据类型，也就是说允许在运行时检查代码和操作任意值。这种特性通过 &lt;code&gt;Mirror&lt;/code&gt; API 暴露给开发人员。你可能会很好奇，&lt;code&gt;Mirror&lt;/code&gt; 是如何在如此强调静态类型的语言中工作的？让我们来一探究竟。&lt;/p&gt;
+&lt;h3 id=&quot;免责声明&quot;&gt;&lt;a href=&quot;#免责声明&quot; class=&quot;headerlink&quot; title=&quot;免责声明&quot;&gt;&lt;/a&gt;免责声明&lt;/h3&gt;&lt;p&gt;接下来所讲得内容是内部实现的细节，所涉及的代码是在当前版本中的写法，在将来可能会发生改变。当 ABI 稳定后，元数据将变成固定和可信赖的格式，但是现在它仍会发生改变。如果你写常规的 swift 代码，不要依赖于元数据。如果你要编写的代码所要实现的是比 &lt;code&gt;Mirror&lt;/code&gt; API 所提供的更复杂的反射机制的话，本篇文章将会启发你它们是如何一起配合的，但是要记住所有一切在未来都可能发生改变。&lt;/p&gt;
+&lt;h3 id=&quot;接口&quot;&gt;&lt;a href=&quot;#接口&quot; class=&quot;headerlink&quot; title=&quot;接口&quot;&gt;&lt;/a&gt;接口&lt;/h3&gt;&lt;p&gt;&lt;code&gt;Mirror(reflecting:)&lt;/code&gt; 初始化器得参数接受任意值。返回的 &lt;code&gt;Mirror&lt;/code&gt; 实例提供关于这个值的信息，主要是它所包含的子项。每个子项包含一个值和一个可选的标签。然后，你就可以在不需要知道编译时的任何类型信息的情况下，使用 &lt;code&gt;Mirror&lt;/code&gt; 去遍历一个对象的所有子项。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Mirror&lt;/code&gt; 允许类型在遵守 &lt;code&gt;CustomReflectable&lt;/code&gt; 协议的条件下，提供自定义的表现。这种特性对于那些希望展示比从内省中获得更多信息的类来说是特别有用的。例如，&lt;code&gt;Array&lt;/code&gt; 遵守 &lt;code&gt;CustomReflectable&lt;/code&gt; 协议并且将所有的元素暴露为未标签化的子项。 &lt;code&gt;Dictionary&lt;/code&gt; 使用这种特性将所有的键值对暴露为标签化的子项。&lt;/p&gt;
+&lt;p&gt;对于所有其他的类型而言， &lt;code&gt;Mirror&lt;/code&gt; 在值的真实内容基础上做了一些魔法操作生成一列子项。对于结构体和类而言，它将存储的属性作为子项展示。对于元组而言，它展示的是元组的元素。枚举则是展示每种情况和其对应的值（如果有的话）。&lt;/p&gt;
+&lt;p&gt;黑魔法是如何工作的？让我们来看一看。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="翻译" scheme="http://yoursite.com/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>利用 KVO 解决 swizzle 失效问题</title>
     <link href="http://yoursite.com/2018/09/12/%E5%88%A9%E7%94%A8KVO%E8%A7%A3%E5%86%B3swizzle%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/"/>
     <id>http://yoursite.com/2018/09/12/利用KVO解决swizzle失效问题/</id>
     <published>2018-09-12T13:11:23.000Z</published>
-    <updated>2018-09-12T16:17:37.300Z</updated>
+    <updated>2018-09-12T16:17:37.000Z</updated>
     
     <summary type="html">
     
@@ -41,7 +65,7 @@
     <link href="http://yoursite.com/2017/11/18/%E6%8E%A2%E7%A9%B6%20iOS%2011%20%E4%B8%8B%E7%9A%84%20UIDebuggingInformationOverlay/"/>
     <id>http://yoursite.com/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/</id>
     <published>2017-11-18T12:43:48.000Z</published>
-    <updated>2018-08-27T05:05:35.467Z</updated>
+    <updated>2018-08-27T05:05:35.000Z</updated>
     
     <summary type="html">
     
@@ -63,7 +87,7 @@
     <link href="http://yoursite.com/2017/10/04/Weak%20%E5%B1%9E%E6%80%A7%E5%9C%A8%20dealloc%20%E8%83%8C%E5%90%8E%E7%9A%84%E9%80%BB%E8%BE%91/"/>
     <id>http://yoursite.com/2017/10/04/Weak 属性在 dealloc 背后的逻辑/</id>
     <published>2017-10-04T09:29:32.000Z</published>
-    <updated>2018-08-27T05:05:28.364Z</updated>
+    <updated>2018-08-27T05:05:28.000Z</updated>
     
     <summary type="html">
     
@@ -240,7 +264,7 @@
     <link href="http://yoursite.com/2016/08/24/%E6%8B%86%E8%A7%A3ARC%E4%B8%8B%E7%9A%84self/"/>
     <id>http://yoursite.com/2016/08/24/拆解ARC下的self/</id>
     <published>2016-08-24T13:23:28.000Z</published>
-    <updated>2018-09-12T14:40:13.135Z</updated>
+    <updated>2018-09-12T14:40:13.000Z</updated>
     
     <summary type="html">
     
@@ -391,26 +415,6 @@
 &lt;p&gt;When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class. As a result the value of the isa pointer does not necessarily reflect the actual class of the instance.&lt;/p&gt;
 &lt;p&gt;You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.&lt;/p&gt;
 &lt;/blockquote&gt;
-    
-    </summary>
-    
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>庖丁解牛KVO（一）——KVO概览和使用</title>
-    <link href="http://yoursite.com/2016/04/13/%E5%BA%96%E4%B8%81%E8%A7%A3%E7%89%9BKVO%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94KVO%E6%A6%82%E8%A7%88%E5%92%8C%E4%BD%BF%E7%94%A8/"/>
-    <id>http://yoursite.com/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/</id>
-    <published>2016-04-13T10:21:33.000Z</published>
-    <updated>2016-10-10T11:58:26.000Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（&lt;code&gt;-bind:toObject:withKeyPath:options:&lt;/code&gt;）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。&lt;/p&gt;
-&lt;p&gt;KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。&lt;/p&gt;
-&lt;p&gt;在通知机制中，KVO与&lt;code&gt;NSNotification&lt;/code&gt;提供的通知机制类似，但是也存在很鲜明的区别。&lt;code&gt;NSNotification&lt;/code&gt;是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。&lt;br&gt;
     
     </summary>
     

@@ -195,6 +195,77 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-UIImage加载图片方式的研究" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/20/UIImage加载图片方式的研究/" class="article-date">
+      <time datetime="2015-10-20T11:56:39.000Z" itemprop="datePublished">2015-10-20</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/20/UIImage加载图片方式的研究/">UIImage加载图片方式的研究</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>常用的UIImage加载图片的方式有以下几种：</p>
+<ul>
+<li><code>[UIImage imageNamed:name]</code></li>
+<li><code>[UIImage imageWithContentsOfFile:name]</code></li>
+<li><code>[UIImage imageWithData:data]</code></li>
+<li><code>[UIImage imageWithCGImage:imageRef]</code></li>
+<li><code>[UIImage imageWithCIImage:obj]</code></li>
+</ul>
+<p>以上方法中<code>imageNamed:</code>和<code>imageWitData:</code>应用程序会对其自动缓存，不过，它们缓存的实现方式并不相同，后面会有详细说明。除去这两个方法以外剩下的三个方法默认情况下是不会产生缓存的，这三个方法的主要区别在于它们的数据源：<code>imageWithContentsOfFile:</code>从指定文件中创建对象，<code>imageWithCGImage:</code>以CGImageRef来创建对象，<code>imageWithCIImage:</code>以CIImage对象来创建对象。<br>最后两种方法平时用的相对会少一些，简要解释一下CGImage与CIImage的区别：CGImageRef只能代表位图，如果你需要与bitmap数据打交道，无疑CGImage是非常合适的选择。CGImageRef以CG开头就不难想到CGImageRef的相关操作都需要在Core Graphics中进行，比如混合、遮罩等等。CIImage以CI开头，即Core Image，不难理解CIImage是底层的数据对象，它通常包含了与它相关的图像数据，而不是一个图像。默认情况下，CIImage对象是不会被绘图系统渲染的，除非是得到明确的指令。这种机制（“lazy evaluation”）允许核心绘图系统尽可能高效地运行。CIImage通常被运用在GPU优化图像滤镜算法当中。<br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/2015/10/20/UIImage加载图片方式的研究/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Xcode-Target、Project、WorkSpace、Scheme" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">

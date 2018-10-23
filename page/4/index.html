@@ -195,6 +195,70 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-iOS 10推送通知小记（上）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/07/23/iOS 10推送通知小记（上）/" class="article-date">
+      <time datetime="2016-07-23T06:22:31.000Z" itemprop="datePublished">2016-07-23</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/23/iOS 10推送通知小记（上）/">iOS 10推送通知小记（上）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>最近在体验iOS 10Beta版的过程中，我发现iOS 10在锁屏界面的变动比较大，与之前的交互逻辑完全不同。与此同时，推送通知消息也有了改进，比如支持3D Touch，可以展示更多的信息，通知内容可以包含图片等等。按照逻辑推断iOS 10推送通知的API会有变化，于是，我赶紧查阅了Xcode 8Beta中的文档以及WWDC2016的视频，果然发现了玄机。</p>
+<h3 id="推送机制"><a href="#推送机制" class="headerlink" title="推送机制"></a>推送机制</h3>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/2016/07/23/iOS 10推送通知小记（上）/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-iOS 10 UICollectionView新特性小记" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -445,71 +509,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-庖丁解牛KVO（一）——KVO概览和使用" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/" class="article-date">
-      <time datetime="2016-04-13T10:21:33.000Z" itemprop="datePublished">2016-04-13</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/">庖丁解牛KVO（一）——KVO概览和使用</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（<code>-bind:toObject:withKeyPath:options:</code>）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。</p>
-<p>KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。</p>
-<p>在通知机制中，KVO与<code>NSNotification</code>提供的通知机制类似，但是也存在很鲜明的区别。<code>NSNotification</code>是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。<br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/iOS/">iOS</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>

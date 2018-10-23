@@ -195,6 +195,75 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-HowMirrorWorks" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/10/22/HowMirrorWorks/" class="article-date">
+      <time datetime="2018-10-22T03:32:28.000Z" itemprop="datePublished">2018-10-22</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/22/HowMirrorWorks/">反射如何工作</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>原文地址 <a href="https://swift.org/blog/how-mirror-works/?utm_source=mybridge&amp;utm_medium=blog&amp;utm_campaign=read_more">https://swift.org/blog/how-mirror-works/?utm_source=mybridge&amp;utm_medium=blog&amp;utm_campaign=read_more</a></p>
+<p>虽然 swift 是一门特别强调静态类型的语言，但是它同时也支持丰富的元数据类型，也就是说允许在运行时检查代码和操作任意值。这种特性通过 <code>Mirror</code> API 暴露给开发人员。你可能会很好奇，<code>Mirror</code> 是如何在如此强调静态类型的语言中工作的？让我们来一探究竟。</p>
+<h3 id="免责声明"><a href="#免责声明" class="headerlink" title="免责声明"></a>免责声明</h3><p>接下来所讲得内容是内部实现的细节，所涉及的代码是在当前版本中的写法，在将来可能会发生改变。当 ABI 稳定后，元数据将变成固定和可信赖的格式，但是现在它仍会发生改变。如果你写常规的 swift 代码，不要依赖于元数据。如果你要编写的代码所要实现的是比 <code>Mirror</code> API 所提供的更复杂的反射机制的话，本篇文章将会启发你它们是如何一起配合的，但是要记住所有一切在未来都可能发生改变。</p>
+<h3 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h3><p><code>Mirror(reflecting:)</code> 初始化器得参数接受任意值。返回的 <code>Mirror</code> 实例提供关于这个值的信息，主要是它所包含的子项。每个子项包含一个值和一个可选的标签。然后，你就可以在不需要知道编译时的任何类型信息的情况下，使用 <code>Mirror</code> 去遍历一个对象的所有子项。</p>
+<p><code>Mirror</code> 允许类型在遵守 <code>CustomReflectable</code> 协议的条件下，提供自定义的表现。这种特性对于那些希望展示比从内省中获得更多信息的类来说是特别有用的。例如，<code>Array</code> 遵守 <code>CustomReflectable</code> 协议并且将所有的元素暴露为未标签化的子项。 <code>Dictionary</code> 使用这种特性将所有的键值对暴露为标签化的子项。</p>
+<p>对于所有其他的类型而言， <code>Mirror</code> 在值的真实内容基础上做了一些魔法操作生成一列子项。对于结构体和类而言，它将存储的属性作为子项展示。对于元组而言，它展示的是元组的元素。枚举则是展示每种情况和其对应的值（如果有的话）。</p>
+<p>黑魔法是如何工作的？让我们来看一看。</p>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/翻译/">翻译</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/2018/10/22/HowMirrorWorks/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-利用KVO解决swizzle失效问题" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -438,69 +507,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/10/10/CFNetwork学习笔记（四）/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-CFNetwork学习笔记（三）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/10/07/CFNetwork学习笔记（三）/" class="article-date">
-      <time datetime="2016-10-07T06:39:12.000Z" itemprop="datePublished">2016-10-07</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/10/07/CFNetwork学习笔记（三）/">CFNetwork学习笔记（三）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要介绍如何创建、发送和接收HTTP请求和响应。</p>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/MacOS/">MacOS</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/10/07/CFNetwork学习笔记（三）/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>
