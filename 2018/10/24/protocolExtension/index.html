@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>为 Objective-C 下的 protocol 添加默认实现 | iiiCeBlink</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近有业务有需求需要为 UIViewController 的 UIViewControllerTransitioningDelegate 协议提供默认的实现，使用 swift 开发默认是支持给协议添加默认实现的，但是，目前主项目中使用的是 Objective-C 做开发，而 Objective-C 下是不支持给协议添加默认实现的。调研一番后，找到了合适的解决方案—— PKProtocolExten">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为 Objective-C 下的 protocol 添加默认实现">
+<meta property="og:url" content="http://yoursite.com/2018/10/24/protocolExtension/index.html">
+<meta property="og:site_name" content="iiiCeBlink">
+<meta property="og:description" content="最近有业务有需求需要为 UIViewController 的 UIViewControllerTransitioningDelegate 协议提供默认的实现，使用 swift 开发默认是支持给协议添加默认实现的，但是，目前主项目中使用的是 Objective-C 做开发，而 Objective-C 下是不支持给协议添加默认实现的。调研一番后，找到了合适的解决方案—— PKProtocolExten">
+<meta property="og:updated_time" content="2018-10-24T13:52:57.841Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为 Objective-C 下的 protocol 添加默认实现">
+<meta name="twitter:description" content="最近有业务有需求需要为 UIViewController 的 UIViewControllerTransitioningDelegate 协议提供默认的实现，使用 swift 开发默认是支持给协议添加默认实现的，但是，目前主项目中使用的是 Objective-C 做开发，而 Objective-C 下是不支持给协议添加默认实现的。调研一番后，找到了合适的解决方案—— PKProtocolExten">
+  
+    <link rel="alternative" href="/atom.xml" title="iiiCeBlink" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.ico">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">iiiCeBlink</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/Home">博客首页</a></li>
+                        
+                            <li><a href="/tags">静心阅读</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/iiiCeBlink" title="github">github</a>
+                            
+                                <a class="fl rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+                            
+                                <a class="fl stackoverflow" target="_blank" href="https://stackoverflow.com/users/7310173/zakariyyasv?tab=profile" title="stackoverflow">stackoverflow</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://iiiCeBlink.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">iiiCeBlink</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">iiiCeBlink</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/Home">博客首页</a></li>
+                
+                    <li><a href="/tags">静心阅读</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/iiiCeBlink" title="github">github</a>
+                    
+                        <a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+                    
+                        <a class="stackoverflow" target="_blank" href="https://stackoverflow.com/users/7310173/zakariyyasv?tab=profile" title="stackoverflow">stackoverflow</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-protocolExtension" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/10/24/protocolExtension/" class="article-date">
+      <time datetime="2018-10-24T03:53:32.000Z" itemprop="datePublished">2018-10-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      为 Objective-C 下的 protocol 添加默认实现
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>最近有业务有需求需要为 <code>UIViewController</code> 的 <code>UIViewControllerTransitioningDelegate</code> 协议提供默认的实现，使用 swift 开发默认是支持给协议添加默认实现的，但是，目前主项目中使用的是 Objective-C 做开发，而 Objective-C 下是不支持给协议添加默认实现的。调研一番后，找到了合适的解决方案—— <code>PKProtocolExtension</code> 。</p>
+<h3 id="原理解析"><a href="#原理解析" class="headerlink" title="原理解析"></a>原理解析</h3><h4 id="宏定义"><a href="#宏定义" class="headerlink" title="宏定义"></a>宏定义</h4><p><code>PKProtocolExtension.h</code> 中的内容如下：</p>
+<a id="more"></a>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="comment">// For a magic reserved keyword color, use @defs(your_protocol_name)</span></div><div class="line"><span class="meta">#define defs _pk_extension</span></div><div class="line"></div><div class="line"><span class="comment">// Interface</span></div><div class="line"><span class="meta">#define _pk_extension($protocol) _pk_extension_imp($protocol, _pk_get_container_class($protocol))</span></div><div class="line"></div><div class="line"><span class="comment">// Implementation</span></div><div class="line"><span class="meta">#define _pk_extension_imp($protocol, $container_class) \</span></div><div class="line">    protocol $protocol; \</div><div class="line">    <span class="class"><span class="keyword">@interface</span> $<span class="title">container_class</span> : <span class="title">NSObject</span> &lt;$<span class="title">protocol</span>&gt; @<span class="title">end</span> \</span></div><div class="line">    <span class="class"><span class="keyword">@implementation</span> $<span class="title">container_class</span> \</span></div><div class="line">    + (<span class="keyword">void</span>)load &#123; \</div><div class="line">        _pk_extension_load(<span class="class"><span class="keyword">@protocol</span>($<span class="title">protocol</span>), $<span class="title">container_class</span>.<span class="title">class</span>); \</span></div><div class="line">    &#125; \</div><div class="line"></div><div class="line"><span class="comment">// Get container class name by counter</span></div><div class="line"><span class="meta">#define _pk_get_container_class($protocol) _pk_get_container_class_imp($protocol, __COUNTER__)</span></div><div class="line"><span class="meta">#define _pk_get_container_class_imp($protocol, $counter) _pk_get_container_class_imp_concat(__PKContainer_, $protocol, $counter)</span></div><div class="line"><span class="meta">#define _pk_get_container_class_imp_concat($a, $b, $c) $a ## $b ## _ ## $c</span></div><div class="line"></div><div class="line"><span class="keyword">void</span> _pk_extension_load(Protocol *protocol, Class containerClass);</div></pre></td></tr></table></figure>
+<p>首先是定义了保留关键字 <code>@defs</code> 来封装真正的实现宏。<code>defs</code> 、 <code>_pk_extension($protocol)</code> 、 <code>_pk_extension_imp($protocol, $container_class)</code> 三个宏组合后的作用是创建自定义的容器类，然后实现协议的方法，这些实现即为该协议的默认实现。而容器类的名字则是由 <code>_pk_get_container_class($protocol)</code> 、 <code>_pk_get_container_class_imp($protocol, $counter)</code> 和 <code>_pk_get_container_class_imp_concat($a, $b, $c)</code> 三个宏来决定。这里面的 <code>__COUNTER__</code> 是累加数字宏，默认是 0 ，每调用一次，就会在之前的结果上加一。 <code>##</code> 是连接符，将符号两边的参数连接起来，如果有一个参数为空，它会自动把空余的部分吃掉。以上面的代码为例，如果 $b 为空，则实际的字符串为 $a_$c 。</p>
+<p>为了更直观地看到宏的作用，我们来写一个例子：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Protocol</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">Forkable</span> &lt;<span class="title">NSObject</span>&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">@optional</span></div><div class="line">- (<span class="keyword">void</span>)fork;</div><div class="line"></div><div class="line"><span class="keyword">@required</span></div><div class="line">- (<span class="built_in">NSString</span> *)github;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="comment">// Protocol Extension</span></div><div class="line"></div><div class="line"><span class="keyword">@defs</span>(Forkable)</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)fork &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Forkable protocol extension: I'm forking (%@)."</span>, <span class="keyword">self</span>.github);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">NSString</span> *)github &#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">@"This is a required method, concrete class must override me."</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>展开宏定义后如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Protocol</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">Forkable</span> &lt;<span class="title">NSObject</span>&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">@optional</span></div><div class="line">- (<span class="keyword">void</span>)fork;</div><div class="line"></div><div class="line"><span class="keyword">@required</span></div><div class="line">- (<span class="built_in">NSString</span> *)github;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="comment">// Protocol Extension</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">Forkable</span>; @<span class="title">interface</span> <span class="title">__PKContainer_Forkable_0</span> : <span class="title">NSObject</span> &lt;<span class="title">Forkable</span>&gt; @<span class="title">end</span> </span></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">__PKContainer_Forkable_0</span> + (<span class="title">void</span>)<span class="title">load</span> </span>&#123; _pk_extension_load(<span class="class"><span class="keyword">@protocol</span>(<span class="title">Forkable</span>), <span class="title">__PKContainer_Forkable_0</span>.<span class="title">class</span>); &#125;</span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)fork &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Forkable protocol extension: I'm forking (%@)."</span>, <span class="keyword">self</span>.github);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">NSString</span> *)github &#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">@"This is a required method, concrete class must override me."</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<h4 id="提取协议方法及实现"><a href="#提取协议方法及实现" class="headerlink" title="提取协议方法及实现"></a>提取协议方法及实现</h4><p>从宏定义预编译之后的代码可以看出，核心方法是 <code>_pk_extension_load</code> 。该方法的作用是将容器类遵循的协议方法和实现保存到一个全局数组 <code>allExtendedProtocols</code> 中，数组元素的类型定义为一个结构体 <code>PKExtendedProtocol</code> ：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</div><div class="line">    Protocol *__unsafe_unretained protocol;</div><div class="line">    Method *instanceMethods;</div><div class="line">    <span class="keyword">unsigned</span> instanceMethodCount;</div><div class="line">    Method *classMethods;</div><div class="line">    <span class="keyword">unsigned</span> classMethodCount;</div><div class="line">&#125; PKExtendedProtocol;</div></pre></td></tr></table></figure>
+<p>提取的逻辑处理则是依赖于 <code>_pk_extension_create_merged</code> 和 <code>_pk_extension_merge</code> 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">Method *_pk_extension_create_merged(Method *existMethods, <span class="keyword">unsigned</span> existMethodCount, Method *appendingMethods, <span class="keyword">unsigned</span> appendingMethodCount) &#123;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (existMethodCount == <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">return</span> appendingMethods;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">unsigned</span> mergedMethodCount = existMethodCount + appendingMethodCount;</div><div class="line">    Method *mergedMethods = malloc(mergedMethodCount * <span class="keyword">sizeof</span>(Method));</div><div class="line">    memcpy(mergedMethods, existMethods, existMethodCount * <span class="keyword">sizeof</span>(Method));</div><div class="line">    memcpy(mergedMethods + existMethodCount, appendingMethods, appendingMethodCount * <span class="keyword">sizeof</span>(Method));</div><div class="line">    <span class="keyword">return</span> mergedMethods;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">void</span> _pk_extension_merge(PKExtendedProtocol *extendedProtocol, Class containerClass) &#123;</div><div class="line">    </div><div class="line">    <span class="comment">// Instance methods</span></div><div class="line">    <span class="keyword">unsigned</span> appendingInstanceMethodCount = <span class="number">0</span>;</div><div class="line">    <span class="comment">// 获取宿主类实现的协议方法列表</span></div><div class="line">    Method *appendingInstanceMethods = class_copyMethodList(containerClass, &amp;appendingInstanceMethodCount);</div><div class="line">    </div><div class="line">    Method *mergedInstanceMethods = _pk_extension_create_merged(extendedProtocol-&gt;instanceMethods,</div><div class="line">                                                                extendedProtocol-&gt;instanceMethodCount,</div><div class="line">                                                                appendingInstanceMethods,</div><div class="line">                                                                appendingInstanceMethodCount);</div><div class="line">    free(extendedProtocol-&gt;instanceMethods);</div><div class="line">    extendedProtocol-&gt;instanceMethods = mergedInstanceMethods;</div><div class="line">    extendedProtocol-&gt;instanceMethodCount += appendingInstanceMethodCount;</div><div class="line">    </div><div class="line">    <span class="comment">// Class methods</span></div><div class="line">    <span class="keyword">unsigned</span> appendingClassMethodCount = <span class="number">0</span>;</div><div class="line">    Method *appendingClassMethods = class_copyMethodList(object_getClass(containerClass), &amp;appendingClassMethodCount);</div><div class="line">    Method *mergedClassMethods = _pk_extension_create_merged(extendedProtocol-&gt;classMethods,</div><div class="line">                                                             extendedProtocol-&gt;classMethodCount,</div><div class="line">                                                             appendingClassMethods,</div><div class="line">                                                             appendingClassMethodCount);</div><div class="line">    free(extendedProtocol-&gt;classMethods);</div><div class="line">    extendedProtocol-&gt;classMethods = mergedClassMethods;</div><div class="line">    extendedProtocol-&gt;classMethodCount += appendingClassMethodCount;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="注入协议的方法和实现"><a href="#注入协议的方法和实现" class="headerlink" title="注入协议的方法和实现"></a>注入协议的方法和实现</h4><p>成功提取相关协议的方法和实现后，怎么注入并且何时注入到相应的类中呢？我们知道在 main 方法调用之前，所有的类都已经注册到 runtime 中了，那么，在执行 main 方法之前去注入无疑是比较恰当的时机，但是，这个时机又必须得比加载 load 方法晚，否则，还没提取完协议方法，就到了注入环节无疑是不正确的。要完成这个目标，就需要借助于 <code>__attribute__((constructor))</code> 。被该属性修饰过的方法会在 <code>load</code> 方法之后 main 方法之前被调用。我们在注入方法中获取所有注册类，然后循环遍历找到符合条件的类，再将对应的协议方法和实现注入到该类中即可。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">__attribute__((constructor)) <span class="keyword">static</span> <span class="keyword">void</span> _pk_extension_inject_entry(<span class="keyword">void</span>) &#123;</div><div class="line">    </div><div class="line">    pthread_mutex_lock(&amp;protocolsLoadingLock);</div><div class="line"></div><div class="line">    <span class="keyword">unsigned</span> classCount = <span class="number">0</span>;</div><div class="line">    Class *allClasses = objc_copyClassList(&amp;classCount);</div><div class="line">    </div><div class="line">    <span class="keyword">@autoreleasepool</span> &#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">unsigned</span> protocolIndex = <span class="number">0</span>; protocolIndex &lt; extendedProtcolCount; ++protocolIndex) &#123;</div><div class="line">            PKExtendedProtocol extendedProtcol = allExtendedProtocols[protocolIndex];</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">unsigned</span> classIndex = <span class="number">0</span>; classIndex &lt; classCount; ++classIndex) &#123;</div><div class="line">                Class <span class="keyword">class</span> = allClasses[classIndex];</div><div class="line">                <span class="keyword">if</span> (!class_conformsToProtocol(<span class="keyword">class</span>, extendedProtcol.protocol)) &#123;</div><div class="line">                    <span class="keyword">continue</span>;</div><div class="line">                &#125;</div><div class="line">                _pk_extension_inject_class(<span class="keyword">class</span>, extendedProtcol);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    pthread_mutex_unlock(&amp;protocolsLoadingLock);</div><div class="line">    </div><div class="line">    free(allClasses);</div><div class="line">    free(allExtendedProtocols);</div><div class="line">    extendedProtcolCount = <span class="number">0</span>, extendedProtcolCapacity = <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">void</span> _pk_extension_inject_class(Class targetClass, PKExtendedProtocol extendedProtocol) &#123;</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> methodIndex = <span class="number">0</span>; methodIndex &lt; extendedProtocol.instanceMethodCount; ++methodIndex) &#123;</div><div class="line">        Method method = extendedProtocol.instanceMethods[methodIndex];</div><div class="line">        SEL selector = method_getName(method);</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> (class_getInstanceMethod(targetClass, selector)) &#123;</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        IMP imp = method_getImplementation(method);</div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *types = method_getTypeEncoding(method);</div><div class="line">        class_addMethod(targetClass, selector, imp, types);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    Class targetMetaClass = object_getClass(targetClass);</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> methodIndex = <span class="number">0</span>; methodIndex &lt; extendedProtocol.classMethodCount; ++methodIndex) &#123;</div><div class="line">        Method method = extendedProtocol.classMethods[methodIndex];</div><div class="line">        SEL selector = method_getName(method);</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> (selector == <span class="keyword">@selector</span>(load) || selector == <span class="keyword">@selector</span>(initialize)) &#123;</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (class_getInstanceMethod(targetMetaClass, selector)) &#123;</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        IMP imp = method_getImplementation(method);</div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *types = method_getTypeEncoding(method);</div><div class="line">        class_addMethod(targetMetaClass, selector, imp, types);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>protocolExtension</code> 依赖于 <code>runtime</code> ，在 <code>load</code> 方法执行之后向已经在 <code>runtime</code> 中注册类中挑选合适的类进行注入操作。但是，这种做法本身也有一些值得商榷的地方，比如，在注入方法中遍历所有已注册的类的操作，本身就是耗时操作，会影响 App 的启动速度。有想过使用 <code>runtime</code> 的消息转发机制来进行懒加载，但是，这么做的问题在于如果某个实现子类重写了消息转发机制的相关方法，并且没有调用父类的相关方法，则该类的注入操作便会失败。</p>
+
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipayImg.png" alt="支付宝" /></span>
+                </div>
+              
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/10/24/protocolExtension/">为 Objective-C 下的 protocol 添加默认实现</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 iiiCeBlink 的个人博客">iiiCeBlink</a></p>
+        <p><span>发布时间:</span>2018年10月24日 - 11时53分</p>
+        <p><span>最后更新:</span>2018年10月24日 - 21时52分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/10/24/protocolExtension/" title="为 Objective-C 下的 protocol 添加默认实现">http://yoursite.com/2018/10/24/protocolExtension/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/10/24/protocolExtension/　　作者: iiiCeBlink" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/22/HowMirrorWorks/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">反射如何工作</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#原理解析"><span class="toc-number">1.</span> <span class="toc-text">原理解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#宏定义"><span class="toc-number">1.1.</span> <span class="toc-text">宏定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#提取协议方法及实现"><span class="toc-number">1.2.</span> <span class="toc-text">提取协议方法及实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入协议的方法和实现"><span class="toc-number">1.3.</span> <span class="toc-text">注入协议的方法和实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <section id="comments">
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'iiiCeBlink'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/10/22/HowMirrorWorks/" title="下一篇: 反射如何工作">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/10/24/protocolExtension/">为 Objective-C 下的 protocol 添加默认实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/22/HowMirrorWorks/">反射如何工作</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/12/利用KVO解决swizzle失效问题/">利用 KVO 解决 swizzle 失效问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/">探究 iOS 11 下的 UIDebuggingInformationOverlay</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/">Weak 属性在 dealloc() 背后的逻辑</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/CFNetwork学习笔记（四）/">CFNetwork学习笔记（四）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/07/CFNetwork学习笔记（三）/">CFNetwork学习笔记（三）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/06/CFNetwork学习笔记（二）/">CFNetwork学习笔记（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/CFNetwork学习笔记（一）/">CFNetwork学习笔记（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/03/dumpdecrypted砸壳记录/">dumpdecrypted砸壳记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/20/iOS OpenDev踩坑记录/">iOS OpenDev踩坑记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/18/iOS APP砸壳小记/">iOS APP砸壳小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/04/iOS APP中调用私有方法/">iOS APP中调用私有方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/24/拆解ARC下的self/">拆解ARC下的self</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/30/CallKit学习笔记/">CallKit学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/26/iOS 10推送通知小记（下）/">iOS 10推送通知小记（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/23/iOS 10推送通知小记（上）/">iOS 10推送通知小记（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/18/iOS 10 UICollectionView新特性小记/">iOS 10 UICollectionView新特性小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/20/H5游戏接入技术小结（下）/">H5游戏接入技术小结（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/17/H5游戏接入技术小结（上）/">H5游戏接入技术小结（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">庖丁解牛KVO（二）——KVO实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/">庖丁解牛KVO（一）——KVO概览和使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/21/UIScrollView实践小记——分页/">【转】UIScrollView实践小记——分页</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/12/Mac workflow小记/">Mac workflow小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/12/抽丝剥茧之block（上）/">抽丝剥茧之block（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">深入理解NSMapTable、NSHashTable、NSPointerArray</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/06/YYCache源码学习/">YYCache源码学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/02/20/runtime对containsString方法的小改进/">runtime对containsString方法的小改进</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/14/ApplePay线上支付教程/">ApplePay线上支付教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/28/UIButton之titleLabel、imageView解析/">UIButton之titleLabel、imageView解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/17/UICollectionView Layout学习笔记/">UICollectionView Layout学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/20/UIImage加载图片方式的研究/">UIImage加载图片方式的研究</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/18/Xcode-Target、Project、WorkSpace、Scheme/">Xcode-Target、Project、WorkSpace、Scheme</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/24/UINavigationBar背景色设置/">UINavigationBar背景色设置</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 iiiCeBlink
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

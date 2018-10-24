@@ -195,6 +195,69 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-CFNetwork学习笔记（四）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/10/10/CFNetwork学习笔记（四）/" class="article-date">
+      <time datetime="2016-10-10T08:46:53.000Z" itemprop="datePublished">2016-10-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/10/10/CFNetwork学习笔记（四）/">CFNetwork学习笔记（四）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讲述用CFHTTPAuthentication API如何与HTTP认证服务器交互，如何找到合适的认证对象和证书并填入到HTTP请求中。一般而言，如果HTTP服务器给你的HTTP请求返回401或407，就意味着服务器是认证服务器并且要求证书。在CFHTTPAuthentication API中，每个证书集合都被存储在CFHTTPAuthentication对象中。因此，每个不同的认证服务器和连接到服务器的不同用户都需要存储在独立的CFHTTPAuthentication对象中。为了能与服务器进行通信，你需要将CFHTTPAuthentication存储到HTTP请求当中。后面会对这些步骤进行详细解释。<br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/MacOS/">MacOS</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/2016/10/10/CFNetwork学习笔记（四）/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-CFNetwork学习笔记（三）" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -442,69 +505,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/10/03/dumpdecrypted砸壳记录/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-iOS OpenDev踩坑记录" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/09/20/iOS OpenDev踩坑记录/" class="article-date">
-      <time datetime="2016-09-20T14:52:58.000Z" itemprop="datePublished">2016-09-20</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/20/iOS OpenDev踩坑记录/">iOS OpenDev踩坑记录</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近在研究iOS逆向工程，需要用到iOSDev工具，心想那就安装呗，多大点事儿。谁知道自己有点too young too simple，原以为下载完安装包再按步骤点点点就完了，谁知道到了最后一步，它给我来个安装失败。真是没有一点点防备啊，于是各种找办法解决安装问题，最终解决了，于是，决定把解决的过程写下来，方便以后回顾。<br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/iOS逆向工程/">iOS逆向工程</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/09/20/iOS OpenDev踩坑记录/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>

@@ -195,6 +195,70 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-protocolExtension" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/10/24/protocolExtension/" class="article-date">
+      <time datetime="2018-10-24T03:53:32.000Z" itemprop="datePublished">2018-10-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/24/protocolExtension/">为 Objective-C 下的 protocol 添加默认实现</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>最近有业务有需求需要为 <code>UIViewController</code> 的 <code>UIViewControllerTransitioningDelegate</code> 协议提供默认的实现，使用 swift 开发默认是支持给协议添加默认实现的，但是，目前主项目中使用的是 Objective-C 做开发，而 Objective-C 下是不支持给协议添加默认实现的。调研一番后，找到了合适的解决方案—— <code>PKProtocolExtension</code> 。</p>
+<h3 id="原理解析"><a href="#原理解析" class="headerlink" title="原理解析"></a>原理解析</h3><h4 id="宏定义"><a href="#宏定义" class="headerlink" title="宏定义"></a>宏定义</h4><p><code>PKProtocolExtension.h</code> 中的内容如下：</p>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/2018/10/24/protocolExtension/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-HowMirrorWorks" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -444,69 +508,6 @@
       
         <p class="article-more-link">
           <a  href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-CFNetwork学习笔记（四）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/10/10/CFNetwork学习笔记（四）/" class="article-date">
-      <time datetime="2016-10-10T08:46:53.000Z" itemprop="datePublished">2016-10-10</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/10/10/CFNetwork学习笔记（四）/">CFNetwork学习笔记（四）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讲述用CFHTTPAuthentication API如何与HTTP认证服务器交互，如何找到合适的认证对象和证书并填入到HTTP请求中。一般而言，如果HTTP服务器给你的HTTP请求返回401或407，就意味着服务器是认证服务器并且要求证书。在CFHTTPAuthentication API中，每个证书集合都被存储在CFHTTPAuthentication对象中。因此，每个不同的认证服务器和连接到服务器的不同用户都需要存储在独立的CFHTTPAuthentication对象中。为了能与服务器进行通信，你需要将CFHTTPAuthentication存储到HTTP请求当中。后面会对这些步骤进行详细解释。<br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/MacOS/">MacOS</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/10/10/CFNetwork学习笔记（四）/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>

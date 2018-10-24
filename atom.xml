@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-10-23T03:48:53.757Z</updated>
+  <updated>2018-10-24T13:52:57.841Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,25 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>为 Objective-C 下的 protocol 添加默认实现</title>
+    <link href="http://yoursite.com/2018/10/24/protocolExtension/"/>
+    <id>http://yoursite.com/2018/10/24/protocolExtension/</id>
+    <published>2018-10-24T03:53:32.000Z</published>
+    <updated>2018-10-24T13:52:57.841Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近有业务有需求需要为 &lt;code&gt;UIViewController&lt;/code&gt; 的 &lt;code&gt;UIViewControllerTransitioningDelegate&lt;/code&gt; 协议提供默认的实现，使用 swift 开发默认是支持给协议添加默认实现的，但是，目前主项目中使用的是 Objective-C 做开发，而 Objective-C 下是不支持给协议添加默认实现的。调研一番后，找到了合适的解决方案—— &lt;code&gt;PKProtocolExtension&lt;/code&gt; 。&lt;/p&gt;
+&lt;h3 id=&quot;原理解析&quot;&gt;&lt;a href=&quot;#原理解析&quot; class=&quot;headerlink&quot; title=&quot;原理解析&quot;&gt;&lt;/a&gt;原理解析&lt;/h3&gt;&lt;h4 id=&quot;宏定义&quot;&gt;&lt;a href=&quot;#宏定义&quot; class=&quot;headerlink&quot; title=&quot;宏定义&quot;&gt;&lt;/a&gt;宏定义&lt;/h4&gt;&lt;p&gt;&lt;code&gt;PKProtocolExtension.h&lt;/code&gt; 中的内容如下：&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>反射如何工作</title>
@@ -390,31 +409,6 @@
     
       &lt;h3 id=&quot;概览&quot;&gt;&lt;a href=&quot;#概览&quot; class=&quot;headerlink&quot; title=&quot;概览&quot;&gt;&lt;/a&gt;概览&lt;/h3&gt;&lt;p&gt;这段时间忙着做游戏平台H5游戏的接入，趁着刚做完还热乎劲儿，将其中的技术要点总结下来。H5游戏的接入主要分为两个部分：游戏的下载和游戏对战。本篇博客着重讲述游戏的下载部分，下篇博客将着重讲述H5游戏与app通过JS进行数据交互以及在线对战的技术要点。&lt;/p&gt;
 &lt;p&gt;H5游戏资源本质上是由一些目录以及目录下的文件资源组成，要能够在app中运行H5游戏，就是要在&lt;code&gt;WKWebView&lt;/code&gt;的浏览器中用HTTPServer搭建本地服务，然后去加载游戏资源根目录下的index.html文件，换句话说index.html文件是游戏的入口文件。
-    
-    </summary>
-    
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>庖丁解牛KVO（二）——KVO实现原理</title>
-    <link href="http://yoursite.com/2016/04/23/%E5%BA%96%E4%B8%81%E8%A7%A3%E7%89%9BKVO%EF%BC%88%E4%BA%8C%EF%BC%89%E2%80%94%E2%80%94KVO%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
-    <id>http://yoursite.com/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/</id>
-    <published>2016-04-23T08:38:13.000Z</published>
-    <updated>2016-10-10T11:58:32.000Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;概览&quot;&gt;&lt;a href=&quot;#概览&quot; class=&quot;headerlink&quot; title=&quot;概览&quot;&gt;&lt;/a&gt;概览&lt;/h3&gt;&lt;p&gt;在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。&lt;/p&gt;
-&lt;p&gt;KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Automatic key-value observing is implemented using a technique called isa-swizzling.&lt;/p&gt;
-&lt;p&gt;The is a pointer, as the name suggests, points to the object’s class which maintains a dispatch table. This dispatch table essentially contains pointers to the methods the class implements, among other data.&lt;/p&gt;
-&lt;p&gt;When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class. As a result the value of the isa pointer does not necessarily reflect the actual class of the instance.&lt;/p&gt;
-&lt;p&gt;You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.&lt;/p&gt;
-&lt;/blockquote&gt;
     
     </summary>
     
