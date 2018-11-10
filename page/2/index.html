@@ -195,6 +195,71 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Weak 属性在 dealloc 背后的逻辑" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/" class="article-date">
+      <time datetime="2017-10-04T09:29:32.000Z" itemprop="datePublished">2017-10-04</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/">Weak 属性在 dealloc() 背后的逻辑</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>我们都知道在 ARC 环境无论是强指针还是弱指针都无需在 <code>dealloc</code> 设置为 <code>nil</code> ， ARC 会自动帮我们处理。然而，最近在项目中遇到这样一个问题，代码示例如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// class Foo</span></div><div class="line">- (<span class="keyword">void</span>)dealloc &#123;</div><div class="line">    <span class="keyword">if</span> (_obj) &#123;</div><div class="line">        [_obj removeObserver:[KVOObserverStub stub] forKeyPath:_keyPath];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中，<code>_obj</code> 是类 <code>Foo</code> 的 weak 属性，这段代码所做的工作是在 <code>Foo</code> 的实例对象销毁的时候，移除 <code>_obj</code> 对象上的观察者，否则，会导致 <code>KVO still registering when deallocated</code> 的 crash 。原以为这样写会 work ，然而在实际测试中发现，在触发 <code>dealloc</code> 方法时，<code>_obj</code> 此时已被置为 <code>nil</code> ，即 <code>[_obj removeObserver:[KVOObserverStub stub] forKeyPath:_keyPath];</code> 并不会触发。解决方案则是将 <code>_obj</code> 属性的修饰符由 <code>weak</code> 改为 <code>unsafe_unretained</code> 或者 <code>assign</code> 。但是，这样改可能会为其他代码引入 bug ，因为现在 ARC 不会自动为将 <code>_obj</code> 对象置为 <code>nil</code> ，需要去检查涉及 <code>_obj</code> 部分的代码。虽然这样解决问题了，但是，我还是对 <code>weak</code> 属性在其持有对象的 <code>dealloc</code> 方法触发时背后的逻辑很感兴趣。</p>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-CFNetwork学习笔记（四）" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -430,81 +495,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/10/05/CFNetwork学习笔记（一）/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-dumpdecrypted砸壳记录" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/10/03/dumpdecrypted砸壳记录/" class="article-date">
-      <time datetime="2016-10-03T02:14:41.000Z" itemprop="datePublished">2016-10-03</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/10/03/dumpdecrypted砸壳记录/">dumpdecrypted砸壳记录</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前一直采用Clutch对ipa包进行砸壳，后来发现Clutch在某些iOS版本下砸壳会失效，故而放弃了Clutch而采用dumpdecrypted。本篇文章就是记录用dumpdecrypted砸壳的过程以及其中的注意点。</p>
-<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>砸壳需要的东西：</p>
-<blockquote>
-<ul>
-<li><a href="https://github.com/stefanesser/dumpdecrypted">dumpdecrypted</a></li>
-<li>越狱的iOS设备</li>
-<li>OpenSSH（Cydia）</li>
-<li>iFile（Cydia）</li>
-<li>Cycript（Cydia）</li>
-<li>XCode</li>
-<li>Command Line Tools</li>
-</ul>
-</blockquote>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/iOS/">iOS</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a  href="/2016/10/03/dumpdecrypted砸壳记录/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>

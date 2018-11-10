@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Mach-O 文件解析 | iiiCeBlink</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="0x00 概要Mach-O 是 Mach object 文件格式的缩写，它是一种用于记录可执行文件、对象代码、共享库、动态加载代码和内存转储的文件格式。作为 a.out 格式的替代品， Mach-O 提供了更好的扩展性，并提升了符号表中信息的访问速度。
+每个 Mach-O 文件都包含一个 Mach-O 头，然后是载入命令(Load Commands),最后是数据块(Data)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mach-O 文件解析">
+<meta property="og:url" content="http://yoursite.com/2018/11/10/analyzeMachoFile/index.html">
+<meta property="og:site_name" content="iiiCeBlink">
+<meta property="og:description" content="0x00 概要Mach-O 是 Mach object 文件格式的缩写，它是一种用于记录可执行文件、对象代码、共享库、动态加载代码和内存转储的文件格式。作为 a.out 格式的替代品， Mach-O 提供了更好的扩展性，并提升了符号表中信息的访问速度。
+每个 Mach-O 文件都包含一个 Mach-O 头，然后是载入命令(Load Commands),最后是数据块(Data)。">
+<meta property="og:image" content="http://yoursite.com/images/macho/macho.jpg">
+<meta property="og:image" content="http://yoursite.com/images/macho/machoOverview.jpg">
+<meta property="og:image" content="http://yoursite.com/images/macho/header.jpg">
+<meta property="og:image" content="http://yoursite.com/images/macho/loadcmd.jpg">
+<meta property="og:updated_time" content="2018-11-10T15:27:13.678Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mach-O 文件解析">
+<meta name="twitter:description" content="0x00 概要Mach-O 是 Mach object 文件格式的缩写，它是一种用于记录可执行文件、对象代码、共享库、动态加载代码和内存转储的文件格式。作为 a.out 格式的替代品， Mach-O 提供了更好的扩展性，并提升了符号表中信息的访问速度。
+每个 Mach-O 文件都包含一个 Mach-O 头，然后是载入命令(Load Commands),最后是数据块(Data)。">
+<meta name="twitter:image" content="http://yoursite.com/images/macho/macho.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="iiiCeBlink" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.ico">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">iiiCeBlink</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/Home">博客首页</a></li>
+                        
+                            <li><a href="/tags">静心阅读</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/iiiCeBlink" title="github">github</a>
+                            
+                                <a class="fl rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+                            
+                                <a class="fl stackoverflow" target="_blank" href="https://stackoverflow.com/users/7310173/zakariyyasv?tab=profile" title="stackoverflow">stackoverflow</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://iiiCeBlink.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">iiiCeBlink</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">iiiCeBlink</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/Home">博客首页</a></li>
+                
+                    <li><a href="/tags">静心阅读</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/iiiCeBlink" title="github">github</a>
+                    
+                        <a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+                    
+                        <a class="stackoverflow" target="_blank" href="https://stackoverflow.com/users/7310173/zakariyyasv?tab=profile" title="stackoverflow">stackoverflow</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-analyzeMachoFile" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/11/10/analyzeMachoFile/" class="article-date">
+      <time datetime="2018-11-10T10:51:04.000Z" itemprop="datePublished">2018-11-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Mach-O 文件解析
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/macOS/">macOS</a><a class="article-category-link" href="/categories/macOS/iOS/">iOS</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="0x00-概要"><a href="#0x00-概要" class="headerlink" title="0x00 概要"></a>0x00 概要</h3><p><code>Mach-O</code> 是 <code>Mach object</code> 文件格式的缩写，它是一种用于记录可执行文件、对象代码、共享库、动态加载代码和内存转储的文件格式。作为 <code>a.out</code> 格式的替代品， <code>Mach-O</code> 提供了更好的扩展性，并提升了符号表中信息的访问速度。</p>
+<p>每个 <code>Mach-O</code> 文件都包含一个 <code>Mach-O</code> 头，然后是载入命令(<code>Load Commands</code>),最后是数据块(<code>Data</code>)。</p>
+<p><img src="/images/macho/macho.jpg" alt=""></p>
+<a id="more"></a>
+<ul>
+<li>Header : 保存了 <code>Mach-O</code> 的一些基本信息，包括了平台、文件类型、 <code>LoadCommands</code> 的个数等等。</li>
+<li>LoadCommands：这一段紧跟 <code>Header</code> ，加载 <code>Mach-O</code> 文件时会使用这里的数据来确定内存的分布。</li>
+<li>Data：每一个 <code>segment</code> 的具体数据都保存在这里，这里包含了具体的代码、数据等等。</li>
+</ul>
+<p><strong>注意</strong>：如果是一个 Fat <code>Mach-O</code> 文件，则它的结构会稍有不同，会多出一个 <code>Fat Header</code> 。</p>
+<p>为了更好地说明 <code>Mach-O</code> 的文件格式，下面会借助于 <a href="https://sourceforge.net/projects/machoview/" target="_blank" rel="external">MachOView</a> 来展示其内部的结构。</p>
+<p><img src="/images/macho/machoOverview.jpg" alt=""></p>
+<h3 id="0x01-Fat-Header"><a href="#0x01-Fat-Header" class="headerlink" title="0x01 Fat Header"></a>0x01 Fat Header</h3><p><code>Fat Header</code> 的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mach/machine.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> FAT_MAGIC	0xcafebabe</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> FAT_CIGAM	0xbebafeca	</span></div><div class="line"></div><div class="line"><span class="keyword">struct</span> fat_header &#123;</div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span>	magic;		<span class="comment">/* FAT_MAGIC */</span></div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span>	nfat_arch;	<span class="comment">/* number of structs that follow */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> fat_arch &#123;</div><div class="line">	<span class="keyword">cpu_type_t</span>	cputype;	<span class="comment">/* cpu specifier (int) */</span></div><div class="line">	<span class="keyword">cpu_subtype_t</span>	cpusubtype;	<span class="comment">/* machine specifier (int) */</span></div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span>	offset;		<span class="comment">/* file offset to this object file */</span></div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span>	size;		<span class="comment">/* size of this object file */</span></div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span>	align;		<span class="comment">/* alignment as a power of 2 */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> KERNEL</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mach/mach_types.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">struct</span> vnode;</div><div class="line"></div><div class="line"><span class="comment">/* XXX return type should be load_return_t, but mach_loader.h is not in scope */</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">fatfile_getarch_affinity</span><span class="params">(<span class="keyword">struct</span> vnode *vp, <span class="keyword">vm_offset_t</span> data_ptr,</span></span></div><div class="line">		<span class="keyword">struct</span> fat_arch *archret, <span class="keyword">int</span> affinity);</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">fatfile_getarch</span><span class="params">(<span class="keyword">struct</span> vnode *vp, <span class="keyword">vm_offset_t</span> data_ptr,</span></span></div><div class="line">		<span class="keyword">struct</span> fat_arch *archret);</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">fatfile_getarch_with_bits</span><span class="params">(<span class="keyword">struct</span> vnode *vp, <span class="keyword">integer_t</span> archbits,</span></span></div><div class="line">		<span class="keyword">vm_offset_t</span> data_ptr, <span class="keyword">struct</span> fat_arch *archret);</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span>	<span class="comment">/* KERNEL */</span></span></div></pre></td></tr></table></figure>
+<p>由代码定义我们可以看出 <code>fat_header</code> 主要包含两部分：</p>
+<ul>
+<li><code>magic</code> : 标识当前文件是 Fat <code>Mach-O</code> 文件</li>
+<li><code>nfat_arch</code> : 当前文件中包含的架构的数目</li>
+</ul>
+<h3 id="0x02-Header"><a href="#0x02-Header" class="headerlink" title="0x02 Header"></a>0x02 Header</h3><p><code>Header</code> 的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * The 32-bit mach header appears at the very beginning of the object file for</div><div class="line"> * 32-bit architectures.</div><div class="line"> */</div><div class="line"><span class="keyword">struct</span> mach_header &#123;</div><div class="line">	<span class="keyword">uint32_t</span>	magic;		<span class="comment">/* mach magic number identifier */</span></div><div class="line">	<span class="keyword">cpu_type_t</span>	cputype;	<span class="comment">/* cpu specifier */</span></div><div class="line">	<span class="keyword">cpu_subtype_t</span>	cpusubtype;	<span class="comment">/* machine specifier */</span></div><div class="line">	<span class="keyword">uint32_t</span>	filetype;	<span class="comment">/* type of file */</span></div><div class="line">	<span class="keyword">uint32_t</span>	ncmds;		<span class="comment">/* number of load commands */</span></div><div class="line">	<span class="keyword">uint32_t</span>	sizeofcmds;	<span class="comment">/* the size of all the load commands */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">/* Constant for the magic field of the mach_header (32-bit architectures) */</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_MAGIC	0xfeedface	<span class="comment">/* the mach magic number */</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_CIGAM	0xcefaedfe	<span class="comment">/* NXSwapInt(MH_MAGIC) */</span></span></div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line"> * The 64-bit mach header appears at the very beginning of object files for</div><div class="line"> * 64-bit architectures.</div><div class="line"> */</div><div class="line"><span class="keyword">struct</span> mach_header_64 &#123;</div><div class="line">	<span class="keyword">uint32_t</span>	magic;		<span class="comment">/* mach magic number identifier */</span></div><div class="line">	<span class="keyword">cpu_type_t</span>	cputype;	<span class="comment">/* cpu specifier */</span></div><div class="line">	<span class="keyword">cpu_subtype_t</span>	cpusubtype;	<span class="comment">/* machine specifier */</span></div><div class="line">	<span class="keyword">uint32_t</span>	filetype;	<span class="comment">/* type of file */</span></div><div class="line">	<span class="keyword">uint32_t</span>	ncmds;		<span class="comment">/* number of load commands */</span></div><div class="line">	<span class="keyword">uint32_t</span>	sizeofcmds;	<span class="comment">/* the size of all the load commands */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved;	<span class="comment">/* reserved */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">/* Constant for the magic field of the mach_header_64 (64-bit architectures) */</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_MAGIC_64 0xfeedfacf <span class="comment">/* the 64-bit mach magic number */</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_CIGAM_64 0xcffaedfe <span class="comment">/* NXSwapInt(MH_MAGIC_64) */</span></span></div></pre></td></tr></table></figure>
+<p>由源码可以看出 <code>Header</code> 的主要作用就是帮助系统迅速的定位 <code>Mach-O</code> 文件的运行环境，文件类型。</p>
+<p><img src="/images/macho/header.jpg" alt=""></p>
+<p>由此我们可以看出 <code>Header</code> 主要由以下几部分组成：</p>
+<ul>
+<li><code>magic number</code> : 确定是 32 位还是 64 位平台上的文件。 <code>0xfeedfacf</code> 代表 64 位， <code>0xfeedface</code> 代表 32 位。</li>
+<li><code>CPU type</code> <code>CPU subtype</code> : 确定文件运行的 CPU 架构，这里是 x86_64 架构。</li>
+<li><code>File Type</code> : 标识文件的类型。它所有的值定义如下：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_OBJECT	0x1		<span class="comment">/* relocatable object file */</span>  <span class="comment">//  编译过程中产生的*.obj文件 </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_EXECUTE	0x2		<span class="comment">/* demand paged executable file */</span>  <span class="comment">// 可执行二进制文件</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_FVMLIB	0x3		<span class="comment">/* fixed VM shared library file */</span> </span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_CORE		0x4		<span class="comment">/* core file */</span>      <span class="comment">//  崩溃时的Dump文件 </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_PRELOAD	0x5		<span class="comment">/* preloaded executable file */</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_DYLIB	0x6		<span class="comment">/* dynamically bound shared library */</span>  <span class="comment">// 动态库</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_DYLINKER	0x7		<span class="comment">/* dynamic link editor */</span>    <span class="comment">// 动态链接器</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_BUNDLE	0x8		<span class="comment">/* dynamically bound bundle file */</span>   <span class="comment">// bundle 文件</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_DYLIB_STUB	0x9		<span class="comment">/* shared library stub for static */</span></span></div><div class="line">					<span class="comment">/*  linking only, no section contents */</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_DSYM		0xa		<span class="comment">/* companion file with only debug */</span></span></div><div class="line">					<span class="comment">/*  sections */</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_KEXT_BUNDLE	0xb		<span class="comment">/* x86_64 kexts */</span>  <span class="comment">//  内核扩展文件</span></span></div></pre></td></tr></table></figure>
+<ul>
+<li><code>Flags</code> : 指定了 dyld 的加载参数，其所有参数如下：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Constants for the flags field of the mach_header */</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_NOUNDEFS	0x1		<span class="comment">/* the object file has no undefined</span></span></div><div class="line">					   references */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_INCRLINK	0x2		<span class="comment">/* the object file is the output of an</span></span></div><div class="line">					   incremental link against a base file</div><div class="line">					   and can't be link edited again */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_DYLDLINK	0x4		<span class="comment">/* the object file is input for the</span></span></div><div class="line">					   dynamic linker and can't be staticly</div><div class="line">					   link edited again */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_BINDATLOAD	0x8		<span class="comment">/* the object file's undefined</span></span></div><div class="line">					   references are bound by the dynamic</div><div class="line">					   linker when loaded. */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_PREBOUND	0x10		<span class="comment">/* the file has its dynamic undefined</span></span></div><div class="line">					   references prebound. */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_SPLIT_SEGS	0x20		<span class="comment">/* the file has its read-only and</span></span></div><div class="line">					   read-write segments split */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_LAZY_INIT	0x40		<span class="comment">/* the shared library init routine is</span></span></div><div class="line">					   to be run lazily via catching memory</div><div class="line">					   faults to its writeable segments</div><div class="line">					   (obsolete) */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_TWOLEVEL	0x80		<span class="comment">/* the image is using two-level name</span></span></div><div class="line">					   space bindings */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_FORCE_FLAT	0x100		<span class="comment">/* the executable is forcing all images</span></span></div><div class="line">					   to use flat name space bindings */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_NOMULTIDEFS	0x200		<span class="comment">/* this umbrella guarantees no multiple</span></span></div><div class="line">					   defintions of symbols in its</div><div class="line">					   sub-images so the two-level namespace</div><div class="line">					   hints can always be used. */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_NOFIXPREBINDING 0x400	<span class="comment">/* do not have dyld notify the</span></span></div><div class="line">					   prebinding agent about this</div><div class="line">					   executable */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_PREBINDABLE  0x800           <span class="comment">/* the binary is not prebound but can</span></span></div><div class="line">					   have its prebinding redone. only used</div><div class="line">                                           when MH_PREBOUND is not set. */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_ALLMODSBOUND 0x1000		<span class="comment">/* indicates that this binary binds to</span></span></div><div class="line">                                           all two-level namespace modules of</div><div class="line">					   its dependent libraries. only used</div><div class="line">					   when MH_PREBINDABLE and MH_TWOLEVEL</div><div class="line">					   are both set. */ </div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_SUBSECTIONS_VIA_SYMBOLS 0x2000<span class="comment">/* safe to divide up the sections into</span></span></div><div class="line">					    sub-sections via symbols for dead</div><div class="line">					    code stripping */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_CANONICAL    0x4000		<span class="comment">/* the binary has been canonicalized</span></span></div><div class="line">					   via the unprebind operation */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_WEAK_DEFINES	0x8000		<span class="comment">/* the final linked image contains</span></span></div><div class="line">					   external weak symbols */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_BINDS_TO_WEAK 0x10000	<span class="comment">/* the final linked image uses</span></span></div><div class="line">					   weak symbols */</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_ALLOW_STACK_EXECUTION 0x20000<span class="comment">/* When this bit is set, all stacks </span></span></div><div class="line">					   in the task will be given stack</div><div class="line">					   execution privilege.  Only used in</div><div class="line">					   MH_EXECUTE filetypes. */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_ROOT_SAFE 0x40000           <span class="comment">/* When this bit is set, the binary </span></span></div><div class="line">					  declares it is safe for use in</div><div class="line">					  processes with uid zero */</div><div class="line">                                         </div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_SETUID_SAFE 0x80000         <span class="comment">/* When this bit is set, the binary </span></span></div><div class="line">					  declares it is safe for use in</div><div class="line">					  processes when issetugid() is true */</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_NO_REEXPORTED_DYLIBS 0x100000 <span class="comment">/* When this bit is set on a dylib, </span></span></div><div class="line">					  the static linker does not need to</div><div class="line">					  examine dependent dylibs to see</div><div class="line">					  if any are re-exported */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	MH_PIE 0x200000			<span class="comment">/* When this bit is set, the OS will</span></span></div><div class="line">					   load the main executable at a</div><div class="line">					   random address.  Only used in</div><div class="line">					   MH_EXECUTE filetypes. */</div></pre></td></tr></table></figure>
+<p>条目比较长，这里介绍几个常见的：</p>
+<table>
+<thead>
+<tr>
+<th>Flag Type</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MH_NOUNDEFS</td>
+<td>目标没有未定义的符号，不存在链接依赖</td>
+</tr>
+<tr>
+<td>MH_DYLDLINK</td>
+<td>该目标文件是 dyld 的输入文件，无法被再次的静态链接</td>
+</tr>
+<tr>
+<td>MH_PIE</td>
+<td>允许随机的地址空间</td>
+</tr>
+<tr>
+<td>MH_ALLOW_STACK_EXECUTION</td>
+<td>栈内存可执行代码，一般是默认关闭的</td>
+</tr>
+<tr>
+<td>MH_NO_HEAP_EXECUTION</td>
+<td>堆内存无法执行代码</td>
+</tr>
+<tr>
+<td>MH_BINDS_TO_WEAK</td>
+<td>最终链接文件包含弱符号</td>
+</tr>
+<tr>
+<td>MH_WEAK_DEFINES</td>
+<td>文件包含外部弱符号</td>
+</tr>
+<tr>
+<td>MH_TWOLEVEL</td>
+<td>两级名称空间绑定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="0x03-Load-Commands"><a href="#0x03-Load-Commands" class="headerlink" title="0x03 Load Commands"></a>0x03 Load Commands</h3><p>其数据结构定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> load_command &#123;</div><div class="line">	<span class="keyword">uint32_t</span> cmd;		<span class="comment">/* type of load command */</span></div><div class="line">	<span class="keyword">uint32_t</span> cmdsize;	<span class="comment">/* total size of command in bytes */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p><img src="/images/macho/loadcmd.jpg" alt=""></p>
+<p>这些加载命令在 <code>Mach-O</code> 文件加载解析时，被内核加载器或者动态链接器调用，指导如何设置加载对应的二进制数据段。从内部逻辑来说，它是根据 <code>cmd</code> 的类型去调用相对应的函数来加载。以下列出一些常见的 <code>cmd</code> ：</p>
+<table>
+<thead>
+<tr>
+<th>Command类型</th>
+<th>处理函数或结构体</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LC_SEGMENT；LC_SEGMENT_64</td>
+<td>load_segment</td>
+<td>将 segment 中的数据加载并映射到进程的内存空间去</td>
+</tr>
+<tr>
+<td>LC_LOAD_DYLINKER</td>
+<td>load_dylinker</td>
+<td>启动动态加载链接器 /usr/lib/dyld 程序</td>
+</tr>
+<tr>
+<td>LC_UUID</td>
+<td>load_uuid</td>
+<td>加载128-bit的唯一ID，标示该二进制文件</td>
+</tr>
+<tr>
+<td>LC_THREAD</td>
+<td>load_thread</td>
+<td>开启一个MACH线程，但是不分配栈空间。</td>
+</tr>
+<tr>
+<td>LC_UNIXTHREAD</td>
+<td>load_unixthread</td>
+<td>开启一个UNIX线程</td>
+</tr>
+<tr>
+<td>LC_CODE_SIGNATURE</td>
+<td>load_code_signature</td>
+<td>进行数字签名</td>
+</tr>
+<tr>
+<td>LC_ENCRYPTION_INFO</td>
+<td>set_code_unprotect</td>
+<td>加密二进制文件</td>
+</tr>
+<tr>
+<td>LC_SYMTAB</td>
+<td></td>
+<td>加载符号表和字符串表</td>
+</tr>
+<tr>
+<td>LC_DYSYMTAB</td>
+<td></td>
+<td>动态符号表信息 创建导入表，包含符号表上已被加载的数据</td>
+</tr>
+<tr>
+<td>LC_LOAD_DYLIB</td>
+<td>struct dylib_command</td>
+<td>加载的动态库，包括动态库地址、名称、版本号等</td>
+</tr>
+<tr>
+<td>LC_FUNCTION_STARTS</td>
+<td></td>
+<td>函数地址起始表</td>
+</tr>
+<tr>
+<td>LC_MAIN</td>
+<td>struct entry_point_command</td>
+<td>可执行文件的主函数main()的位置</td>
+</tr>
+</tbody>
+</table>
+<p>至于 <code>cmdsize</code> 字段是表示 <code>command</code> 整个大小，用于计算出到下一个 <code>command</code> 的偏移量。</p>
+<h3 id="0x04-Segments"><a href="#0x04-Segments" class="headerlink" title="0x04 Segments"></a>0x04 Segments</h3><p>加载数据时，主要加载的就是 <code>LC_SEGMET</code> 或者 <code>LC_SEGMENT_64</code>，其数据结构定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> segment_command &#123; <span class="comment">/* for 32-bit architectures */</span></div><div class="line">	<span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_SEGMENT */</span></div><div class="line">	<span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* includes sizeof section structs */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment name */</span></div><div class="line">	<span class="keyword">uint32_t</span>	vmaddr;		<span class="comment">/* memory address of this segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	vmsize;		<span class="comment">/* memory size of this segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	fileoff;	<span class="comment">/* file offset of this segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	filesize;	<span class="comment">/* amount to map from the file */</span></div><div class="line">	<span class="keyword">vm_prot_t</span>	maxprot;	<span class="comment">/* maximum VM protection */</span></div><div class="line">	<span class="keyword">vm_prot_t</span>	initprot;	<span class="comment">/* initial VM protection */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nsects;		<span class="comment">/* number of sections in segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> segment_command_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">	<span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_SEGMENT_64 */</span></div><div class="line">	<span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* includes sizeof section_64 structs */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment name */</span></div><div class="line">	<span class="keyword">uint64_t</span>	vmaddr;		<span class="comment">/* memory address of this segment */</span></div><div class="line">	<span class="keyword">uint64_t</span>	vmsize;		<span class="comment">/* memory size of this segment */</span></div><div class="line">	<span class="keyword">uint64_t</span>	fileoff;	<span class="comment">/* file offset of this segment */</span></div><div class="line">	<span class="keyword">uint64_t</span>	filesize;	<span class="comment">/* amount to map from the file */</span></div><div class="line">	<span class="keyword">vm_prot_t</span>	maxprot;	<span class="comment">/* maximum VM protection */</span></div><div class="line">	<span class="keyword">vm_prot_t</span>	initprot;	<span class="comment">/* initial VM protection */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nsects;		<span class="comment">/* number of sections in segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>从定义可以看出它的大部分作用是定义了一些 <code>Mach-O</code> 文件的数据、地址和内存保护属性，这些数据在动态链接器加载程序时被映射到了虚拟内存中。主要要关注的是 <code>nsects</code> 字段，标示了 <code>Segment</code> 中有多少 <code>secetion</code>。 <code>section</code> 是具体有用的数据存放的地方。这里提一下 <code>vmaddr</code> 变量， <code>vmaddr</code> 段的虚存地址（未偏移），由于 <code>ALSR</code> ，程序会在进程加上一段偏移量（<code>slide</code>），真实的地址 <code>= vm address + slide</code> 。</p>
+<h3 id="0x05-Section"><a href="#0x05-Section" class="headerlink" title="0x05 Section"></a>0x05 Section</h3><p><code>Section</code> 的数据结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> section &#123; <span class="comment">/* for 32-bit architectures */</span></div><div class="line">	<span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></div><div class="line">	<span class="keyword">uint32_t</span>	addr;		<span class="comment">/* memory address of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	size;		<span class="comment">/* size in bytes of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	offset;		<span class="comment">/* file offset of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	align;		<span class="comment">/* section alignment (power of 2) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reloff;		<span class="comment">/* file offset of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nreloc;		<span class="comment">/* number of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags (section type and attributes)*/</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> section_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">	<span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></div><div class="line">	<span class="keyword">uint64_t</span>	addr;		<span class="comment">/* memory address of this section */</span></div><div class="line">	<span class="keyword">uint64_t</span>	size;		<span class="comment">/* size in bytes of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	offset;		<span class="comment">/* file offset of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	align;		<span class="comment">/* section alignment (power of 2) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reloff;		<span class="comment">/* file offset of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nreloc;		<span class="comment">/* number of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags (section type and attributes)*/</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved3;	<span class="comment">/* reserved */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>除了同样有帮助内存映射的变量外，在了解 <code>Mach-O</code> 格式的时候，只需要知道不同的 <code>Section</code> 有着不同的作用就可以了。</p>
+<ul>
+<li><code>__text</code> : 代码</li>
+<li><code>__cstring</code> : 硬编码的字符串</li>
+<li><code>__const</code> : const 关键词修饰过的变量</li>
+<li><code>__DATA.__bss</code> : bss段</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Text.__text</code></td>
+<td>主程序代码</td>
+</tr>
+<tr>
+<td><code>Text.__objc_methname</code></td>
+<td>方法名列表</td>
+</tr>
+<tr>
+<td><code>Text.__objc_classname</code></td>
+<td>类名列表</td>
+</tr>
+<tr>
+<td><code>Text.__objc_methtype</code></td>
+<td>方法签名列表</td>
+</tr>
+<tr>
+<td><code>Text.__cstring</code></td>
+<td>c 字符串</td>
+</tr>
+<tr>
+<td><code>Text.__stubs</code></td>
+<td>桩代码</td>
+</tr>
+<tr>
+<td><code>Data.__objc_classlist</code></td>
+<td>类列表</td>
+</tr>
+<tr>
+<td><code>Data.__data</code></td>
+<td>初始化可变的数据</td>
+</tr>
+<tr>
+<td><code>Data.__objc_imageinfo</code></td>
+<td>镜像信息</td>
+</tr>
+<tr>
+<td><code>Data.__la_symbol_ptr</code></td>
+<td>懒加载符号指针表</td>
+</tr>
+<tr>
+<td><code>Data.__got</code></td>
+<td>非懒加载符号指针表</td>
+</tr>
+</tbody>
+</table>
+<h3 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h3><p>要想继续深入 iOS 底层，<code>Mach-O</code> 是绕不开的一环。深入了解 <code>Mach-O</code> 后，为后续安装包瘦身，动态修改函数指针等打下坚实的基础。</p>
+<h3 id="0x07-参考"><a href="#0x07-参考" class="headerlink" title="0x07 参考"></a>0x07 参考</h3><p><a href="https://feicong.github.io/2017/01/13/macho/" target="_blank" rel="external">Mach-O文件格式</a><br><a href="https://opensource.apple.com/source/xnu/xnu-1228.15.4/EXTERNAL_HEADERS/mach-o/loader.h.auto.html" target="_blank" rel="external">Apple Open Source</a></p>
+
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipayImg.png" alt="支付宝" /></span>
+                </div>
+              
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/11/10/analyzeMachoFile/">Mach-O 文件解析</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 iiiCeBlink 的个人博客">iiiCeBlink</a></p>
+        <p><span>发布时间:</span>2018年11月10日 - 18时51分</p>
+        <p><span>最后更新:</span>2018年11月10日 - 23时27分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/11/10/analyzeMachoFile/" title="Mach-O 文件解析">http://yoursite.com/2018/11/10/analyzeMachoFile/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/11/10/analyzeMachoFile/　　作者: iiiCeBlink" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/24/protocolExtension/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">为 Objective-C 下的 protocol 添加默认实现</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-概要"><span class="toc-number">1.</span> <span class="toc-text">0x00 概要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-Fat-Header"><span class="toc-number">2.</span> <span class="toc-text">0x01 Fat Header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-Header"><span class="toc-number">3.</span> <span class="toc-text">0x02 Header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-Load-Commands"><span class="toc-number">4.</span> <span class="toc-text">0x03 Load Commands</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-Segments"><span class="toc-number">5.</span> <span class="toc-text">0x04 Segments</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-Section"><span class="toc-number">6.</span> <span class="toc-text">0x05 Section</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-总结"><span class="toc-number">7.</span> <span class="toc-text">0x06 总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-参考"><span class="toc-number">8.</span> <span class="toc-text">0x07 参考</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <section id="comments">
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'iiiCeBlink'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/10/24/protocolExtension/" title="下一篇: 为 Objective-C 下的 protocol 添加默认实现">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/10/analyzeMachoFile/">Mach-O 文件解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/24/protocolExtension/">为 Objective-C 下的 protocol 添加默认实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/22/HowMirrorWorks/">反射如何工作</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/12/利用KVO解决swizzle失效问题/">利用 KVO 解决 swizzle 失效问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/18/探究 iOS 11 下的 UIDebuggingInformationOverlay/">探究 iOS 11 下的 UIDebuggingInformationOverlay</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/04/Weak 属性在 dealloc 背后的逻辑/">Weak 属性在 dealloc() 背后的逻辑</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/CFNetwork学习笔记（四）/">CFNetwork学习笔记（四）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/07/CFNetwork学习笔记（三）/">CFNetwork学习笔记（三）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/06/CFNetwork学习笔记（二）/">CFNetwork学习笔记（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/CFNetwork学习笔记（一）/">CFNetwork学习笔记（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/03/dumpdecrypted砸壳记录/">dumpdecrypted砸壳记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/20/iOS OpenDev踩坑记录/">iOS OpenDev踩坑记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/18/iOS APP砸壳小记/">iOS APP砸壳小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/04/iOS APP中调用私有方法/">iOS APP中调用私有方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/24/拆解ARC下的self/">拆解ARC下的self</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/30/CallKit学习笔记/">CallKit学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/26/iOS 10推送通知小记（下）/">iOS 10推送通知小记（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/23/iOS 10推送通知小记（上）/">iOS 10推送通知小记（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/18/iOS 10 UICollectionView新特性小记/">iOS 10 UICollectionView新特性小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/20/H5游戏接入技术小结（下）/">H5游戏接入技术小结（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/17/H5游戏接入技术小结（上）/">H5游戏接入技术小结（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/23/庖丁解牛KVO（二）——KVO实现原理/">庖丁解牛KVO（二）——KVO实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/庖丁解牛KVO（一）——KVO概览和使用/">庖丁解牛KVO（一）——KVO概览和使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/21/UIScrollView实践小记——分页/">【转】UIScrollView实践小记——分页</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/12/Mac workflow小记/">Mac workflow小记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/12/抽丝剥茧之block（上）/">抽丝剥茧之block（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/10/深入理解NSMapTable、NSHashTable、NSPointerArray/">深入理解NSMapTable、NSHashTable、NSPointerArray</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/06/YYCache源码学习/">YYCache源码学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/02/20/runtime对containsString方法的小改进/">runtime对containsString方法的小改进</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/14/ApplePay线上支付教程/">ApplePay线上支付教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/28/UIButton之titleLabel、imageView解析/">UIButton之titleLabel、imageView解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/17/UICollectionView Layout学习笔记/">UICollectionView Layout学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/20/UIImage加载图片方式的研究/">UIImage加载图片方式的研究</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/18/Xcode-Target、Project、WorkSpace、Scheme/">Xcode-Target、Project、WorkSpace、Scheme</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/24/UINavigationBar背景色设置/">UINavigationBar背景色设置</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 iiiCeBlink
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
