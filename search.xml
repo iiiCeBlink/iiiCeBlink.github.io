@@ -5,7 +5,7 @@
     
     <entry>
       <title><![CDATA[Mach-O 文件解析]]></title>
-      <url>http://yoursite.com/2018/11/10/analyzeMachoFile/</url>
+      <url>https://iiiceblink.github.io/2018/11/10/analyzeMachoFile/</url>
       <content type="html"><![CDATA[<h3 id="0x00-概要"><a href="#0x00-概要" class="headerlink" title="0x00 概要"></a>0x00 概要</h3><p><code>Mach-O</code> 是 <code>Mach object</code> 文件格式的缩写，它是一种用于记录可执行文件、对象代码、共享库、动态加载代码和内存转储的文件格式。作为 <code>a.out</code> 格式的替代品， <code>Mach-O</code> 提供了更好的扩展性，并提升了符号表中信息的访问速度。</p>
 <p>每个 <code>Mach-O</code> 文件都包含一个 <code>Mach-O</code> 头，然后是载入命令(<code>Load Commands</code>),最后是数据块(<code>Data</code>)。</p>
 <p><img src="/images/macho/macho.jpg" alt=""></p>
@@ -162,6 +162,13 @@
 <h3 id="0x04-Segments"><a href="#0x04-Segments" class="headerlink" title="0x04 Segments"></a>0x04 Segments</h3><p>加载数据时，主要加载的就是 <code>LC_SEGMET</code> 或者 <code>LC_SEGMENT_64</code>，其数据结构定义如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> segment_command &#123; <span class="comment">/* for 32-bit architectures */</span></div><div class="line">	<span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_SEGMENT */</span></div><div class="line">	<span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* includes sizeof section structs */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment name */</span></div><div class="line">	<span class="keyword">uint32_t</span>	vmaddr;		<span class="comment">/* memory address of this segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	vmsize;		<span class="comment">/* memory size of this segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	fileoff;	<span class="comment">/* file offset of this segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	filesize;	<span class="comment">/* amount to map from the file */</span></div><div class="line">	<span class="keyword">vm_prot_t</span>	maxprot;	<span class="comment">/* maximum VM protection */</span></div><div class="line">	<span class="keyword">vm_prot_t</span>	initprot;	<span class="comment">/* initial VM protection */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nsects;		<span class="comment">/* number of sections in segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> segment_command_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">	<span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_SEGMENT_64 */</span></div><div class="line">	<span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* includes sizeof section_64 structs */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment name */</span></div><div class="line">	<span class="keyword">uint64_t</span>	vmaddr;		<span class="comment">/* memory address of this segment */</span></div><div class="line">	<span class="keyword">uint64_t</span>	vmsize;		<span class="comment">/* memory size of this segment */</span></div><div class="line">	<span class="keyword">uint64_t</span>	fileoff;	<span class="comment">/* file offset of this segment */</span></div><div class="line">	<span class="keyword">uint64_t</span>	filesize;	<span class="comment">/* amount to map from the file */</span></div><div class="line">	<span class="keyword">vm_prot_t</span>	maxprot;	<span class="comment">/* maximum VM protection */</span></div><div class="line">	<span class="keyword">vm_prot_t</span>	initprot;	<span class="comment">/* initial VM protection */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nsects;		<span class="comment">/* number of sections in segment */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>从定义可以看出它的大部分作用是定义了一些 <code>Mach-O</code> 文件的数据、地址和内存保护属性，这些数据在动态链接器加载程序时被映射到了虚拟内存中。主要要关注的是 <code>nsects</code> 字段，标示了 <code>Segment</code> 中有多少 <code>secetion</code>。 <code>section</code> 是具体有用的数据存放的地方。这里提一下 <code>vmaddr</code> 变量， <code>vmaddr</code> 段的虚存地址（未偏移），由于 <code>ALSR</code> ，程序会在进程加上一段偏移量（<code>slide</code>），真实的地址 <code>= vm address + slide</code> 。</p>
+<p><code>LC_SEGMENT</code> 意味着这部分文件需要映射到进程的地址空间去。一般有以下段名：</p>
+<ul>
+<li><code>__PAGEZERO</code> :　空指针陷阱段，映射到虚拟内存空间的第一页，用于捕捉对 <code>NULL</code> 指针的引用。</li>
+<li><code>__TEXT</code> :　包含了执行代码以及其他只读数据。该段数据可以 <code>VM_PROT_READ</code>(读)、<code>VM_PROT_EXECUTE</code>(执行)，不能被修改。</li>
+<li><code>__DATA</code> :　程序数据，该段可写 <code>VM_PROT_WRITE/READ/EXECUTE</code>。</li>
+<li><code>__LINKEDIT</code> :　链接器使用的符号以及其他表</li>
+</ul>
 <h3 id="0x05-Section"><a href="#0x05-Section" class="headerlink" title="0x05 Section"></a>0x05 Section</h3><p><code>Section</code> 的数据结构如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> section &#123; <span class="comment">/* for 32-bit architectures */</span></div><div class="line">	<span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></div><div class="line">	<span class="keyword">uint32_t</span>	addr;		<span class="comment">/* memory address of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	size;		<span class="comment">/* size in bytes of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	offset;		<span class="comment">/* file offset of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	align;		<span class="comment">/* section alignment (power of 2) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reloff;		<span class="comment">/* file offset of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nreloc;		<span class="comment">/* number of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags (section type and attributes)*/</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> section_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">	<span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></div><div class="line">	<span class="keyword">uint64_t</span>	addr;		<span class="comment">/* memory address of this section */</span></div><div class="line">	<span class="keyword">uint64_t</span>	size;		<span class="comment">/* size in bytes of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	offset;		<span class="comment">/* file offset of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	align;		<span class="comment">/* section alignment (power of 2) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reloff;		<span class="comment">/* file offset of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nreloc;		<span class="comment">/* number of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags (section type and attributes)*/</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved3;	<span class="comment">/* reserved */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>除了同样有帮助内存映射的变量外，在了解 <code>Mach-O</code> 格式的时候，只需要知道不同的 <code>Section</code> 有着不同的作用就可以了。</p>
@@ -182,6 +189,10 @@
 <tr>
 <td><code>Text.__text</code></td>
 <td>主程序代码</td>
+</tr>
+<tr>
+<td><code>Text.__stub_helper</code></td>
+<td>用于动态链接的存根</td>
 </tr>
 <tr>
 <td><code>Text.__objc_methname</code></td>
@@ -208,8 +219,20 @@
 <td>类列表</td>
 </tr>
 <tr>
+<td><code>Data.__objc_nlclslist</code></td>
+<td><code>Objective-C</code> 的 <code>+load</code> 函数列表，比 <code>__mod_init_func</code> 更早执行</td>
+</tr>
+<tr>
 <td><code>Data.__data</code></td>
 <td>初始化可变的数据</td>
+</tr>
+<tr>
+<td><code>Data._got</code></td>
+<td>存储引用符号的实际地址，类似于动态符号表</td>
+</tr>
+<tr>
+<td><code>Data.__cfstring</code></td>
+<td><code>Core Foundation</code> 用到的字符串（OC字符串）</td>
 </tr>
 <tr>
 <td><code>Data.__objc_imageinfo</code></td>
@@ -217,22 +240,58 @@
 </tr>
 <tr>
 <td><code>Data.__la_symbol_ptr</code></td>
-<td>懒加载符号指针表</td>
+<td>懒加载符号指针表，通过 <code>dyld_stub_binder</code> 辅助链接</td>
 </tr>
 <tr>
-<td><code>Data.__got</code></td>
+<td><code>Data.__nl_symbol_ptr</code></td>
 <td>非懒加载符号指针表</td>
+</tr>
+<tr>
+<td><code>Data.__mod_init_func</code></td>
+<td>初始化的全局函数地址，在 <code>main</code> 之前被调用</td>
+</tr>
+<tr>
+<td><code>Data.__objc_const</code></td>
+<td><code>Objective-C</code> 的常量</td>
 </tr>
 </tbody>
 </table>
-<h3 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h3><p>要想继续深入 iOS 底层，<code>Mach-O</code> 是绕不开的一环。深入了解 <code>Mach-O</code> 后，为后续安装包瘦身，动态修改函数指针等打下坚实的基础。</p>
-<h3 id="0x07-参考"><a href="#0x07-参考" class="headerlink" title="0x07 参考"></a>0x07 参考</h3><p><a href="https://feicong.github.io/2017/01/13/macho/" target="_blank" rel="external">Mach-O文件格式</a><br><a href="https://opensource.apple.com/source/xnu/xnu-1228.15.4/EXTERNAL_HEADERS/mach-o/loader.h.auto.html" target="_blank" rel="external">Apple Open Source</a></p>
+<h3 id="0x06-二进制文件符号查找"><a href="#0x06-二进制文件符号查找" class="headerlink" title="0x06 二进制文件符号查找"></a>0x06 二进制文件符号查找</h3><p>我们可以结合 <code>fishhook</code> 的一张图来分析。</p>
+<p><img src="/images/macho/fishhook.png" alt=""></p>
+<p>这张图初看很复杂，不过它演示的是寻找符号的过程，我们根据这张图来分析一下这个过程：</p>
+<ol>
+<li>从 <code>__DATA</code> 段中的 <code>lazy</code> 符号指针表中查找某个符号，获得这个符号的偏移量 1061 ，然后在每一个 <code>section_64</code> 中查找 <code>reserved1</code> ，通过这两个值找到 <code>Indirect Symbol Table</code> 中符号对应的条目</li>
+<li>在 <code>Indirect Symbol Table</code> 找到符号表指针以及对应的索引 16343 之后，就需要访问符号表</li>
+<li>然后通过符号表中的偏移量，获取字符串表中的符号 <code>_close</code></li>
+</ol>
+<p>从代码角度来看，整个过程大致是这样的。首先从镜像中查找 <code>linkedit_segment</code> <code>symtab_command</code> 和 <code>dysymtab_command</code> ；在开始查找之前，要先跳过 <code>mach_header_t</code> 长度的位置，然后将当前指针强转成 <code>segment_command_t</code> ，通过对比 <code>cmd</code> 的值，来找到需要的 <code>segment_command_t</code> 。在 <code>linkedit_segment</code> 结构体中获得其虚拟地址以及文件偏移量，然后通过一下公式来计算当前 <code>__LINKEDIT</code> 段的位置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">slide + vmaffr - fileoff</div></pre></td></tr></table></figure>
+<p>类似地，在 <code>symtab_command</code> 中获取符号表偏移量和字符串表偏移量，从 <code>dysymtab_command</code> 中获取间接符号表（<code>indirect symbol table</code>）偏移量，就能够获得<em>符号表</em>、<em>字符串表</em>以及<em>间接符号表</em>的引用了。</p>
+<ul>
+<li>间接符号表中的元素都是 <code>uint32_t *</code>，指针的值是对应条目 <code>n_list</code> 在符号表中的位置</li>
+<li>符号表中的元素都是 <code>nlist_t</code> 结构体，其中包含了当前符号在字符串表中的下标</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> nlist_64 &#123;</div><div class="line">    <span class="keyword">union</span> &#123;</div><div class="line">    	<span class="keyword">uint32_t</span>  n_strx; <span class="comment">/* index into the string table */</span></div><div class="line">	&#125; n_un;</div><div class="line">	<span class="keyword">uint8_t</span> n_type;        <span class="comment">/* type flag, see below */</span></div><div class="line">	<span class="keyword">uint8_t</span> n_sect;        <span class="comment">/* section number or NO_SECT */</span></div><div class="line">	<span class="keyword">uint16_t</span> n_desc;       <span class="comment">/* see &lt;mach-o/stab.h&gt; */</span></div><div class="line">	<span class="keyword">uint64_t</span> n_value;      <span class="comment">/* value of this symbol (or stab offset) */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<ul>
+<li>字符串表中的元素是 <code>char</code> 字符</li>
+</ul>
+<p>总结一下就是：</p>
+<ol>
+<li>通过 i<code>ndirect_symtab + section-&gt;reserved1</code> 获取 <code>indirect_symbol_indices *</code>，也就是符号表的数组</li>
+<li>通过 <code>(void **)((uintptr_t)slide + section-&gt;addr)</code> 获取函数指针列表 <code>indirect_symbol_bindings</code></li>
+<li>遍历符号表数组 <code>indirect_symbol_indices *</code> 中的所有符号表中，获取其中的符号表索引 <code>symtab_index</code></li>
+<li>通过符号表索引 <code>symtab_index</code> 获取符号表中某一个 <code>n_list</code> 结构体，得到字符串表中的索引 <code>symtab[symtab_index].n_un.n_strx</code></li>
+<li>最后在字符串表中获得符号的名字 <code>char *symbol_name</code></li>
+</ol>
+<p>以上就是查找符号的整个过程。不过，以上的过程有个限定条件，那就是该符号是存在于外部动态链接库中的。如果你所要查找的符号包含于当前的镜像中，则不需要 <code>dyld</code> 解决函数地址的问题，它是直接从其他代码地址跳转到了当前函数的实现中。</p>
+<h3 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h3><p>要想继续深入 iOS 底层，<code>Mach-O</code> 是绕不开的一环。深入了解 <code>Mach-O</code> 后，为后续安装包瘦身，动态修改函数指针等打下坚实的基础。</p>
+<h3 id="0x08-参考"><a href="#0x08-参考" class="headerlink" title="0x08 参考"></a>0x08 参考</h3><p><a href="https://feicong.github.io/2017/01/13/macho/" target="_blank" rel="external">Mach-O文件格式</a><br><a href="https://opensource.apple.com/source/xnu/xnu-1228.15.4/EXTERNAL_HEADERS/mach-o/loader.h.auto.html" target="_blank" rel="external">Apple Open Source</a><br><a href="https://draveness.me/fishhook" target="_blank" rel="external">动态修改 C 语言函数的实现</a><br><a href="https://amywushu.github.io/2017/02/27/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-Hook-%E5%8E%9F%E7%90%86%E4%B9%8B-fishhook-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.html" target="_blank" rel="external">Hook 原理之 fishhook 源码解析</a></p>
 ]]></content>
     </entry>
     
     <entry>
       <title><![CDATA[为 Objective-C 下的 protocol 添加默认实现]]></title>
-      <url>http://yoursite.com/2018/10/24/protocolExtension/</url>
+      <url>https://iiiceblink.github.io/2018/10/24/protocolExtension/</url>
       <content type="html"><![CDATA[<p>最近有业务有需求需要为 <code>UIViewController</code> 的 <code>UIViewControllerTransitioningDelegate</code> 协议提供默认的实现，使用 swift 开发默认是支持给协议添加默认实现的，但是，目前主项目中使用的是 Objective-C 做开发，而 Objective-C 下是不支持给协议添加默认实现的。调研一番后，找到了合适的解决方案—— <code>PKProtocolExtension</code> 。</p>
 <h3 id="原理解析"><a href="#原理解析" class="headerlink" title="原理解析"></a>原理解析</h3><h4 id="宏定义"><a href="#宏定义" class="headerlink" title="宏定义"></a>宏定义</h4><p><code>PKProtocolExtension.h</code> 中的内容如下：</p>
 <a id="more"></a>
@@ -254,7 +313,7 @@
     
     <entry>
       <title><![CDATA[反射如何工作]]></title>
-      <url>http://yoursite.com/2018/10/22/HowMirrorWorks/</url>
+      <url>https://iiiceblink.github.io/2018/10/22/HowMirrorWorks/</url>
       <content type="html"><![CDATA[<p>原文地址 <a href="https://swift.org/blog/how-mirror-works/?utm_source=mybridge&amp;utm_medium=blog&amp;utm_campaign=read_more" target="_blank" rel="external">https://swift.org/blog/how-mirror-works/?utm_source=mybridge&amp;utm_medium=blog&amp;utm_campaign=read_more</a></p>
 <p>虽然 swift 是一门特别强调静态类型的语言，但是它同时也支持丰富的元数据类型，也就是说允许在运行时检查代码和操作任意值。这种特性通过 <code>Mirror</code> API 暴露给开发人员。你可能会很好奇，<code>Mirror</code> 是如何在如此强调静态类型的语言中工作的？让我们来一探究竟。</p>
 <h3 id="免责声明"><a href="#免责声明" class="headerlink" title="免责声明"></a>免责声明</h3><p>接下来所讲得内容是内部实现的细节，所涉及的代码是在当前版本中的写法，在将来可能会发生改变。当 ABI 稳定后，元数据将变成固定和可信赖的格式，但是现在它仍会发生改变。如果你写常规的 swift 代码，不要依赖于元数据。如果你要编写的代码所要实现的是比 <code>Mirror</code> API 所提供的更复杂的反射机制的话，本篇文章将会启发你它们是如何一起配合的，但是要记住所有一切在未来都可能发生改变。</p>
@@ -385,7 +444,7 @@
     
     <entry>
       <title><![CDATA[利用 KVO 解决 swizzle 失效问题]]></title>
-      <url>http://yoursite.com/2018/09/12/%E5%88%A9%E7%94%A8KVO%E8%A7%A3%E5%86%B3swizzle%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/</url>
+      <url>https://iiiceblink.github.io/2018/09/12/%E5%88%A9%E7%94%A8KVO%E8%A7%A3%E5%86%B3swizzle%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/</url>
       <content type="html"><![CDATA[<p>最近碰到一个需求，类似于下图所示，几个 <code>UIButton</code> 排列在一起，在某个事件触发时，隐藏或者显示中间的 <code>button</code> ，重点是隐藏中间的 <code>button</code> 时，上下 <code>button</code> 之间的间距保持为原来的间距。比较好的做法是重写 <code>alignmentRectInsets</code> 的 get 方法，当然更新约束的方法也是 OK 的。直接创建子类去重写 <code>alignmentRectInsets</code> 的 get 方法不够优雅，因而想到创建分类， swizzle <code>UIView</code> 的 <code>alignmentRectInsets</code> 的 get 方法，在自己的自定义方法中去完成真正的修改逻辑。</p>
 <p><img src="/images/KVOSwizzle/button.gif" alt=""></p>
 <p>原以为写完分类，在项目中调用再 run 一下就大功告成了，然而，我还是 naive 啊。运行项目后，发现竟然没有 work ，打断点调试，发现 swizzle method 没有调用。没有调用的原因在于 <code>UIButton</code> 类本身的实现已经重写了 <code>alignmentRectInsets</code> 的 get 方法，所以，不会再调用 <code>UIView</code> 的相同方法了。那怎么办呢？最简单的办法就是给 <code>UIButton</code> 创建分类而不是 <code>UIView</code> ，但是感觉这样写不是很好，有些冗余。</p>
@@ -414,7 +473,7 @@
     
     <entry>
       <title><![CDATA[探究 iOS 11 下的 UIDebuggingInformationOverlay]]></title>
-      <url>http://yoursite.com/2017/11/18/%E6%8E%A2%E7%A9%B6%20iOS%2011%20%E4%B8%8B%E7%9A%84%20UIDebuggingInformationOverlay/</url>
+      <url>https://iiiceblink.github.io/2017/11/18/%E6%8E%A2%E7%A9%B6%20iOS%2011%20%E4%B8%8B%E7%9A%84%20UIDebuggingInformationOverlay/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>自 iOS 9 以后，Apple 加入了悬浮窗调试工具，也就是 <code>UIDebuggingInformationOverlay</code> 。利用它我们可以做到很多事情，例如：查看视图层级，控制器层级，页面中的变量，测量等等。那么我们如何开启这个调试工具呢？只需要添加如下的代码：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> overlayClass = <span class="type">NSClassFromString</span>(<span class="string">"UIDebuggingInformationOverlay"</span>) <span class="keyword">as</span>? <span class="type">UIWindow</span>.<span class="type">Type</span></div><div class="line"><span class="number">_</span> = overlayClass?.perform(<span class="type">NSSelectorFromString</span>(<span class="string">"prepareDebuggingOverlay"</span>))</div><div class="line"><span class="keyword">let</span> overlay = overlayClass?.perform(<span class="type">NSSelectorFromString</span>(<span class="string">"overlay"</span>)).takeUnretainedValue() <span class="keyword">as</span>? <span class="type">UIWindow</span></div><div class="line"><span class="number">_</span> = overlay?.perform(<span class="type">NSSelectorFromString</span>(<span class="string">"toggleVisibility"</span>))</div></pre></td></tr></table></figure>
 <p>这段代码的实际意义可以转换成以下两行代码：</p>
@@ -438,7 +497,7 @@
     
     <entry>
       <title><![CDATA[Weak 属性在 dealloc() 背后的逻辑]]></title>
-      <url>http://yoursite.com/2017/10/04/Weak%20%E5%B1%9E%E6%80%A7%E5%9C%A8%20dealloc%20%E8%83%8C%E5%90%8E%E7%9A%84%E9%80%BB%E8%BE%91/</url>
+      <url>https://iiiceblink.github.io/2017/10/04/Weak%20%E5%B1%9E%E6%80%A7%E5%9C%A8%20dealloc%20%E8%83%8C%E5%90%8E%E7%9A%84%E9%80%BB%E8%BE%91/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>我们都知道在 ARC 环境无论是强指针还是弱指针都无需在 <code>dealloc</code> 设置为 <code>nil</code> ， ARC 会自动帮我们处理。然而，最近在项目中遇到这样一个问题，代码示例如下：</p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// class Foo</span></div><div class="line">- (<span class="keyword">void</span>)dealloc &#123;</div><div class="line">    <span class="keyword">if</span> (_obj) &#123;</div><div class="line">        [_obj removeObserver:[KVOObserverStub stub] forKeyPath:_keyPath];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>其中，<code>_obj</code> 是类 <code>Foo</code> 的 weak 属性，这段代码所做的工作是在 <code>Foo</code> 的实例对象销毁的时候，移除 <code>_obj</code> 对象上的观察者，否则，会导致 <code>KVO still registering when deallocated</code> 的 crash 。原以为这样写会 work ，然而在实际测试中发现，在触发 <code>dealloc</code> 方法时，<code>_obj</code> 此时已被置为 <code>nil</code> ，即 <code>[_obj removeObserver:[KVOObserverStub stub] forKeyPath:_keyPath];</code> 并不会触发。解决方案则是将 <code>_obj</code> 属性的修饰符由 <code>weak</code> 改为 <code>unsafe_unretained</code> 或者 <code>assign</code> 。但是，这样改可能会为其他代码引入 bug ，因为现在 ARC 不会自动为将 <code>_obj</code> 对象置为 <code>nil</code> ，需要去检查涉及 <code>_obj</code> 部分的代码。虽然这样解决问题了，但是，我还是对 <code>weak</code> 属性在其持有对象的 <code>dealloc</code> 方法触发时背后的逻辑很感兴趣。</p>
@@ -469,7 +528,7 @@
     
     <entry>
       <title><![CDATA[CFNetwork学习笔记（四）]]></title>
-      <url>http://yoursite.com/2016/10/10/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/10/10/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讲述用CFHTTPAuthentication API如何与HTTP认证服务器交互，如何找到合适的认证对象和证书并填入到HTTP请求中。一般而言，如果HTTP服务器给你的HTTP请求返回401或407，就意味着服务器是认证服务器并且要求证书。在CFHTTPAuthentication API中，每个证书集合都被存储在CFHTTPAuthentication对象中。因此，每个不同的认证服务器和连接到服务器的不同用户都需要存储在独立的CFHTTPAuthentication对象中。为了能与服务器进行通信，你需要将CFHTTPAuthentication存储到HTTP请求当中。后面会对这些步骤进行详细解释。<br><a id="more"></a></p>
 <h3 id="认证"><a href="#认证" class="headerlink" title="认证"></a>认证</h3><p>添加对认证的支持能让你的app与HTTP认证服务器进行会话，即使即使HTTP认证不是复杂的概念，但要去实现它却是比较复杂的过程。整个的过程如下：</p>
 <blockquote>
@@ -522,7 +581,7 @@
     
     <entry>
       <title><![CDATA[CFNetwork学习笔记（三）]]></title>
-      <url>http://yoursite.com/2016/10/07/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/10/07/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要介绍如何创建、发送和接收HTTP请求和响应。</p>
 <a id="more"></a>
 <h3 id="创建CFHTTP请求"><a href="#创建CFHTTP请求" class="headerlink" title="创建CFHTTP请求"></a>创建CFHTTP请求</h3><p>HTTP请求实际上是包含了请求方法、URL、消息头和消息体的消息。请求方法通常是GET, HEAD, PUT, POST, DELETE, TRACE, CONNECT 或 OPTIONS。用CFHTTP创建HTTP请求需要四个步骤：</p>
@@ -568,7 +627,7 @@
     
     <entry>
       <title><![CDATA[CFNetwork学习笔记（二）]]></title>
-      <url>http://yoursite.com/2016/10/06/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/10/06/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讨论如何创建、开启读写流并检查读写流上的错误。此外，还会介绍如何从读流中读出数据，如何向写流中写入数据，如何在读写的过程中防止发生阻塞，如何通过代理服务器来引导流。</p>
 <p>CFStream可以用来读写文件或者与socket一起工作。除了创建流的过程之外，它们其他的行为都很相似。<br><a id="more"></a></p>
 <h3 id="ReadStream"><a href="#ReadStream" class="headerlink" title="ReadStream"></a>ReadStream</h3><p>要使用读流，首先需要创建读流对象，代码如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CFReadStreamRef</span> myReadStream = <span class="built_in">CFReadStreamCreateWithFile</span>(kCFAllocatorDefault, fileURL);</div></pre></td></tr></table></figure></p>
@@ -628,7 +687,7 @@
     
     <entry>
       <title><![CDATA[CFNetwork学习笔记（一）]]></title>
-      <url>http://yoursite.com/2016/10/05/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/10/05/CFNetwork%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</url>
       <content type="html"><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。<br><a id="more"></a><br>CFNetwork是CoreServices框架中的框架，它提供了网络协议的抽象接口。这些抽象接口让直行各种网络任务变得简单起来，比如：支持与BSDScoket，HTTP，FTP服务工作，使用SSL或TLS建立加密连接，支持DNS主机解析等。</p>
 <p>CFNetwork是底层且高性能的框架，它能够让我们在协议栈上进行精细地控制。它是对BSDSocket的扩展，BSDSocket是提供对象简化任务如与FTP或者HTTP服务器通信或者解析DNS主机的标准socket抽象API。</p>
 <p>由于CFNetwork依赖于BSDsocket，如NSURL等的一些Cocoa类是依赖于CFNetwork实现的。此外，在视图中展示web内容的WebKit也同样依赖于CFNetwork。CFNetwork和其他一些框架的层级结构如下图所示。</p>
@@ -716,7 +775,7 @@
     
     <entry>
       <title><![CDATA[dumpdecrypted砸壳记录]]></title>
-      <url>http://yoursite.com/2016/10/03/dumpdecrypted%E7%A0%B8%E5%A3%B3%E8%AE%B0%E5%BD%95/</url>
+      <url>https://iiiceblink.github.io/2016/10/03/dumpdecrypted%E7%A0%B8%E5%A3%B3%E8%AE%B0%E5%BD%95/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前一直采用Clutch对ipa包进行砸壳，后来发现Clutch在某些iOS版本下砸壳会失效，故而放弃了Clutch而采用dumpdecrypted。本篇文章就是记录用dumpdecrypted砸壳的过程以及其中的注意点。</p>
 <h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>砸壳需要的东西：</p>
 <blockquote>
@@ -752,7 +811,7 @@
     
     <entry>
       <title><![CDATA[iOS OpenDev踩坑记录]]></title>
-      <url>http://yoursite.com/2016/09/20/iOS%20OpenDev%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</url>
+      <url>https://iiiceblink.github.io/2016/09/20/iOS%20OpenDev%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近在研究iOS逆向工程，需要用到iOSDev工具，心想那就安装呗，多大点事儿。谁知道自己有点too young too simple，原以为下载完安装包再按步骤点点点就完了，谁知道到了最后一步，它给我来个安装失败。真是没有一点点防备啊，于是各种找办法解决安装问题，最终解决了，于是，决定把解决的过程写下来，方便以后回顾。<br><a id="more"></a><br><img src="/images/openDev/1.png" alt=""></p>
 <h3 id="安装必要的软件包和工具"><a href="#安装必要的软件包和工具" class="headerlink" title="安装必要的软件包和工具"></a>安装必要的软件包和工具</h3><p>1.安装MacPort。在<a href="https://www.macports.org/install.php" target="_blank" rel="external">官网</a>根据当前电脑系统下载对应的pkg安装包，然后进行安装。安装过程会很慢，建议全程开启VPN会好一些。</p>
 <p>2.更新MacPort。在命令行中输入命令进行更新：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo port -v selfupdate</div></pre></td></tr></table></figure></p>
@@ -769,7 +828,7 @@
     
     <entry>
       <title><![CDATA[iOS APP砸壳小记]]></title>
-      <url>http://yoursite.com/2016/09/18/iOS%20APP%E7%A0%B8%E5%A3%B3%E5%B0%8F%E8%AE%B0/</url>
+      <url>https://iiiceblink.github.io/2016/09/18/iOS%20APP%E7%A0%B8%E5%A3%B3%E5%B0%8F%E8%AE%B0/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在逆向工程中，砸壳是很必要并且不可缺少的一个步骤。所谓“壳”，其实就是苹果给应用加密的一层保护，我们只要是从APP Store上下载的APP都是带壳的。带壳的APP是无法进行class-dump以及hook等操作，因此，需要对APP进行砸壳。接下来，我以微信为例来进行砸壳。<br><a id="more"></a></p>
 <h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>要能顺利完成砸壳需要四样东西：</p>
 <blockquote>
@@ -810,7 +869,7 @@
     
     <entry>
       <title><![CDATA[iOS APP中调用私有方法]]></title>
-      <url>http://yoursite.com/2016/09/04/iOS%20APP%E4%B8%AD%E8%B0%83%E7%94%A8%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95/</url>
+      <url>https://iiiceblink.github.io/2016/09/04/iOS%20APP%E4%B8%AD%E8%B0%83%E7%94%A8%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>得益于苹果封闭的生态系统，iOS平台才能如此优秀和健壮。然而，对于开发者而言，开源永远是最受欢迎的，闭源只会让开发者束手束脚。我们在开发的过程中可能会遇到有需求需要依赖于iOS私有API，但由于iOS的封闭，我们无法直接调用私有方法，这让人很是头疼。那有没有方法能让我们在不越狱的情况下去调用私有API呢？<br><a id="more"></a><br>答案是有的，并且就我目前了解而言有两种方案。为了更好地解释这两种方案，我写了个小Demo。在Demo中只有一个类<code>TestClass</code>。</p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// TestClass.h</span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">TestClass</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)publicMethod;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// TestClass.m</span></div><div class="line"><span class="meta">#import <span class="meta-string">"TestClass.h"</span></span></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">TestClass</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)publicMethod&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Call public method"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)privateMethod&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"call private method"</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
@@ -829,7 +888,7 @@
     
     <entry>
       <title><![CDATA[拆解ARC下的self]]></title>
-      <url>http://yoursite.com/2016/08/24/%E6%8B%86%E8%A7%A3ARC%E4%B8%8B%E7%9A%84self/</url>
+      <url>https://iiiceblink.github.io/2016/08/24/%E6%8B%86%E8%A7%A3ARC%E4%B8%8B%E7%9A%84self/</url>
       <content type="html"><![CDATA[<p>最近在研究AFNetworking源码的过程中碰到了很多处地方用到了<code>weakSelf</code>和<code>strongSelf</code>。依据自己之前的理解，正常情况下使用<code>weakSelf</code>是为了避免发生循环引用，而使用<code>strongSelf</code>是为了避免方法还没有执行完成self已经被释放从而导致崩溃。不过为何在方法执行完成之前无法确保self不被释放却不是很明白，于是乎，自己花了些时间研究了一下。</p>
 <h3 id="self的本质"><a href="#self的本质" class="headerlink" title="self的本质"></a>self的本质</h3><p>self是类的隐藏参数，在类方法中self指向当前调用方法的类，在实例方法中指向当前调用方法的类的init方法族生成的实例。更准确来说，在类方法中self是<code>const Class self</code>，在实例方法中self是<code>Person const* self</code>（以Person类举例）。事实确实如此么？来验证一下。</p>
 <a id="more"></a>
@@ -855,7 +914,7 @@
     
     <entry>
       <title><![CDATA[CallKit学习笔记]]></title>
-      <url>http://yoursite.com/2016/07/30/CallKit%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+      <url>https://iiiceblink.github.io/2016/07/30/CallKit%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
       <content type="html"><![CDATA[<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>近几年4G大规模的普及使得VoIP（Voice over Internet Protocol）变得可靠和稳定。iOS 10开始全面支持VOIP，于是推出了<code>CallKit</code>框架。</p>
 <p><code>CallKit</code>框架能让你的第三方VoIP应用程序获得原声应用程序的体验效果。为了能更好得讲述<code>CallKit</code>新特性，我们以一个第三方VoIP应用程序——“Speakerbox”举例来说明。<br><a id="more"></a><br>在iOS 10之前，当用户收到“Speakerbox”的电话时的界面如同下图。在锁屏状态下，我们无法区分iMessage和VoIP电话的区别，它只是一则通知。如果想要接听“Speakerbox”中的来电，我们需要先右滑通知，输入密码，进入app才能接听电话。这是非常糟糕的体验。而在解锁状态下，来电会显示为一条横幅，我们有时候可能会错过这些通知，这样的体验也是很糟糕的。</p>
 <p><img src="/images/callkit/1.png" alt=""></p>
@@ -928,7 +987,7 @@
     
     <entry>
       <title><![CDATA[iOS 10推送通知小记（下）]]></title>
-      <url>http://yoursite.com/2016/07/26/iOS%2010%E6%8E%A8%E9%80%81%E9%80%9A%E7%9F%A5%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8B%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/07/26/iOS%2010%E6%8E%A8%E9%80%81%E9%80%9A%E7%9F%A5%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8B%EF%BC%89/</url>
       <content type="html"><![CDATA[<h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><p>在上一篇<a href="http://zakariyyasv.pub/2016/07/23/iOS%2010%E6%8E%A8%E9%80%81%E9%80%9A%E7%9F%A5%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8A%EF%BC%89/" target="_blank" rel="external">iOS 10推送通知小记（上）</a>中，已经将iOS 10推送机制的改进以及原理讲完了。本篇文章的着重点放在心的推送框架<code>UserNotification.framework</code>上面。</p>
 <p>先说说iOS 10之前的推送API中存在的问题。比如，本地推送和远程推送使用的是不同的回调方法但有可能回调方法中的代码是重复的。当你的app将通知发送给用户之后就没办法再去控制它了。为了解决这些问题，iOS 10推出了新的推送框架——<code>UserNotification.framework</code>。<br><a id="more"></a><br>新框架的主要特性有：</p>
 <blockquote>
@@ -1006,7 +1065,7 @@
     
     <entry>
       <title><![CDATA[iOS 10推送通知小记（上）]]></title>
-      <url>http://yoursite.com/2016/07/23/iOS%2010%E6%8E%A8%E9%80%81%E9%80%9A%E7%9F%A5%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8A%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/07/23/iOS%2010%E6%8E%A8%E9%80%81%E9%80%9A%E7%9F%A5%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8A%EF%BC%89/</url>
       <content type="html"><![CDATA[<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>最近在体验iOS 10Beta版的过程中，我发现iOS 10在锁屏界面的变动比较大，与之前的交互逻辑完全不同。与此同时，推送通知消息也有了改进，比如支持3D Touch，可以展示更多的信息，通知内容可以包含图片等等。按照逻辑推断iOS 10推送通知的API会有变化，于是，我赶紧查阅了Xcode 8Beta中的文档以及WWDC2016的视频，果然发现了玄机。</p>
 <h3 id="推送机制"><a href="#推送机制" class="headerlink" title="推送机制"></a>推送机制</h3><a id="more"></a>
 <p>推送机制在iOS 10上发生了一点变化。</p>
@@ -1039,7 +1098,7 @@
     
     <entry>
       <title><![CDATA[iOS 10 UICollectionView新特性小记]]></title>
-      <url>http://yoursite.com/2016/07/18/iOS%2010%20UICollectionView%E6%96%B0%E7%89%B9%E6%80%A7%E5%B0%8F%E8%AE%B0/</url>
+      <url>https://iiiceblink.github.io/2016/07/18/iOS%2010%20UICollectionView%E6%96%B0%E7%89%B9%E6%80%A7%E5%B0%8F%E8%AE%B0/</url>
       <content type="html"><![CDATA[<h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p>iOS 10对于UICollectionview的改进优化主要表现在以下三个方面：</p>
 <blockquote>
 <ul>
@@ -1122,7 +1181,7 @@
     
     <entry>
       <title><![CDATA[H5游戏接入技术小结（下）]]></title>
-      <url>http://yoursite.com/2016/05/20/H5%E6%B8%B8%E6%88%8F%E6%8E%A5%E5%85%A5%E6%8A%80%E6%9C%AF%E5%B0%8F%E7%BB%93%EF%BC%88%E4%B8%8B%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/05/20/H5%E6%B8%B8%E6%88%8F%E6%8E%A5%E5%85%A5%E6%8A%80%E6%9C%AF%E5%B0%8F%E7%BB%93%EF%BC%88%E4%B8%8B%EF%BC%89/</url>
       <content type="html"><![CDATA[<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>在上一篇<a href="http://zakariyyasv.pub/2016/05/17/H5%E6%B8%B8%E6%88%8F%E6%8E%A5%E5%85%A5%E6%8A%80%E6%9C%AF%E5%B0%8F%E7%BB%93%EF%BC%88%E4%B8%8A%EF%BC%89/" target="_blank" rel="external">H5游戏接入技术小结（上）</a>中，主要介绍了H5游戏资源的下载和运行。本篇文章主要是介绍app与H5游戏的交互以及在线与其他玩家对战的技术总结。<br><a id="more"></a></p>
 <h3 id="app与H5游戏交互"><a href="#app与H5游戏交互" class="headerlink" title="app与H5游戏交互"></a>app与H5游戏交互</h3><p>app与游戏交互本质上就是app与浏览器进行交互，交互的媒介自然是要靠JS。交互的内容倒并不复杂，复杂的在于iOS版本的适配。iOS中<code>webview</code>有两个类<code>UIWebView</code>和<code>WKWebView</code>，性能方面来说<code>WKWebView</code>会更好一些（如果你对<code>UIWebView</code>和<code>WKWebView</code>的区别不太了解，可以看这篇<a href="http://nshipster.cn/wkwebkit/" target="_blank" rel="external">博文</a>），但<code>WKWebView</code>是iOS 8之后才引入的，故iOS 8之前的版本只能采用<code>UIWebView</code>。JS与OC交互的类库用的较多的是<code>JavaScriptCore</code>和<code>WebViewJavaScriptBridge</code>，其中<code>JavaScriptCore</code>是iOS 7之后苹果开放的类库，而<code>WebViewJavaScriptBridge</code>则是第三方类库，并且作者也说明了对于<code>WKWebView</code>的支持上还存在bug。综合来看最佳的解决方案应该是<code>WKWebView</code>与<code>JavaScriptCore</code>的组合，然而在<code>WKWebView</code>中我们无法获取context，也就是说<code>WKWebView</code>不支持<code>JavaScriptCore</code>。综合考虑后，还是决定采用UIWebView与JavaScriptCore组合(iOS 7)与WKWebView与原生JS组合(iOS 8及以上)的方案。</p>
 <h3 id="UIWebView与JavaScriptCore交互"><a href="#UIWebView与JavaScriptCore交互" class="headerlink" title="UIWebView与JavaScriptCore交互"></a>UIWebView与JavaScriptCore交互</h3><p>相比于<code>WebViewJavaScriptBridge</code>，<code>JavaScriptCore</code>的学习成本要更低一些。<code>JavaScriptCore</code>中包含了以下几个类：</p>
@@ -1191,7 +1250,7 @@
     
     <entry>
       <title><![CDATA[H5游戏接入技术小结（上）]]></title>
-      <url>http://yoursite.com/2016/05/17/H5%E6%B8%B8%E6%88%8F%E6%8E%A5%E5%85%A5%E6%8A%80%E6%9C%AF%E5%B0%8F%E7%BB%93%EF%BC%88%E4%B8%8A%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/05/17/H5%E6%B8%B8%E6%88%8F%E6%8E%A5%E5%85%A5%E6%8A%80%E6%9C%AF%E5%B0%8F%E7%BB%93%EF%BC%88%E4%B8%8A%EF%BC%89/</url>
       <content type="html"><![CDATA[<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>这段时间忙着做游戏平台H5游戏的接入，趁着刚做完还热乎劲儿，将其中的技术要点总结下来。H5游戏的接入主要分为两个部分：游戏的下载和游戏对战。本篇博客着重讲述游戏的下载部分，下篇博客将着重讲述H5游戏与app通过JS进行数据交互以及在线对战的技术要点。</p>
 <p>H5游戏资源本质上是由一些目录以及目录下的文件资源组成，要能够在app中运行H5游戏，就是要在<code>WKWebView</code>的浏览器中用HTTPServer搭建本地服务，然后去加载游戏资源根目录下的index.html文件，换句话说index.html文件是游戏的入口文件。<a id="more"></a>HTTPServer我们采用的是开源的<a href="https://github.com/robbiehanson/CocoaHTTPServer" target="_blank" rel="external">CocoaHTTPServer</a>，关于在app中搭建HTTPServer服务的内容就不多赘述，感兴趣的可以去Github上了解。当然，这也需要H5与iOS开发人员沟通和调试才能真正地在<code>WKWebView</code>中流畅运行。</p>
 <h3 id="游戏资源下载思路"><a href="#游戏资源下载思路" class="headerlink" title="游戏资源下载思路"></a>游戏资源下载思路</h3><p>知道了怎样在app中运行H5游戏，接下来最重要的就是游戏资源的下载。当用户进入一个游戏后，游戏的状态分为三种：未下载，已下载，暂停下载和需要更新。如何判断游戏此时的状态呢？首先我们需要区分每一个游戏，因此，约定将游戏资源的URL进行MD5加密后的字符串作为游戏的唯一标识符。之后，我们创建<code>game.plist</code>文件，文件中存储一个字典，字典的key为游戏的标识符，value为游戏资源的大小。每当一个游戏开始下载，则在plist文件中添加一条记录。检查游戏的状态时，拿游戏的标识符与plist文件中所有的记录进行对比，若未找到相同的记录则状态为未下载。否则，在存储游戏资源的文件夹中查找以游戏标识符命名的.zip压缩包，若找到将其包的大小与plist文件中找到的记录的大小进行比较，若大小不同，则状态为暂停下载，若未找到压缩包且未找到解压后的资源文件夹显示为未下载。否则，状态为已下载。至于更新的状态则需要与服务器端进行沟通和约定，在此就不讲了。</p>
@@ -1214,7 +1273,7 @@
     
     <entry>
       <title><![CDATA[庖丁解牛KVO（二）——KVO实现原理]]></title>
-      <url>http://yoursite.com/2016/04/23/%E5%BA%96%E4%B8%81%E8%A7%A3%E7%89%9BKVO%EF%BC%88%E4%BA%8C%EF%BC%89%E2%80%94%E2%80%94KVO%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</url>
+      <url>https://iiiceblink.github.io/2016/04/23/%E5%BA%96%E4%B8%81%E8%A7%A3%E7%89%9BKVO%EF%BC%88%E4%BA%8C%EF%BC%89%E2%80%94%E2%80%94KVO%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</url>
       <content type="html"><![CDATA[<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p>在上一篇文章中，我们已经了解了KVO的使用场景以及使用方法。作为Objective-c中异常强大和重要的特性，我们有必要去了解和探索KVO底层的实现机制。</p>
 <p>KVO的实现机制到底是怎么样的呢？依据苹果官方文档的介绍：</p>
 <blockquote>
@@ -1238,7 +1297,7 @@
     
     <entry>
       <title><![CDATA[庖丁解牛KVO（一）——KVO概览和使用]]></title>
-      <url>http://yoursite.com/2016/04/13/%E5%BA%96%E4%B8%81%E8%A7%A3%E7%89%9BKVO%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94KVO%E6%A6%82%E8%A7%88%E5%92%8C%E4%BD%BF%E7%94%A8/</url>
+      <url>https://iiiceblink.github.io/2016/04/13/%E5%BA%96%E4%B8%81%E8%A7%A3%E7%89%9BKVO%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94KVO%E6%A6%82%E8%A7%88%E5%92%8C%E4%BD%BF%E7%94%A8/</url>
       <content type="html"><![CDATA[<p>KVO是对Objective-c观察者模式的实现，也是OC非常强大和有用的特性，同时还是实现cocoa bndings的基础（<code>-bind:toObject:withKeyPath:options:</code>）。因此，理解和掌握KVO可以给我们带来很多便利以及意想不到的效果。</p>
 <p>KVO可以让观察者在被观察者的属性被修改时直接接收到通知。在KVO的作用下，一个对象可以观察另一个对象的任何属性，同时，也可以知道某个属性的修改前和修改后的值。对多关系的观察者不仅能知道改变发生的类型，而且还能知道哪些对象被改变了。</p>
 <p>在通知机制中，KVO与<code>NSNotification</code>提供的通知机制类似，但是也存在很鲜明的区别。<code>NSNotification</code>是以广播的形式将通知传递给所有注册为观察者的对象，即“一对多”，而KVO则会在属性值发生改变时直接将通知传递给观察者，即“点对点”。<br><a id="more"></a><br>由于基类<code>NSObject</code>提供了对于KVO的基本实现，因而所有的cocoa对象本质上都能够使用KVO。为了能够接收到KVO的通知，你必须要做以下几件事：</p>
@@ -1309,7 +1368,7 @@
     
     <entry>
       <title><![CDATA[【转】UIScrollView实践小记——分页]]></title>
-      <url>http://yoursite.com/2016/03/21/UIScrollView%E5%AE%9E%E8%B7%B5%E5%B0%8F%E8%AE%B0%E2%80%94%E2%80%94%E5%88%86%E9%A1%B5/</url>
+      <url>https://iiiceblink.github.io/2016/03/21/UIScrollView%E5%AE%9E%E8%B7%B5%E5%B0%8F%E8%AE%B0%E2%80%94%E2%80%94%E5%88%86%E9%A1%B5/</url>
       <content type="html"><![CDATA[<p><code>UIScrollView</code>是iOS中很有意思也是最常用的控件之一，同时也是为数不多可以响应手势的UIKit控件。本篇文章主要研究的是<code>UIScrollView</code>的分页实现。分页有多种实现方法，且各自的效果和优点各不相同，但它们都依赖于<code>UIScrollView</code>的代理方法，所以，我们先从<code>UIScrollViewDelegate</code>说起。</p>
 <h4 id="UIScrollViewDelegate"><a href="#UIScrollViewDelegate" class="headerlink" title="UIScrollViewDelegate"></a>UIScrollViewDelegate</h4><p><code>UIScrollView</code>有意思的功能都是通过它的 <code>delegate</code> 方法实现的。了解这些方法被触发的条件及调用的顺序对于使用 <code>UIScrollView</code> 是很有必要的。</p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewDidScroll:(<span class="built_in">UIScrollView</span> *)scrollView</div></pre></td></tr></table></figure>
@@ -1348,7 +1407,7 @@
     
     <entry>
       <title><![CDATA[Mac workflow小记]]></title>
-      <url>http://yoursite.com/2016/03/12/Mac%20workflow%E5%B0%8F%E8%AE%B0/</url>
+      <url>https://iiiceblink.github.io/2016/03/12/Mac%20workflow%E5%B0%8F%E8%AE%B0/</url>
       <content type="html"><![CDATA[<p>在Mac平台下做开发也有一段时间了，虽然说相对于windows平台而言，Mac下的软件资源并不如windows下的那么丰富，但是在适应以及找到合适的软件后，我觉得Mac对我而言更适合做开发。对于开发人员来说，效率至上是毋庸置疑的，因此，拥有一套提升效率的软件和工具对于开发人员来说是至关重要的。这篇博客就记录下我自己开发的workflow，也希望通过这篇博客能与他人分享。</p>
 <h3 id="Homebrew"><a href="#Homebrew" class="headerlink" title="Homebrew"></a><a href="http://brew.sh/index_zh-cn.html" target="_blank" rel="external">Homebrew</a></h3><p><img src="/images/workflow/homebrew.png" alt=""></p>
 <p>Homebrew之于Mac的关系就跟apt之于Linux的关系是一样的，它实际上是Mac下的套件管理器。比如你想安装MySQL、git等等工具软件，都可以使用homebrew来下载和管理。<br>homebrew的安装也非常方便，你可以去到它的官网，根据提示进行安装。安装成功后就使用homebrew的命令去下载和管理你需要的工具软件了。<br><a id="more"></a><br><strong>注</strong>：homebrew的安装程序需要用到Xcode的command line tools。</p>
@@ -1414,7 +1473,7 @@
     
     <entry>
       <title><![CDATA[抽丝剥茧之block（上）]]></title>
-      <url>http://yoursite.com/2016/03/12/%E6%8A%BD%E4%B8%9D%E5%89%A5%E8%8C%A7%E4%B9%8Bblock%EF%BC%88%E4%B8%8A%EF%BC%89/</url>
+      <url>https://iiiceblink.github.io/2016/03/12/%E6%8A%BD%E4%B8%9D%E5%89%A5%E8%8C%A7%E4%B9%8Bblock%EF%BC%88%E4%B8%8A%EF%BC%89/</url>
       <content type="html"><![CDATA[<p>block在iOS下的应用场景非常广泛，相比于delegate严谨繁琐的语法，block则更加灵活。因而，深入理解block还是很有必要的，以免在开发过程中踩到坑。整个关于block的系列着重点不在于介绍block的定义和使用，而是着眼于block中的关键概念以及难以理解的地方，系列索引在这里：</p>
 <p><a href="">抽丝剥茧之block（上）</a></p>
 <p><a href="">抽丝剥茧之block（下）</a></p>
@@ -1442,7 +1501,7 @@
     
     <entry>
       <title><![CDATA[深入理解NSMapTable、NSHashTable、NSPointerArray]]></title>
-      <url>http://yoursite.com/2016/03/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3NSMapTable%E3%80%81NSHashTable%E3%80%81NSPointerArray/</url>
+      <url>https://iiiceblink.github.io/2016/03/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3NSMapTable%E3%80%81NSHashTable%E3%80%81NSPointerArray/</url>
       <content type="html"><![CDATA[<p>最近在学习<code>YYCache</code>中的<code>YYDiskCache</code>时，注意到了这段代码：</p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// weak reference for all instances</span></div><div class="line"><span class="keyword">static</span> <span class="built_in">NSMapTable</span> *_globalInstances;</div><div class="line"><span class="keyword">static</span> dispatch_semaphore_t _globalInstancesLock;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">void</span> _YYDiskCacheInitGlobal() &#123;</div><div class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</div><div class="line">    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</div><div class="line">        _globalInstancesLock = dispatch_semaphore_create(<span class="number">1</span>);</div><div class="line">        _globalInstances = [[<span class="built_in">NSMapTable</span> alloc] initWithKeyOptions:<span class="built_in">NSPointerFunctionsStrongMemory</span> valueOptions:<span class="built_in">NSPointerFunctionsWeakMemory</span> capacity:<span class="number">0</span>];</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> YYDiskCache *_YYDiskCacheGetGlobal(<span class="built_in">NSString</span> *path) &#123;</div><div class="line">    <span class="keyword">if</span> (path.length == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line">    _YYDiskCacheInitGlobal();</div><div class="line">    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);</div><div class="line">    <span class="keyword">id</span> cache = [_globalInstances objectForKey:path];</div><div class="line">    dispatch_semaphore_signal(_globalInstancesLock);</div><div class="line">    <span class="keyword">return</span> cache;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">void</span> _YYDiskCacheSetGlobal(YYDiskCache *cache) &#123;</div><div class="line">    <span class="keyword">if</span> (cache.path.length == <span class="number">0</span>) <span class="keyword">return</span>;</div><div class="line">    _YYDiskCacheInitGlobal();</div><div class="line">    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);</div><div class="line">    [_globalInstances setObject:cache forKey:cache.path];</div><div class="line">    dispatch_semaphore_signal(_globalInstancesLock);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <a id="more"></a>
@@ -1486,7 +1545,7 @@
     
     <entry>
       <title><![CDATA[YYCache源码学习]]></title>
-      <url>http://yoursite.com/2016/03/06/YYCache%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/</url>
+      <url>https://iiiceblink.github.io/2016/03/06/YYCache%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/</url>
       <content type="html"><![CDATA[<p>这篇文章并不是对YYCache的设计思路的范范分析，而是对YYCache代码实现的详细分析。一方面YYCache的设计思路作者已经写得比较清楚了，我就没必要再多此一举了，有兴趣的可以到大神的博客去看<a href="http://blog.ibireme.com/2015/10/26/yycache/" target="_blank" rel="external">YYCache 设计思路</a>。从代码层面进行分析，一方面是因为很多思路上的东西很虚理解起来大都很容易，但是要能用代码实现却往往不那么轻松，另一方面是因为代码分析可以学习优秀代码的编码风格以及加深对iOS技术上的理解，这样做给自己带来的帮助或许会更多。</p>
 <h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><p>YYCache文件数并不多，主要包含四个文件：</p>
 <blockquote>
@@ -1560,7 +1619,7 @@
     
     <entry>
       <title><![CDATA[runtime对containsString方法的小改进]]></title>
-      <url>http://yoursite.com/2016/02/20/runtime%E5%AF%B9containsString%E6%96%B9%E6%B3%95%E7%9A%84%E5%B0%8F%E6%94%B9%E8%BF%9B/</url>
+      <url>https://iiiceblink.github.io/2016/02/20/runtime%E5%AF%B9containsString%E6%96%B9%E6%B3%95%E7%9A%84%E5%B0%8F%E6%94%B9%E8%BF%9B/</url>
       <content type="html"><![CDATA[<p>最近做项目过程中版本适配到iOS 7上出现了一点问题，定位分析了一下发现原来是<code>NSstring</code>的<code>containsString:</code>方法在从中作梗。看了一下文档发现原来<code>containsString:</code>是从iOS 8才加入的，iOS 7 SDK并没有该方法。这个问题解决起来也挺简单的，在iOS 7下可以用如下代码代替<code>containsString:</code>方法：</p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> isContained = [aString rangeOfString:bString].location != <span class="built_in">NSNotFound</span></div></pre></td></tr></table></figure>
 <p>不过，我觉得要在每一个需要调用<code>containsString:</code>方法写一遍有点麻烦，把适配的代码抽离出来写入一个方法倒是可以，但我还是觉得有点麻烦，毕竟懒癌患者。于是，我想到了用runtime运行时机制动态添加<code>containsString:</code>方法就可以一劳永逸了。<br>实现的原理也很简单，在iOS 7下判断<code>NSString</code>中是否存在<code>containsString:</code>实例方法，若不存在，则动态添加该方法。这样就不用再需要调用<code>containsString:</code>实例方法去判断了。原理很简单，代码也很简单，还是很符合我这个懒癌患者的口味的嘛。<br><a id="more"></a></p>
@@ -1571,7 +1630,7 @@
     
     <entry>
       <title><![CDATA[ApplePay线上支付教程]]></title>
-      <url>http://yoursite.com/2016/01/14/ApplePay%E7%BA%BF%E4%B8%8A%E6%94%AF%E4%BB%98%E6%95%99%E7%A8%8B/</url>
+      <url>https://iiiceblink.github.io/2016/01/14/ApplePay%E7%BA%BF%E4%B8%8A%E6%94%AF%E4%BB%98%E6%95%99%E7%A8%8B/</url>
       <content type="html"><![CDATA[<h2 id="第一部分-准备阶段"><a href="#第一部分-准备阶段" class="headerlink" title="第一部分 准备阶段"></a>第一部分 准备阶段</h2><p>1）硬件要求：<br>iPhone6及更新的设备，还有iPad air2和iPad mini3之后的平板，以及apple watch。具体型号（截止2016年2月）：iPhone 6，iPhone 6 Plus，iPhone 6s， iPhone 6s Plus；iPad Air 2，iPad mini 3，iPad mini 4，iPad Pro；还有Apple Watch。</p>
 <p>2）系统要求：<br>iPhone或iPad至少要升到iOS 9.2版，手表至少watch OS 2.1。</p>
 <p>3）配置支付环境<br>1.进入苹果开发者中心，注册App ID。<br>App ID必须是explicit类型，否则无法使用ApplePay服务。<br><a id="more"></a><br><img src="/images/applePay/1.png" alt=""></p>
@@ -1602,7 +1661,7 @@
     
     <entry>
       <title><![CDATA[UIButton之titleLabel、imageView解析]]></title>
-      <url>http://yoursite.com/2015/12/28/UIButton%E4%B9%8BtitleLabel%E3%80%81imageView%E8%A7%A3%E6%9E%90/</url>
+      <url>https://iiiceblink.github.io/2015/12/28/UIButton%E4%B9%8BtitleLabel%E3%80%81imageView%E8%A7%A3%E6%9E%90/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><code>UIButton</code>是我们开发过程中使用频率很高的控件类。在使用UIButton实现需求时，通常会碰到需要改变<code>UIButton</code>中image和title位置和大小的需求。如果对UIButton中的titleLabel和imageView理解不到位的话，只能是不停地修改参数，不停地调试，陷入恶性循环，既低效又很难正确地去实现。为了解决这个问题，我研究出了两套方案，分别是用<code>imageEdgeInsets</code>、<code>titleEdgeInsets</code>组合的方案以及<code>imageRectContentRet</code>、<code>titleRectContentRect</code>组合的方案。<br><a id="more"></a></p>
 <h3 id="titleEdgeInsets、imageEdgeInsets组合"><a href="#titleEdgeInsets、imageEdgeInsets组合" class="headerlink" title="titleEdgeInsets、imageEdgeInsets组合"></a>titleEdgeInsets、imageEdgeInsets组合</h3><p>这个方案是使用的比较多的解决方案，它主要依赖的是两个方法：</p>
 <blockquote>
@@ -1646,7 +1705,7 @@
     
     <entry>
       <title><![CDATA[UICollectionView Layout学习笔记]]></title>
-      <url>http://yoursite.com/2015/12/17/UICollectionView%20Layout%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+      <url>https://iiiceblink.github.io/2015/12/17/UICollectionView%20Layout%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
       <content type="html"><![CDATA[<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><p><code>UITableView</code>是<code>UIKit</code>视图类中极其重要的一个，我们与之打交道的频率也是极高的。在UIKit视图类中有一个类与<code>UITableview</code>共享一套API设计，但相比<code>UITableview</code>，该类的视图布局更加灵活复杂。这就是<code>UICollectionView</code>。本篇的着重点也放在<code>UICollectionView</code>灵活强大的视图布局上面。<br><a id="more"></a></p>
 <h3 id="UICollectionView结构"><a href="#UICollectionView结构" class="headerlink" title="UICollectionView结构"></a>UICollectionView结构</h3><p>UICollectionView的结构可以分为两部分来看：</p>
 <blockquote>
@@ -1676,7 +1735,7 @@
     
     <entry>
       <title><![CDATA[UIImage加载图片方式的研究]]></title>
-      <url>http://yoursite.com/2015/10/20/UIImage%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E6%96%B9%E5%BC%8F%E7%9A%84%E7%A0%94%E7%A9%B6/</url>
+      <url>https://iiiceblink.github.io/2015/10/20/UIImage%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E6%96%B9%E5%BC%8F%E7%9A%84%E7%A0%94%E7%A9%B6/</url>
       <content type="html"><![CDATA[<p>常用的UIImage加载图片的方式有以下几种：</p>
 <ul>
 <li><code>[UIImage imageNamed:name]</code></li>
@@ -1698,7 +1757,7 @@
     
     <entry>
       <title><![CDATA[Xcode-Target、Project、WorkSpace、Scheme]]></title>
-      <url>http://yoursite.com/2015/10/18/Xcode-Target%E3%80%81Project%E3%80%81WorkSpace%E3%80%81Scheme/</url>
+      <url>https://iiiceblink.github.io/2015/10/18/Xcode-Target%E3%80%81Project%E3%80%81WorkSpace%E3%80%81Scheme/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>开发iOS有一段时间了，Xcode用得也越发熟练，但对于Xcode中的一些常用项目结构的概念如<code>Target</code>、<code>Project</code>等却还是一知半解。故将其摘出来搞清楚，避免以后犯概念性错误。</p>
 <a id="more"></a>
 <h3 id="Target"><a href="#Target" class="headerlink" title="Target"></a>Target</h3><p>一个<code>Target</code>对应一个编译的product并且包含将<code>Project</code>或<code>workspace</code>中的文件编译成product的指令。<code>Project</code>可以包含一个或多个<code>Target</code>，而每个<code>Target</code>对应一个product。</p>
@@ -1745,7 +1804,7 @@
     
     <entry>
       <title><![CDATA[UINavigationBar背景色设置]]></title>
-      <url>http://yoursite.com/2015/09/24/UINavigationBar%E8%83%8C%E6%99%AF%E8%89%B2%E8%AE%BE%E7%BD%AE/</url>
+      <url>https://iiiceblink.github.io/2015/09/24/UINavigationBar%E8%83%8C%E6%99%AF%E8%89%B2%E8%AE%BE%E7%BD%AE/</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近关于<code>UINavigationBar</code>背景色随tableView滚动而渐变的风格很流行，自己也想着研究去实现它，并决定把研究的结果写进这篇文章中。渐变的实现很简单，思路无非是监听tableView的<code>contentOffset</code>属性，在<code>scrollViewDidScroll</code>方法中更新navigationbar背景色的alpha值，我们的重点放在设置navigationbar背景色上。</p>
 <a id="more"></a>
 <p><img src="/images/navigationbarColor/TBNavigationbar.mov" alt=""></p>
