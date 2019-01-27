@@ -254,6 +254,10 @@
 <td><code>Data.__objc_const</code></td>
 <td><code>Objective-C</code> 的常量</td>
 </tr>
+<tr>
+<td><code>Data.__objc_selrefs</code></td>
+<td>所有被使用的方法的引用</td>
+</tr>
 </tbody>
 </table>
 <h3 id="0x06-二进制文件符号查找"><a href="#0x06-二进制文件符号查找" class="headerlink" title="0x06 二进制文件符号查找"></a>0x06 二进制文件符号查找</h3><p>我们可以结合 <code>fishhook</code> 的一张图来分析。</p>
