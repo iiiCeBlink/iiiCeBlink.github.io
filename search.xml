@@ -167,17 +167,12 @@
 <li><code>__PAGEZERO</code> :　空指针陷阱段，映射到虚拟内存空间的第一页，用于捕捉对 <code>NULL</code> 指针的引用。</li>
 <li><code>__TEXT</code> :　包含了执行代码以及其他只读数据。该段数据可以 <code>VM_PROT_READ</code>(读)、<code>VM_PROT_EXECUTE</code>(执行)，不能被修改。</li>
 <li><code>__DATA</code> :　程序数据，该段可写 <code>VM_PROT_WRITE/READ/EXECUTE</code>。</li>
-<li><code>__LINKEDIT</code> :　链接器使用的符号以及其他表</li>
+<li><code>__LINKEDIT</code> :　包含需要被动态链接器使用的信息，包括符号表、字符串表、重定位项表等。</li>
 </ul>
 <h3 id="0x05-Section"><a href="#0x05-Section" class="headerlink" title="0x05 Section"></a>0x05 Section</h3><p><code>Section</code> 的数据结构如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> section &#123; <span class="comment">/* for 32-bit architectures */</span></div><div class="line">	<span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></div><div class="line">	<span class="keyword">uint32_t</span>	addr;		<span class="comment">/* memory address of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	size;		<span class="comment">/* size in bytes of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	offset;		<span class="comment">/* file offset of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	align;		<span class="comment">/* section alignment (power of 2) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reloff;		<span class="comment">/* file offset of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nreloc;		<span class="comment">/* number of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags (section type and attributes)*/</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> section_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">	<span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></div><div class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></div><div class="line">	<span class="keyword">uint64_t</span>	addr;		<span class="comment">/* memory address of this section */</span></div><div class="line">	<span class="keyword">uint64_t</span>	size;		<span class="comment">/* size in bytes of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	offset;		<span class="comment">/* file offset of this section */</span></div><div class="line">	<span class="keyword">uint32_t</span>	align;		<span class="comment">/* section alignment (power of 2) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reloff;		<span class="comment">/* file offset of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	nreloc;		<span class="comment">/* number of relocation entries */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags (section type and attributes)*/</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved3;	<span class="comment">/* reserved */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>除了同样有帮助内存映射的变量外，在了解 <code>Mach-O</code> 格式的时候，只需要知道不同的 <code>Section</code> 有着不同的作用就可以了。</p>
-<ul>
-<li><code>__text</code> : 代码</li>
-<li><code>__cstring</code> : 硬编码的字符串</li>
-<li><code>__const</code> : const 关键词修饰过的变量</li>
-<li><code>__DATA.__bss</code> : bss段</li>
-</ul>
+<p>之所以按照“段-节”的方式组织，是因为同一个段下的节，在内存的权限相同，可以不完全按照页大小进行对齐，节省内存空间。而对外整体暴露段，在装载程序的时候完整映射成一个 <code>vma</code> ，可以更好的做内存对齐。</p>
 <table>
 <thead>
 <tr>
@@ -191,8 +186,12 @@
 <td>主程序代码</td>
 </tr>
 <tr>
+<td><code>Text.__stubs</code></td>
+<td>符号桩。本质上是一小段会直接跳入 <code>lazybinding</code> 的表对应项指针指向的地址的代码</td>
+</tr>
+<tr>
 <td><code>Text.__stub_helper</code></td>
-<td>用于动态链接的存根</td>
+<td>用于动态链接的存根。上述提到的 <code>lazybinding</code> 的表中对应项的指针在没有找到真正的符号地址的时候，都指向这。</td>
 </tr>
 <tr>
 <td><code>Text.__objc_methname</code></td>
@@ -211,8 +210,8 @@
 <td>c 字符串</td>
 </tr>
 <tr>
-<td><code>Text.__stubs</code></td>
-<td>桩代码</td>
+<td><code>Data.__const</code></td>
+<td>没有初始化过的常量</td>
 </tr>
 <tr>
 <td><code>Data.__objc_classlist</code></td>
@@ -249,6 +248,10 @@
 <tr>
 <td><code>Data.__mod_init_func</code></td>
 <td>初始化的全局函数地址，在 <code>main</code> 之前被调用</td>
+</tr>
+<tr>
+<td><code>Data.__mod_term_func</code></td>
+<td>终止函数，在main返回之后调用</td>
 </tr>
 <tr>
 <td><code>Data.__objc_const</code></td>

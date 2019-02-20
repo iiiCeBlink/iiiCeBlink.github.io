@@ -346,87 +346,19 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2016/10/10/CFNetwork学习笔记（四）/" >
+        <a class="abstract-title" href = "/2018/11/10/analyzeMachoFile/" >
             
-                <span>CFNetwork学习笔记（四）</span>
+                <span>Mach-O 文件解析</span>
         </a>
         <div class="abstract-content">
-            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讲述用CFHTTPAuthentication API如何与HTTP认证服务器交互，如何找到合适的认证对象和证书并填入到HTTP请求中。一般而言，如果HTTP服务器给你的HTTP请求返回401或407，就意味着服务器是认证服务器并且要求证书。在CFHTTPAuthentication API中，每个证书集合都被存储在CFHTTPAuthentication对象中。因此，每个不同的认证服务器和连接到服务器的不同用户都需要存储在独立的CFHTTPAuthentication对象中。为了能与服务器进行通信，你需要将CFHTTPAuthentication存储到HTTP请求当中。后面会对这些步骤进行详细解释。<br>
+            <h3 id="0x00-概要"><a href="#0x00-概要" class="headerlink" title="0x00 概要"></a>0x00 概要</h3><p><code>Mach-O</code> 是 <code>Mach object</code> 文件格式的缩写，它是一种用于记录可执行文件、对象代码、共享库、动态加载代码和内存转储的文件格式。作为 <code>a.out</code> 格式的替代品， <code>Mach-O</code> 提供了更好的扩展性，并提升了符号表中信息的访问速度。</p>
+<p>每个 <code>Mach-O</code> 文件都包含一个 <code>Mach-O</code> 头，然后是载入命令(<code>Load Commands</code>),最后是数据块(<code>Data</code>)。</p>
+<p><img src="/images/macho/macho.jpg" alt=""></p>
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2016/10/10</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2016/10/07/CFNetwork学习笔记（三）/" >
-            
-                <span>CFNetwork学习笔记（三）</span>
-        </a>
-        <div class="abstract-content">
-            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要介绍如何创建、发送和接收HTTP请求和响应。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2016/10/07</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2016/10/06/CFNetwork学习笔记（二）/" >
-            
-                <span>CFNetwork学习笔记（二）</span>
-        </a>
-        <div class="abstract-content">
-            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇文章主要讨论如何创建、开启读写流并检查读写流上的错误。此外，还会介绍如何从读流中读出数据，如何向写流中写入数据，如何在读写的过程中防止发生阻塞，如何通过代理服务器来引导流。</p>
-<p>CFStream可以用来读写文件或者与socket一起工作。除了创建流的过程之外，它们其他的行为都很相似。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2016/10/06</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2016/10/05/CFNetwork学习笔记（一）/" >
-            
-                <span>CFNetwork学习笔记（一）</span>
-        </a>
-        <div class="abstract-content">
-            <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>提到CFNetwork框架，首先想到的是当年号称“网络终结者”的ASIHTTPRequest。ASI的底层就是基于CFNetwork开发的，现如今用的最广泛的AFNetworking框架则是基于NSURLSession开发的，相比而言，CFNetwork比NSURLSession更底层，在性能方面理论上来说CFNetwork会更好。之前没怎么研究过CFNetwork，所以决定深入研究一下。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2016/10/05</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
             </div>
             <!-- tags  -->
             
@@ -520,6 +452,22 @@
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1261,9 +1209,101 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="Mac相关"><span class="iconfont-archer">&#xe60a;</span>Mac相关</span>
     
+        <span class="sidebar-category-name" data-categories="iOS逆向工程"><span class="iconfont-archer">&#xe60a;</span>iOS逆向工程</span>
+    
         <span class="sidebar-category-name" data-categories="开发工具"><span class="iconfont-archer">&#xe60a;</span>开发工具</span>
     
+        <span class="sidebar-category-name" data-categories="MacOS"><span class="iconfont-archer">&#xe60a;</span>MacOS</span>
+    
+        <span class="sidebar-category-name" data-categories="macOS"><span class="iconfont-archer">&#xe60a;</span>macOS</span>
+    
+        <span class="sidebar-category-name" data-categories="macOS/iOS"><span class="iconfont-archer">&#xe60a;</span>macOS/iOS</span>
+    
+        <span class="sidebar-category-name" data-categories="翻译"><span class="iconfont-archer">&#xe60a;</span>翻译</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Kealdish"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+     
+    </body>
+</html>
+
+
+4/UINavigationBar背景色设置/" >UINavigationBar背景色设置</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="iOS"><span class="iconfont-archer">&#xe60a;</span>iOS</span>
+    
+        <span class="sidebar-category-name" data-categories="Mac相关"><span class="iconfont-archer">&#xe60a;</span>Mac相关</span>
+    
         <span class="sidebar-category-name" data-categories="iOS逆向工程"><span class="iconfont-archer">&#xe60a;</span>iOS逆向工程</span>
+    
+        <span class="sidebar-category-name" data-categories="开发工具"><span class="iconfont-archer">&#xe60a;</span>开发工具</span>
     
         <span class="sidebar-category-name" data-categories="MacOS"><span class="iconfont-archer">&#xe60a;</span>MacOS</span>
     
